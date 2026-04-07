@@ -1,31 +1,31 @@
-<img src="assets/n8n_logo.jpg" alt="n8n Manager MCP Server banner" width="700">
+<img src="assets/n8n_logo.jpg" alt="n8n Manager MCP Server Banner" width="700">
 
 # n8n Manager MCP Server
 
-**🇩🇪 [Deutsche Version](README_de.md)**
+**🇬🇧 [English Version](README.md)**
 
-*Part of the [ellmos-ai](https://github.com/ellmos-ai) family.*
+*Teil der [ellmos-ai](https://github.com/ellmos-ai)-Familie.*
 
 [![npm](https://img.shields.io/npm/v/n8n-manager-mcp.svg)](https://www.npmjs.com/package/n8n-manager-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-MCP (Model Context Protocol) server for managing n8n workflows via AI assistants like Claude, Cursor, and Windsurf.
+MCP-Server (Model Context Protocol) zur Verwaltung von n8n-Workflows über KI-Assistenten wie Claude, Cursor und Windsurf.
 
-## Features
+## Funktionen
 
-- **13 Tools** for complete n8n workflow management
-- List, create, update, delete, and activate/deactivate workflows
-- Multi-server support (connect to multiple n8n instances)
-- Export/Import workflows between servers
-- View execution history and status
-- Built-in node catalog with descriptions
-- Zero dependencies on Python -- connects directly to n8n REST API
+- **13 Tools** für vollständige n8n-Workflow-Verwaltung
+- Workflows auflisten, erstellen, aktualisieren, löschen und aktivieren/deaktivieren
+- Multi-Server-Unterstützung (Verbindung zu mehreren n8n-Instanzen)
+- Export/Import von Workflows zwischen Servern
+- Ausführungshistorie und Status einsehen
+- Integrierter Node-Katalog mit Beschreibungen
+- Keine Python-Abhängigkeiten — direkte Verbindung zur n8n REST API
 
 ## Installation
 
 ### Claude Desktop
 
-Add to `claude_desktop_config.json`:
+In `claude_desktop_config.json` einfügen:
 
 ```json
 {
@@ -44,57 +44,57 @@ Add to `claude_desktop_config.json`:
 claude mcp add --scope user n8n-manager npx -y n8n-manager-mcp
 ```
 
-### Manual
+### Manuell
 
 ```bash
 npm install -g n8n-manager-mcp
 ```
 
-## Quick Start
+## Schnellstart
 
-After installation, use these commands in your AI assistant:
+Nach der Installation können folgende Befehle im KI-Assistenten verwendet werden:
 
-1. **Add your n8n server:**
-   > "Add my n8n server at http://localhost:5678 with API key abc123"
+1. **n8n-Server hinzufügen:**
+   > „Füge meinen n8n-Server unter http://localhost:5678 mit API-Key abc123 hinzu"
 
-2. **List workflows:**
-   > "Show me all workflows on my n8n server"
+2. **Workflows auflisten:**
+   > „Zeige mir alle Workflows auf meinem n8n-Server"
 
-3. **Create a workflow:**
-   > "Create an n8n workflow that triggers on a webhook, fetches data from an API, and sends a Slack message"
+3. **Workflow erstellen:**
+   > „Erstelle einen n8n-Workflow, der bei einem Webhook auslöst, Daten von einer API abruft und eine Slack-Nachricht sendet"
 
-4. **Check executions:**
-   > "Show me the last 10 workflow executions"
+4. **Ausführungen prüfen:**
+   > „Zeige mir die letzten 10 Workflow-Ausführungen"
 
-## Available Tools
+## Verfügbare Tools
 
-| Tool | Description |
+| Tool | Beschreibung |
 |------|-------------|
-| `n8n_list_workflows` | List all workflows on a server |
-| `n8n_get_workflow` | Get workflow details (nodes, connections) |
-| `n8n_create_workflow` | Create a new workflow from nodes + connections |
-| `n8n_update_workflow` | Update an existing workflow |
-| `n8n_delete_workflow` | Delete a workflow |
-| `n8n_activate_workflow` | Activate or deactivate a workflow |
-| `n8n_list_executions` | List recent executions with status |
-| `n8n_export_workflow` | Export workflow as importable JSON |
-| `n8n_import_workflow` | Import workflow JSON onto a server |
-| `n8n_add_server` | Add/update n8n server connection |
-| `n8n_list_servers` | List configured servers |
-| `n8n_ping_server` | Test server connection |
-| `n8n_remove_server` | Remove a server |
-| `n8n_describe_nodes` | Browse available n8n node types |
+| `n8n_list_workflows` | Alle Workflows eines Servers auflisten |
+| `n8n_get_workflow` | Workflow-Details abrufen (Nodes, Verbindungen) |
+| `n8n_create_workflow` | Neuen Workflow aus Nodes + Verbindungen erstellen |
+| `n8n_update_workflow` | Bestehenden Workflow aktualisieren |
+| `n8n_delete_workflow` | Workflow löschen |
+| `n8n_activate_workflow` | Workflow aktivieren oder deaktivieren |
+| `n8n_list_executions` | Letzte Ausführungen mit Status auflisten |
+| `n8n_export_workflow` | Workflow als importierbares JSON exportieren |
+| `n8n_import_workflow` | Workflow-JSON auf einen Server importieren |
+| `n8n_add_server` | n8n-Serververbindung hinzufügen/aktualisieren |
+| `n8n_list_servers` | Konfigurierte Server auflisten |
+| `n8n_ping_server` | Serververbindung testen |
+| `n8n_remove_server` | Server entfernen |
+| `n8n_describe_nodes` | Verfügbare n8n-Node-Typen durchsuchen |
 
-## Configuration
+## Konfiguration
 
-Server connections are stored in `~/.n8n-manager-mcp/servers.json`.
+Serververbindungen werden in `~/.n8n-manager-mcp/servers.json` gespeichert.
 
-## Related
+## Verwandte Projekte
 
-- [n8n-workflow-manager](https://github.com/ellmos-ai/n8n-workflow-manager) -- Full web UI + REST API for n8n workflow management (Python)
-- [n8n](https://n8n.io/) -- The workflow automation platform
+- [n8n-workflow-manager](https://github.com/ellmos-ai/n8n-workflow-manager) — Vollständige Web-UI + REST API für n8n-Workflow-Verwaltung (Python)
+- [n8n](https://n8n.io/) — Die Workflow-Automatisierungsplattform
 
-## License
+## Lizenz
 
 MIT
 
