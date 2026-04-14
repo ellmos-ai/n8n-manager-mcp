@@ -1,0 +1,30 @@
+# n8n-manager-mcp - MCP Server for n8n Workflow Management
+
+> n8n-manager-mcp is an MCP (Model Context Protocol) server that lets AI assistants like Claude, Cursor, and Windsurf manage n8n workflows end-to-end: list, create, update, delete, activate, export, import, and inspect executions. Connects directly to the n8n REST API with no Python dependency, and supports multiple n8n instances at once.
+
+13 tools covering complete n8n workflow management: n8n_list_workflows, n8n_get_workflow (full node graph + connections), n8n_create_workflow (from nodes + connections), n8n_update_workflow, n8n_delete_workflow, n8n_activate_workflow (toggle on/off), n8n_list_executions (recent runs with status), n8n_export_workflow (importable JSON), n8n_import_workflow, n8n_describe_nodes (built-in catalog with descriptions), n8n_add_server, n8n_list_servers, n8n_remove_server, n8n_ping_server. Multi-server support allows AI agents to move workflows between n8n instances.
+
+Part of the ellmos family. Node.js, MIT. Published as `n8n-manager-mcp` on npm. Listed in the official Model Context Protocol registry (registry.modelcontextprotocol.io) -- the primary referrer for repo traffic.
+
+## Docs
+
+- [README (English)](https://github.com/ellmos-ai/n8n-manager-mcp/blob/main/README.md): Tools, installation, configuration for Claude Desktop / Claude Code / Cursor / Windsurf
+- [README (Deutsch)](https://github.com/ellmos-ai/n8n-manager-mcp/blob/main/README_de.md): German version
+- [LICENSE](https://github.com/ellmos-ai/n8n-manager-mcp/blob/main/LICENSE): MIT license text
+- [npm package](https://www.npmjs.com/package/n8n-manager-mcp): Published artifact
+
+## ellmos MCP family (sibling servers)
+
+- [ellmos-filecommander-mcp](https://github.com/ellmos-ai/ellmos-filecommander-mcp): Filesystem, process management, interactive sessions (43 tools)
+- [ellmos-codecommander-mcp](https://github.com/ellmos-ai/ellmos-codecommander-mcp): Code analysis, AST parsing, import management (17 tools)
+- [ellmos-clatcher-mcp](https://github.com/ellmos-ai/ellmos-clatcher-mcp): Utility tools -- repair, convert, detect, batch ops (12 tools)
+
+## Broader ellmos ecosystem
+
+- [BACH](https://github.com/ellmos-ai/bach): Full text-based OS for LLMs
+- [Rinnsal](https://github.com/ellmos-ai/rinnsal): Lightweight LLM agent infrastructure
+- [USMC](https://github.com/ellmos-ai/usmc): Shared memory primitive
+
+## Optional
+
+- [GitHub Issues](https://github.com/ellmos-ai/n8n-manager-mcp/issues): Bug reports and feature requests
