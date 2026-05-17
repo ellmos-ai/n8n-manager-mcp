@@ -89,6 +89,28 @@ Nach der Installation können folgende Befehle im KI-Assistenten verwendet werde
 
 Serververbindungen werden in `~/.n8n-manager-mcp/servers.json` gespeichert.
 
+## Entwicklung
+
+```bash
+npm install
+npm run build    # Einmaliger Build
+npm run dev      # Watch-Modus
+npm start        # Server starten
+npm test         # Tests ausführen (vitest)
+```
+
+### Tests
+
+Das Projekt enthält eine umfassende Test-Suite mit **75 Tests** für alle 13 Tools.
+
+```bash
+npm test              # Alle Tests ausführen
+npx vitest run        # Gleiche Funktion
+npx vitest --watch    # Watch-Modus
+```
+
+Tests sind auf **Windows**, **macOS** und **Linux** verifiziert.
+
 ## Verwandte Projekte
 
 - [n8n-workflow-manager](https://github.com/ellmos-ai/n8n-workflow-manager) — Vollständige Web-UI + REST API für n8n-Workflow-Verwaltung (Python)
