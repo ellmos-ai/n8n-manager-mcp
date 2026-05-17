@@ -89,6 +89,28 @@ After installation, use these commands in your AI assistant:
 
 Server connections are stored in `~/.n8n-manager-mcp/servers.json`.
 
+## Development
+
+```bash
+npm install
+npm run build    # One-time build
+npm run dev      # Watch mode
+npm start        # Start server
+npm test         # Run test suite (vitest)
+```
+
+### Testing
+
+The project includes **75 tests** covering URL building, server management, workflow JSON construction, export/import validation, and error handling.
+
+```bash
+npm test              # Run all tests
+npx vitest run        # Same as above
+npx vitest --watch    # Watch mode
+```
+
+Tests are verified on **Windows**, **macOS**, and **Linux**.
+
 ## Related
 
 - [n8n-workflow-manager](https://github.com/ellmos-ai/n8n-workflow-manager) -- Full web UI + REST API for n8n workflow management (Python)
