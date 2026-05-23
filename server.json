@@ -1,7 +1,7 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.ellmos-ai/n8n-manager-mcp",
-  "version": "0.1.6",
+  "version": "0.1.8",
   "title": "n8n Manager MCP",
   "description": "MCP server for n8n workflow management -- view, create, sync and manage workflows via AI.",
   "websiteUrl": "https://github.com/ellmos-ai/n8n-manager-mcp",
@@ -14,7 +14,7 @@
     {
       "registryType": "npm",
       "identifier": "n8n-manager-mcp",
-      "version": "0.1.6",
+      "version": "0.1.8",
       "transport": { "type": "stdio" },
       "runtimeHint": "npx"
     }

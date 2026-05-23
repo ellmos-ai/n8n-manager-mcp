@@ -13,8 +13,9 @@ MCP (Model Context Protocol) server for managing n8n workflows via AI assistants
 
 ## Features
 
-- **13 Tools** for complete n8n workflow management
+- **18 Tools** for complete n8n workflow management
 - List, create, update, delete, and activate/deactivate workflows
+- Safety controls: read-only mode, backup-before-delete/update, local restore, and audit log
 - Multi-server support (connect to multiple n8n instances)
 - Export/Import workflows between servers
 - View execution history and status
@@ -79,6 +80,10 @@ After installation, use these commands in your AI assistant:
 | `n8n_list_executions` | List recent executions with status |
 | `n8n_export_workflow` | Export workflow as importable JSON |
 | `n8n_import_workflow` | Import workflow JSON onto a server |
+| `n8n_safety_status` | Show local safety settings, backup directory, and audit log path |
+| `n8n_set_safety_mode` | Toggle read-only mode, backup-before-mutation, and audit logging |
+| `n8n_list_backups` | List local workflow backups created before mutations |
+| `n8n_restore_workflow` | Restore a workflow from a local backup |
 | `n8n_add_server` | Add/update n8n server connection |
 | `n8n_list_servers` | List configured servers |
 | `n8n_ping_server` | Test server connection |
@@ -87,7 +92,14 @@ After installation, use these commands in your AI assistant:
 
 ## Configuration
 
-Server connections are stored in `~/.n8n-manager-mcp/servers.json`.
+Server connections and safety settings are stored in `~/.n8n-manager-mcp/servers.json`.
+
+Safety defaults:
+
+- `backup_before_mutations: true` saves workflow JSON before update, delete, activate/deactivate, and overwrite-restore operations.
+- `audit_log: true` appends mutation outcomes to `~/.n8n-manager-mcp/audit.log`.
+- `read_only: false` can be enabled with `n8n_set_safety_mode` or `N8N_MANAGER_READ_ONLY=1`.
+- Backups are stored under `~/.n8n-manager-mcp/backups/` and can be listed/restored with the backup tools.
 
 ## Development
 
@@ -101,7 +113,7 @@ npm test         # Run test suite (vitest)
 
 ### Testing
 
-The project includes **75 tests** covering URL building, server management, workflow JSON construction, export/import validation, and error handling.
+The project includes **82 tests** covering URL building, server management, safety settings, backup path handling, workflow JSON construction, export/import validation, and error handling.
 
 ```bash
 npm test              # Run all tests
@@ -133,7 +145,7 @@ This MCP server is part of the **[ellmos-ai](https://github.com/ellmos-ai)** eco
 | [FileCommander](https://github.com/ellmos-ai/ellmos-filecommander-mcp) | 43 | Filesystem, process management, interactive sessions | `ellmos-filecommander-mcp` |
 | [CodeCommander](https://github.com/ellmos-ai/ellmos-codecommander-mcp) | 17 | Code analysis, AST parsing, import management | `ellmos-codecommander-mcp` |
 | [Clatcher](https://github.com/ellmos-ai/ellmos-clatcher-mcp) | 12 | File repair, format conversion, batch operations | `ellmos-clatcher-mcp` |
-| **[n8n Manager](https://github.com/ellmos-ai/n8n-manager-mcp)** | **13** | **n8n workflow management via AI assistants** | `n8n-manager-mcp` |
+| **[n8n Manager](https://github.com/ellmos-ai/n8n-manager-mcp)** | **18** | **n8n workflow management via AI assistants** | `n8n-manager-mcp` |
 
 ### AI Infrastructure
 

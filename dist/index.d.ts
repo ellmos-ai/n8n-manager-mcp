@@ -6,7 +6,7 @@
  * Connects directly to n8n servers via REST API.
  *
  * @author Lukas Geiger
- * @version 0.1.0
+ * @version 0.1.8
  * @license MIT
  */
 export {};

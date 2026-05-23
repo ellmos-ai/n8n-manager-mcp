@@ -27,6 +27,13 @@ interface N8nServer {
 
 interface ServerConfig {
   servers: N8nServer[];
+  safety?: Partial<SafetySettings>;
+}
+
+interface SafetySettings {
+  readOnly: boolean;
+  backupBeforeMutations: boolean;
+  auditLog: boolean;
 }
 
 // ============================================================================
@@ -43,15 +50,15 @@ async function loadConfig(configFile: string, configDir: string): Promise<Server
   await ensureConfigDir(configDir);
   try {
     const data = await fs.readFile(configFile, "utf-8");
-    return JSON.parse(data);
+    return normalizeConfig(JSON.parse(data));
   } catch {
-    return { servers: [] };
+    return normalizeConfig({ servers: [] });
   }
 }
 
 async function saveConfig(configFile: string, configDir: string, config: ServerConfig): Promise<void> {
   await ensureConfigDir(configDir);
-  await fs.writeFile(configFile, JSON.stringify(config, null, 2), "utf-8");
+  await fs.writeFile(configFile, JSON.stringify(normalizeConfig(config), null, 2), "utf-8");
 }
 
 function getDefaultServer(config: ServerConfig): N8nServer | undefined {
@@ -60,6 +67,48 @@ function getDefaultServer(config: ServerConfig): N8nServer | undefined {
 
 function getServerByName(config: ServerConfig, name: string): N8nServer | undefined {
   return config.servers.find(s => s.name === name);
+}
+
+const DEFAULT_SAFETY: SafetySettings = {
+  readOnly: false,
+  backupBeforeMutations: true,
+  auditLog: true,
+};
+
+function normalizeConfig(config: Partial<ServerConfig>): ServerConfig {
+  return {
+    servers: Array.isArray(config.servers) ? config.servers : [],
+    safety: {
+      ...DEFAULT_SAFETY,
+      ...(config.safety || {}),
+    },
+  };
+}
+
+function getSafety(config: ServerConfig): SafetySettings {
+  return { ...DEFAULT_SAFETY, ...(config.safety || {}) };
+}
+
+function sanitizePathPart(value: string): string {
+  return value.replace(/[^a-zA-Z0-9_.-]/g, "_").slice(0, 80) || "unknown";
+}
+
+function backupTimestamp(date: Date): string {
+  return date.toISOString().replace(/[:.]/g, "-");
+}
+
+function buildBackupPath(configDir: string, srv: N8nServer, workflowId: string, reason: string, date: Date): string {
+  return path.join(
+    configDir,
+    "backups",
+    sanitizePathPart(srv.name),
+    `${sanitizePathPart(workflowId)}-${backupTimestamp(date)}-${sanitizePathPart(reason)}.json`
+  );
+}
+
+function blockMessageForReadOnly(action: string, safety: SafetySettings): string | null {
+  if (!safety.readOnly) return null;
+  return `Blocked: n8n Manager is in read-only mode. Disable read_only via n8n_set_safety_mode before ${action}.`;
 }
 
 function buildUrl(server: N8nServer, endpoint: string): string {
@@ -301,7 +350,8 @@ describe("n8n-manager-mcp", () => {
   describe("Config Persistence", () => {
     it("returns empty servers array when config file does not exist", async () => {
       const config = await loadConfig(configFile, configDir);
-      expect(config).toEqual({ servers: [] });
+      expect(config.servers).toEqual([]);
+      expect(getSafety(config).backupBeforeMutations).toBe(true);
     });
 
     it("creates config directory if it does not exist", async () => {
@@ -324,7 +374,8 @@ describe("n8n-manager-mcp", () => {
       await ensureConfigDir(configDir);
       await fs.writeFile(configFile, "not valid json{{{", "utf-8");
       const config = await loadConfig(configFile, configDir);
-      expect(config).toEqual({ servers: [] });
+      expect(config.servers).toEqual([]);
+      expect(getSafety(config).auditLog).toBe(true);
     });
 
     it("saves config as pretty-printed JSON", async () => {
@@ -339,6 +390,65 @@ describe("n8n-manager-mcp", () => {
   // ─────────────────────────────────────────────────────────────────────────
   // Server CRUD (add/remove/list/lookup)
   // ─────────────────────────────────────────────────────────────────────────
+
+  describe("Safety Settings and Backups", () => {
+    it("normalizes missing safety settings to secure defaults", () => {
+      const config = normalizeConfig({ servers: [] });
+      expect(getSafety(config)).toEqual({
+        readOnly: false,
+        backupBeforeMutations: true,
+        auditLog: true,
+      });
+    });
+
+    it("preserves explicit safety overrides", () => {
+      const config = normalizeConfig({
+        servers: [],
+        safety: { readOnly: true, auditLog: false },
+      });
+      expect(getSafety(config).readOnly).toBe(true);
+      expect(getSafety(config).backupBeforeMutations).toBe(true);
+      expect(getSafety(config).auditLog).toBe(false);
+    });
+
+    it("builds the read-only block message for write operations", () => {
+      const message = blockMessageForReadOnly("delete_workflow", {
+        readOnly: true,
+        backupBeforeMutations: true,
+        auditLog: true,
+      });
+      expect(message).toContain("read-only mode");
+      expect(message).toContain("delete_workflow");
+    });
+
+    it("allows operations when read-only mode is disabled", () => {
+      const message = blockMessageForReadOnly("delete_workflow", DEFAULT_SAFETY);
+      expect(message).toBeNull();
+    });
+
+    it("sanitizes server and workflow names for backup paths", () => {
+      expect(sanitizePathPart("prod/server:main")).toBe("prod_server_main");
+      expect(sanitizePathPart("")).toBe("unknown");
+    });
+
+    it("builds deterministic backup paths under the config directory", () => {
+      const srv = makeServer({ name: "prod/server" });
+      const backupPath = buildBackupPath(configDir, srv, "wf:123", "pre-restore", new Date("2026-05-23T12:00:00.000Z"));
+      expect(backupPath).toContain(path.join(configDir, "backups", "prod_server"));
+      expect(path.basename(backupPath)).toBe("wf_123-2026-05-23T12-00-00-000Z-pre-restore.json");
+    });
+
+    it("backup payloads preserve the full original workflow", async () => {
+      const srv = makeServer({ name: "prod" });
+      const workflow = { id: "wf1", name: "Important", active: true, nodes: [], connections: {} };
+      const backupPath = buildBackupPath(configDir, srv, "wf1", "delete", new Date("2026-05-23T12:00:00.000Z"));
+      await fs.mkdir(path.dirname(backupPath), { recursive: true });
+      await fs.writeFile(backupPath, JSON.stringify({ workflow }, null, 2), "utf-8");
+      const raw = JSON.parse(await fs.readFile(backupPath, "utf-8"));
+      expect(raw.workflow).toEqual(workflow);
+      expect(stripExportFields(raw.workflow)).not.toHaveProperty("id");
+    });
+  });
 
   describe("Server Management", () => {
     it("adds a new server", () => {

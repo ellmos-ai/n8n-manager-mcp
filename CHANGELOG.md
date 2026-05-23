@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.8] - 2026-05-23
+
+### Added
+- Safety controls for n8n mutations: read-only mode, backup-before-update/delete/activate, local backup listing, restore from backup, and JSONL audit logging.
+- `n8n_safety_status`, `n8n_set_safety_mode`, `n8n_list_backups`, and `n8n_restore_workflow`.
+
+### Fixed
+- Refresh npm lockfile and overrides to resolve Dependabot alerts for `hono`, `fast-uri`, `ip-address`, `vite`, `esbuild`, and `qs`.
+- Update stale security reporting links to the `ellmos-ai` repository.
+
 ## [0.1.7] - 2026-05-17
 
 ### Added

@@ -13,8 +13,9 @@ MCP-Server (Model Context Protocol) zur Verwaltung von n8n-Workflows über KI-As
 
 ## Funktionen
 
-- **13 Tools** für vollständige n8n-Workflow-Verwaltung
+- **18 Tools** für vollständige n8n-Workflow-Verwaltung
 - Workflows auflisten, erstellen, aktualisieren, löschen und aktivieren/deaktivieren
+- Sicherheitsfunktionen: Read-only-Modus, Backup vor Löschen/Aktualisieren, lokale Wiederherstellung und Audit-Log
 - Multi-Server-Unterstützung (Verbindung zu mehreren n8n-Instanzen)
 - Export/Import von Workflows zwischen Servern
 - Ausführungshistorie und Status einsehen
@@ -79,6 +80,10 @@ Nach der Installation können folgende Befehle im KI-Assistenten verwendet werde
 | `n8n_list_executions` | Letzte Ausführungen mit Status auflisten |
 | `n8n_export_workflow` | Workflow als importierbares JSON exportieren |
 | `n8n_import_workflow` | Workflow-JSON auf einen Server importieren |
+| `n8n_safety_status` | Lokale Sicherheitseinstellungen, Backup-Ordner und Audit-Log-Pfad anzeigen |
+| `n8n_set_safety_mode` | Read-only-Modus, Backup vor Änderungen und Audit-Logging umschalten |
+| `n8n_list_backups` | Lokale Workflow-Backups auflisten |
+| `n8n_restore_workflow` | Workflow aus einem lokalen Backup wiederherstellen |
 | `n8n_add_server` | n8n-Serververbindung hinzufügen/aktualisieren |
 | `n8n_list_servers` | Konfigurierte Server auflisten |
 | `n8n_ping_server` | Serververbindung testen |
@@ -87,7 +92,14 @@ Nach der Installation können folgende Befehle im KI-Assistenten verwendet werde
 
 ## Konfiguration
 
-Serververbindungen werden in `~/.n8n-manager-mcp/servers.json` gespeichert.
+Serververbindungen und Sicherheitseinstellungen werden in `~/.n8n-manager-mcp/servers.json` gespeichert.
+
+Sicherheitsstandard:
+
+- `backup_before_mutations: true` speichert Workflow-JSON vor Aktualisieren, Löschen, Aktivieren/Deaktivieren und überschreibender Wiederherstellung.
+- `audit_log: true` schreibt Ergebnisse von Änderungen nach `~/.n8n-manager-mcp/audit.log`.
+- `read_only: false` kann mit `n8n_set_safety_mode` oder `N8N_MANAGER_READ_ONLY=1` aktiviert werden.
+- Backups liegen unter `~/.n8n-manager-mcp/backups/` und können mit den Backup-Tools aufgelistet oder wiederhergestellt werden.
 
 ## Entwicklung
 
@@ -101,7 +113,7 @@ npm test         # Tests ausführen (vitest)
 
 ### Tests
 
-Das Projekt enthält eine umfassende Test-Suite mit **75 Tests** für alle 13 Tools.
+Das Projekt enthält eine umfassende Test-Suite mit **82 Tests** für die Kernlogik aller 18 Tools.
 
 ```bash
 npm test              # Alle Tests ausführen
@@ -133,7 +145,7 @@ This MCP server is part of the **[ellmos-ai](https://github.com/ellmos-ai)** eco
 | [FileCommander](https://github.com/ellmos-ai/ellmos-filecommander-mcp) | 43 | Filesystem, process management, interactive sessions | `ellmos-filecommander-mcp` |
 | [CodeCommander](https://github.com/ellmos-ai/ellmos-codecommander-mcp) | 17 | Code analysis, AST parsing, import management | `ellmos-codecommander-mcp` |
 | [Clatcher](https://github.com/ellmos-ai/ellmos-clatcher-mcp) | 12 | File repair, format conversion, batch operations | `ellmos-clatcher-mcp` |
-| **[n8n Manager](https://github.com/ellmos-ai/n8n-manager-mcp)** | **13** | **n8n workflow management via AI assistants** | `n8n-manager-mcp` |
+| **[n8n Manager](https://github.com/ellmos-ai/n8n-manager-mcp)** | **18** | **n8n workflow management via AI assistants** | `n8n-manager-mcp` |
 
 ### AI Infrastructure
 

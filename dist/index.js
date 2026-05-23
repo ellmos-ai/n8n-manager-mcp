@@ -6,7 +6,7 @@
  * Connects directly to n8n servers via REST API.
  *
  * @author Lukas Geiger
- * @version 0.1.0
+ * @version 0.1.8
  * @license MIT
  */
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
@@ -20,6 +20,13 @@ import { homedir } from "os";
 // ============================================================================
 const CONFIG_DIR = path.join(homedir(), ".n8n-manager-mcp");
 const CONFIG_FILE = path.join(CONFIG_DIR, "servers.json");
+const BACKUP_DIR = path.join(CONFIG_DIR, "backups");
+const AUDIT_LOG_FILE = path.join(CONFIG_DIR, "audit.log");
+const DEFAULT_SAFETY = {
+    readOnly: ["1", "true", "yes", "on"].includes((process.env.N8N_MANAGER_READ_ONLY || "").toLowerCase()),
+    backupBeforeMutations: true,
+    auditLog: true,
+};
 async function ensureConfigDir() {
     try {
         await fs.mkdir(CONFIG_DIR, { recursive: true });
@@ -30,21 +37,120 @@ async function loadConfig() {
     await ensureConfigDir();
     try {
         const data = await fs.readFile(CONFIG_FILE, "utf-8");
-        return JSON.parse(data);
+        return normalizeConfig(JSON.parse(data));
     }
     catch {
-        return { servers: [] };
+        return normalizeConfig({ servers: [] });
     }
 }
 async function saveConfig(config) {
     await ensureConfigDir();
-    await fs.writeFile(CONFIG_FILE, JSON.stringify(config, null, 2), "utf-8");
+    const normalized = normalizeConfig(config);
+    await fs.writeFile(CONFIG_FILE, JSON.stringify(normalized, null, 2), "utf-8");
+}
+function normalizeConfig(config) {
+    return {
+        servers: Array.isArray(config.servers) ? config.servers : [],
+        safety: {
+            ...DEFAULT_SAFETY,
+            ...(config.safety || {}),
+        },
+    };
+}
+function getSafety(config) {
+    return { ...DEFAULT_SAFETY, ...(config.safety || {}) };
 }
 function getDefaultServer(config) {
     return config.servers.find(s => s.isDefault) || config.servers[0];
 }
 function getServerByName(config, name) {
     return config.servers.find(s => s.name === name);
+}
+function sanitizePathPart(value) {
+    return value.replace(/[^a-zA-Z0-9_.-]/g, "_").slice(0, 80) || "unknown";
+}
+function backupTimestamp() {
+    return new Date().toISOString().replace(/[:.]/g, "-");
+}
+function stripWorkflowForImport(workflow) {
+    const copy = { ...workflow };
+    for (const key of ["id", "tags", "active", "createdAt", "updatedAt", "versionId"]) {
+        delete copy[key];
+    }
+    return copy;
+}
+async function writeAudit(config, entry) {
+    if (!getSafety(config).auditLog)
+        return;
+    await ensureConfigDir();
+    const line = JSON.stringify({ timestamp: new Date().toISOString(), ...entry }) + "\n";
+    await fs.appendFile(AUDIT_LOG_FILE, line, "utf-8");
+}
+async function blockIfReadOnly(config, action, srv, workflowId) {
+    if (!getSafety(config).readOnly)
+        return null;
+    const message = `Blocked: n8n Manager is in read-only mode. Disable read_only via n8n_set_safety_mode before ${action}.`;
+    await writeAudit(config, { action, server: srv?.name, workflowId, outcome: "blocked", message });
+    return { content: [{ type: "text", text: message }] };
+}
+async function backupWorkflow(config, srv, workflowId, reason) {
+    if (!getSafety(config).backupBeforeMutations) {
+        return { ok: true };
+    }
+    const result = await n8nRequest(srv, "GET", `/workflows/${workflowId}`);
+    if (!result.ok) {
+        return { ok: false, message: `Backup failed before ${reason}: Error ${result.status}: ${JSON.stringify(result.data)}` };
+    }
+    const serverDir = path.join(BACKUP_DIR, sanitizePathPart(srv.name));
+    await fs.mkdir(serverDir, { recursive: true });
+    const fileName = `${sanitizePathPart(workflowId)}-${backupTimestamp()}-${sanitizePathPart(reason)}.json`;
+    const backupPath = path.join(serverDir, fileName);
+    const payload = {
+        backupSchema: 1,
+        timestamp: new Date().toISOString(),
+        reason,
+        server: { name: srv.name, url: srv.url },
+        workflowId,
+        workflow: result.data,
+    };
+    await fs.writeFile(backupPath, JSON.stringify(payload, null, 2), "utf-8");
+    return { ok: true, path: backupPath };
+}
+async function listBackupFiles(serverName, workflowId) {
+    try {
+        const servers = serverName ? [sanitizePathPart(serverName)] : await fs.readdir(BACKUP_DIR);
+        const files = [];
+        for (const serverDirName of servers) {
+            const serverDir = path.join(BACKUP_DIR, serverDirName);
+            const stat = await fs.stat(serverDir).catch(() => null);
+            if (!stat?.isDirectory())
+                continue;
+            const entries = await fs.readdir(serverDir);
+            for (const entry of entries) {
+                if (!entry.endsWith(".json"))
+                    continue;
+                if (workflowId && !entry.startsWith(`${sanitizePathPart(workflowId)}-`))
+                    continue;
+                files.push(path.join(serverDir, entry));
+            }
+        }
+        return files.sort().reverse();
+    }
+    catch {
+        return [];
+    }
+}
+async function loadBackupWorkflow(backupPath) {
+    const resolved = path.resolve(backupPath);
+    const backupRoot = path.resolve(BACKUP_DIR);
+    if (!resolved.startsWith(backupRoot + path.sep)) {
+        throw new Error(`Backup path must be inside ${BACKUP_DIR}`);
+    }
+    const data = JSON.parse(await fs.readFile(resolved, "utf-8"));
+    if (!data.workflow || typeof data.workflow !== "object") {
+        throw new Error("Backup file does not contain a workflow object");
+    }
+    return data.workflow;
 }
 // ============================================================================
 // n8n API Client
@@ -75,7 +181,37 @@ async function n8nRequest(server, method, endpoint, body) {
 // ============================================================================
 const server = new McpServer({
     name: "n8n-manager-mcp",
-    version: "0.1.0",
+    version: "0.1.8",
+});
+server.tool("n8n_safety_status", "Show n8n Manager safety settings, backup directory, and audit log location.", {}, async () => {
+    const config = await loadConfig();
+    const safety = getSafety(config);
+    const lines = [
+        "n8n Manager safety status:",
+        `  read_only: ${safety.readOnly}`,
+        `  backup_before_mutations: ${safety.backupBeforeMutations}`,
+        `  audit_log: ${safety.auditLog}`,
+        `  config: ${CONFIG_FILE}`,
+        `  backups: ${BACKUP_DIR}`,
+        `  audit_log_file: ${AUDIT_LOG_FILE}`,
+    ];
+    return { content: [{ type: "text", text: lines.join("\n") }] };
+});
+server.tool("n8n_set_safety_mode", "Configure local safety settings: read-only mode, backup-before-mutation, and audit logging.", {
+    read_only: z.boolean().optional().describe("When true, blocks create/update/delete/activate/import/restore operations."),
+    backup_before_mutations: z.boolean().optional().describe("When true, exports workflows before update/delete/activate/restore."),
+    audit_log: z.boolean().optional().describe("When true, appends mutation outcomes to ~/.n8n-manager-mcp/audit.log."),
+}, async ({ read_only, backup_before_mutations, audit_log }) => {
+    const config = await loadConfig();
+    const current = getSafety(config);
+    config.safety = {
+        readOnly: read_only ?? current.readOnly,
+        backupBeforeMutations: backup_before_mutations ?? current.backupBeforeMutations,
+        auditLog: audit_log ?? current.auditLog,
+    };
+    await saveConfig(config);
+    await writeAudit(config, { action: "set_safety_mode", outcome: "success", message: JSON.stringify(config.safety) });
+    return { content: [{ type: "text", text: `Safety mode updated: ${JSON.stringify(config.safety, null, 2)}` }] };
 });
 // ── Tool: n8n_list_workflows ─────────────────────────────────────────
 server.tool("n8n_list_workflows", "List all workflows on an n8n server. Returns workflow names, IDs, active status, and node counts.", {
@@ -136,6 +272,9 @@ server.tool("n8n_create_workflow", "Create a new n8n workflow. Provide the full 
     const srv = server_name ? getServerByName(config, server_name) : getDefaultServer(config);
     if (!srv)
         return { content: [{ type: "text", text: "Error: No server configured." }] };
+    const blocked = await blockIfReadOnly(config, "create_workflow", srv);
+    if (blocked)
+        return blocked;
     // Build n8n workflow JSON
     const n8nNodes = nodes.map((n, i) => ({
         parameters: n.parameters || {},
@@ -167,17 +306,21 @@ server.tool("n8n_create_workflow", "Create a new n8n workflow. Provide the full 
         settings: { executionOrder: "v1" },
     };
     const result = await n8nRequest(srv, "POST", "/workflows", workflow);
-    if (!result.ok)
+    if (!result.ok) {
+        await writeAudit(config, { action: "create_workflow", server: srv.name, outcome: "failed", message: JSON.stringify(result.data) });
         return { content: [{ type: "text", text: `Error ${result.status}: ${JSON.stringify(result.data)}` }] };
+    }
     const created = result.data;
     const createdId = created.id || "unknown";
     // Activate separately via PATCH (POST rejects 'active' field)
     if (activate && createdId !== "unknown") {
         const actResult = await n8nRequest(srv, "PATCH", `/workflows/${createdId}`, { active: true });
         if (!actResult.ok) {
+            await writeAudit(config, { action: "activate_created_workflow", server: srv.name, workflowId: createdId, outcome: "failed", message: JSON.stringify(actResult.data) });
             return { content: [{ type: "text", text: `Workflow created (ID: ${createdId}) but activation failed: ${JSON.stringify(actResult.data)}` }] };
         }
     }
+    await writeAudit(config, { action: "create_workflow", server: srv.name, workflowId: createdId, outcome: "success" });
     return { content: [{ type: "text", text: `Workflow created: "${created.name || name}" (ID: ${createdId})${activate ? " [ACTIVE]" : ""} on ${srv.name}` }] };
 });
 // ── Tool: n8n_update_workflow ────────────────────────────────────────
@@ -190,6 +333,9 @@ server.tool("n8n_update_workflow", "Update an existing n8n workflow. Send the fu
     const srv = server_name ? getServerByName(config, server_name) : getDefaultServer(config);
     if (!srv)
         return { content: [{ type: "text", text: "Error: No server configured." }] };
+    const blocked = await blockIfReadOnly(config, "update_workflow", srv, workflow_id);
+    if (blocked)
+        return blocked;
     let data;
     try {
         data = JSON.parse(workflow_json);
@@ -197,13 +343,22 @@ server.tool("n8n_update_workflow", "Update an existing n8n workflow. Send the fu
     catch (e) {
         return { content: [{ type: "text", text: `Invalid JSON: ${e}` }] };
     }
+    const backup = await backupWorkflow(config, srv, workflow_id, "update");
+    if (!backup.ok) {
+        await writeAudit(config, { action: "update_workflow", server: srv.name, workflowId: workflow_id, outcome: "failed", message: backup.message });
+        return { content: [{ type: "text", text: backup.message || "Backup failed before update." }] };
+    }
     const result = await n8nRequest(srv, "PUT", `/workflows/${workflow_id}`, data);
-    if (!result.ok)
+    if (!result.ok) {
+        await writeAudit(config, { action: "update_workflow", server: srv.name, workflowId: workflow_id, outcome: "failed", message: JSON.stringify(result.data), backupPath: backup.path });
         return { content: [{ type: "text", text: `Error ${result.status}: ${JSON.stringify(result.data)}` }] };
-    return { content: [{ type: "text", text: `Workflow ${workflow_id} updated successfully on ${srv.name}` }] };
+    }
+    await writeAudit(config, { action: "update_workflow", server: srv.name, workflowId: workflow_id, outcome: "success", backupPath: backup.path });
+    const backupNote = backup.path ? ` Backup saved: ${backup.path}` : "";
+    return { content: [{ type: "text", text: `Workflow ${workflow_id} updated successfully on ${srv.name}.${backupNote}` }] };
 });
 // ── Tool: n8n_delete_workflow ────────────────────────────────────────
-server.tool("n8n_delete_workflow", "Delete a workflow from an n8n server. This action cannot be undone.", {
+server.tool("n8n_delete_workflow", "Delete a workflow from an n8n server. By default, a JSON backup is saved before deletion.", {
     workflow_id: z.string().describe("n8n workflow ID to delete"),
     server_name: z.string().optional().describe("Server name. Uses default if omitted."),
 }, async ({ workflow_id, server_name }) => {
@@ -211,10 +366,22 @@ server.tool("n8n_delete_workflow", "Delete a workflow from an n8n server. This a
     const srv = server_name ? getServerByName(config, server_name) : getDefaultServer(config);
     if (!srv)
         return { content: [{ type: "text", text: "Error: No server configured." }] };
+    const blocked = await blockIfReadOnly(config, "delete_workflow", srv, workflow_id);
+    if (blocked)
+        return blocked;
+    const backup = await backupWorkflow(config, srv, workflow_id, "delete");
+    if (!backup.ok) {
+        await writeAudit(config, { action: "delete_workflow", server: srv.name, workflowId: workflow_id, outcome: "failed", message: backup.message });
+        return { content: [{ type: "text", text: backup.message || "Backup failed before delete." }] };
+    }
     const result = await n8nRequest(srv, "DELETE", `/workflows/${workflow_id}`);
-    if (!result.ok)
+    if (!result.ok) {
+        await writeAudit(config, { action: "delete_workflow", server: srv.name, workflowId: workflow_id, outcome: "failed", message: JSON.stringify(result.data), backupPath: backup.path });
         return { content: [{ type: "text", text: `Error ${result.status}: ${JSON.stringify(result.data)}` }] };
-    return { content: [{ type: "text", text: `Workflow ${workflow_id} deleted from ${srv.name}` }] };
+    }
+    await writeAudit(config, { action: "delete_workflow", server: srv.name, workflowId: workflow_id, outcome: "success", backupPath: backup.path });
+    const backupNote = backup.path ? ` Backup saved: ${backup.path}` : "";
+    return { content: [{ type: "text", text: `Workflow ${workflow_id} deleted from ${srv.name}.${backupNote}` }] };
 });
 // ── Tool: n8n_activate_workflow ──────────────────────────────────────
 server.tool("n8n_activate_workflow", "Activate or deactivate an n8n workflow.", {
@@ -226,10 +393,22 @@ server.tool("n8n_activate_workflow", "Activate or deactivate an n8n workflow.", 
     const srv = server_name ? getServerByName(config, server_name) : getDefaultServer(config);
     if (!srv)
         return { content: [{ type: "text", text: "Error: No server configured." }] };
+    const blocked = await blockIfReadOnly(config, "activate_workflow", srv, workflow_id);
+    if (blocked)
+        return blocked;
+    const backup = await backupWorkflow(config, srv, workflow_id, active ? "activate" : "deactivate");
+    if (!backup.ok) {
+        await writeAudit(config, { action: "activate_workflow", server: srv.name, workflowId: workflow_id, outcome: "failed", message: backup.message });
+        return { content: [{ type: "text", text: backup.message || "Backup failed before activation change." }] };
+    }
     const result = await n8nRequest(srv, "PATCH", `/workflows/${workflow_id}`, { active });
-    if (!result.ok)
+    if (!result.ok) {
+        await writeAudit(config, { action: "activate_workflow", server: srv.name, workflowId: workflow_id, outcome: "failed", message: JSON.stringify(result.data), backupPath: backup.path });
         return { content: [{ type: "text", text: `Error ${result.status}: ${JSON.stringify(result.data)}` }] };
-    return { content: [{ type: "text", text: `Workflow ${workflow_id} ${active ? "activated" : "deactivated"} on ${srv.name}` }] };
+    }
+    await writeAudit(config, { action: "activate_workflow", server: srv.name, workflowId: workflow_id, outcome: "success", backupPath: backup.path });
+    const backupNote = backup.path ? ` Backup saved: ${backup.path}` : "";
+    return { content: [{ type: "text", text: `Workflow ${workflow_id} ${active ? "activated" : "deactivated"} on ${srv.name}.${backupNote}` }] };
 });
 // ── Tool: n8n_list_executions ────────────────────────────────────────
 server.tool("n8n_list_executions", "List recent workflow executions on an n8n server. Shows status, timing, and errors.", {
@@ -343,16 +522,73 @@ server.tool("n8n_export_workflow", "Export a workflow from an n8n server as JSON
     if (!result.ok)
         return { content: [{ type: "text", text: `Error ${result.status}: ${JSON.stringify(result.data)}` }] };
     // Clean export (remove server-specific fields that n8n rejects on POST)
-    const wf = result.data;
-    delete wf.id;
-    delete wf.tags;
-    delete wf.active;
-    delete wf.createdAt;
-    delete wf.updatedAt;
-    delete wf.versionId;
+    const wf = stripWorkflowForImport(result.data);
     return { content: [{ type: "text", text: JSON.stringify(wf, null, 2) }] };
 });
 // ── Tool: n8n_import_workflow ────────────────────────────────────────
+server.tool("n8n_list_backups", "List local workflow backups created before n8n mutations.", {
+    server_name: z.string().optional().describe("Optional server name filter."),
+    workflow_id: z.string().optional().describe("Optional workflow ID filter."),
+    limit: z.number().optional().default(20).describe("Maximum backups to show."),
+}, async ({ server_name, workflow_id, limit }) => {
+    const files = (await listBackupFiles(server_name, workflow_id)).slice(0, limit);
+    if (files.length === 0) {
+        return { content: [{ type: "text", text: "No workflow backups found." }] };
+    }
+    const lines = ["Workflow backups:\n", ...files.map(f => `  ${f}`)];
+    return { content: [{ type: "text", text: lines.join("\n") }] };
+});
+server.tool("n8n_restore_workflow", "Restore a workflow from a local backup. By default creates a new workflow; pass target_workflow_id to overwrite an existing workflow.", {
+    backup_path: z.string().describe("Path returned by n8n_list_backups or mutation output."),
+    server_name: z.string().optional().describe("Target server name. Uses default if omitted."),
+    target_workflow_id: z.string().optional().describe("Existing workflow ID to overwrite. If omitted, creates a new workflow."),
+    activate: z.boolean().optional().default(false).describe("Activate restored workflow after restore."),
+}, async ({ backup_path, server_name, target_workflow_id, activate }) => {
+    const config = await loadConfig();
+    const srv = server_name ? getServerByName(config, server_name) : getDefaultServer(config);
+    if (!srv)
+        return { content: [{ type: "text", text: "Error: No server configured." }] };
+    const blocked = await blockIfReadOnly(config, "restore_workflow", srv, target_workflow_id);
+    if (blocked)
+        return blocked;
+    let workflow;
+    try {
+        workflow = stripWorkflowForImport(await loadBackupWorkflow(backup_path));
+    }
+    catch (e) {
+        const msg = e instanceof Error ? e.message : String(e);
+        await writeAudit(config, { action: "restore_workflow", server: srv.name, workflowId: target_workflow_id, outcome: "failed", message: msg });
+        return { content: [{ type: "text", text: `Invalid backup: ${msg}` }] };
+    }
+    let preRestoreBackup = { ok: true };
+    if (target_workflow_id) {
+        preRestoreBackup = await backupWorkflow(config, srv, target_workflow_id, "pre-restore");
+        if (!preRestoreBackup.ok) {
+            await writeAudit(config, { action: "restore_workflow", server: srv.name, workflowId: target_workflow_id, outcome: "failed", message: preRestoreBackup.message });
+            return { content: [{ type: "text", text: preRestoreBackup.message || "Backup failed before restore." }] };
+        }
+    }
+    const endpoint = target_workflow_id ? `/workflows/${target_workflow_id}` : "/workflows";
+    const method = target_workflow_id ? "PUT" : "POST";
+    const result = await n8nRequest(srv, method, endpoint, workflow);
+    if (!result.ok) {
+        await writeAudit(config, { action: "restore_workflow", server: srv.name, workflowId: target_workflow_id, outcome: "failed", message: JSON.stringify(result.data), backupPath: preRestoreBackup.path });
+        return { content: [{ type: "text", text: `Error ${result.status}: ${JSON.stringify(result.data)}` }] };
+    }
+    const restored = result.data;
+    const restoredId = target_workflow_id || restored.id || "unknown";
+    if (activate && restoredId !== "unknown") {
+        const actResult = await n8nRequest(srv, "PATCH", `/workflows/${restoredId}`, { active: true });
+        if (!actResult.ok) {
+            await writeAudit(config, { action: "activate_restored_workflow", server: srv.name, workflowId: restoredId, outcome: "failed", message: JSON.stringify(actResult.data) });
+            return { content: [{ type: "text", text: `Workflow restored (ID: ${restoredId}) but activation failed: ${JSON.stringify(actResult.data)}` }] };
+        }
+    }
+    await writeAudit(config, { action: "restore_workflow", server: srv.name, workflowId: restoredId, outcome: "success", backupPath: preRestoreBackup.path });
+    const mode = target_workflow_id ? "overwritten" : "created";
+    const backupNote = preRestoreBackup.path ? ` Pre-restore backup saved: ${preRestoreBackup.path}` : "";
+    return { content: [{ type: "text", text: `Workflow restored (${mode}) on ${srv.name}: "${restored.name || workflow.name || restoredId}" (ID: ${restoredId}).${backupNote}` }] };
+});
 server.tool("n8n_import_workflow", "Import a workflow JSON onto an n8n server. Takes a full n8n workflow JSON and creates it on the server.", {
     workflow_json: z.string().describe("Complete n8n workflow JSON as string"),
     server_name: z.string().optional().describe("Target server name. Uses default if omitted."),
@@ -362,6 +598,9 @@ server.tool("n8n_import_workflow", "Import a workflow JSON onto an n8n server. T
     const srv = server_name ? getServerByName(config, server_name) : getDefaultServer(config);
     if (!srv)
         return { content: [{ type: "text", text: "Error: No server configured." }] };
+    const blocked = await blockIfReadOnly(config, "import_workflow", srv);
+    if (blocked)
+        return blocked;
     let data;
     try {
         data = JSON.parse(workflow_json);
@@ -374,21 +613,23 @@ server.tool("n8n_import_workflow", "Import a workflow JSON onto an n8n server. T
         return { content: [{ type: "text", text: "Invalid workflow: missing 'nodes' or 'connections'" }] };
     }
     // Strip fields that n8n rejects on POST /workflows
-    for (const key of ["id", "tags", "active", "createdAt", "updatedAt", "versionId"]) {
-        delete data[key];
-    }
+    data = stripWorkflowForImport(data);
     const result = await n8nRequest(srv, "POST", "/workflows", data);
-    if (!result.ok)
+    if (!result.ok) {
+        await writeAudit(config, { action: "import_workflow", server: srv.name, outcome: "failed", message: JSON.stringify(result.data) });
         return { content: [{ type: "text", text: `Error ${result.status}: ${JSON.stringify(result.data)}` }] };
+    }
     const created = result.data;
     const createdId = created.id || "unknown";
     // Activate separately via PATCH (POST rejects 'active' field)
     if (activate && createdId !== "unknown") {
         const actResult = await n8nRequest(srv, "PATCH", `/workflows/${createdId}`, { active: true });
         if (!actResult.ok) {
+            await writeAudit(config, { action: "activate_imported_workflow", server: srv.name, workflowId: createdId, outcome: "failed", message: JSON.stringify(actResult.data) });
             return { content: [{ type: "text", text: `Workflow imported (ID: ${createdId}) but activation failed: ${JSON.stringify(actResult.data)}` }] };
         }
     }
+    await writeAudit(config, { action: "import_workflow", server: srv.name, workflowId: createdId, outcome: "success" });
     return { content: [{ type: "text", text: `Workflow imported: "${created.name}" (ID: ${createdId})${activate ? " [ACTIVE]" : ""} on ${srv.name}` }] };
 });
 // ── Tool: n8n_describe_nodes ─────────────────────────────────────────
