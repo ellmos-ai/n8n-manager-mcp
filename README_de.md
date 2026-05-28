@@ -11,6 +11,12 @@
 
 MCP-Server (Model Context Protocol) zur Verwaltung von n8n-Workflows über KI-Assistenten wie Claude, Cursor und Windsurf.
 
+## Verzeichnis-Status
+
+- [npm-Paket](https://www.npmjs.com/package/n8n-manager-mcp): veröffentlicht als `n8n-manager-mcp`
+- [Glama-Eintrag](https://glama.ai/mcp/servers/ellmos-ai/n8n-manager-mcp): öffentliche Verzeichnisseite für das ellmos-ai-Repo
+- Offizielle MCP Registry: Dieses Repo enthält `server.json` und `mcpName`-Metadaten für `io.github.ellmos-ai/n8n-manager-mcp`; live steht dort noch der ältere Eintrag `io.github.lukisch/n8n-manager-mcp`, bis der Namespace neu veröffentlicht wird.
+
 ## Funktionen
 
 - **18 Tools** für vollständige n8n-Workflow-Verwaltung

@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Changed
+- Include `server.json` in npm package metadata and add npm homepage/bug-report links.
+- Update GitHub community workflows to current `actions/stale` and `actions/first-interaction` versions.
+- Clarify Glama and official MCP Registry namespace status in README and `llms.txt`.
+- Align liability text with the actual MIT license.
+
 ## [0.1.8] - 2026-05-23
 
 ### Added

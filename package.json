@@ -12,7 +12,8 @@
     "dist/",
     "LICENSE",
     "README.md",
-    "README_de.md"
+    "README_de.md",
+    "server.json"
   ],
   "scripts": {
     "build": "node node_modules/typescript/bin/tsc",
@@ -36,6 +37,10 @@
     "type": "git",
     "url": "https://github.com/ellmos-ai/n8n-manager-mcp.git"
   },
+  "bugs": {
+    "url": "https://github.com/ellmos-ai/n8n-manager-mcp/issues"
+  },
+  "homepage": "https://github.com/ellmos-ai/n8n-manager-mcp#readme",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",
     "zod": "^3.23.8"
