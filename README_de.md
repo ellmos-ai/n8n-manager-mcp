@@ -119,7 +119,7 @@ npm test         # Tests ausführen (vitest)
 
 ### Tests
 
-Das Projekt enthält eine umfassende Test-Suite mit **82 Tests** für die Kernlogik aller 18 Tools.
+Das Projekt enthält eine umfassende Test-Suite mit **89 Tests** für die Kernlogik aller 18 Tools, i18n-Sprachpakete und Fehlerbehandlung.
 
 ```bash
 npm test              # Alle Tests ausführen

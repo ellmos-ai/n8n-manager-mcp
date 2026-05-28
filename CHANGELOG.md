@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+- Replace Spanish, Simplified Chinese, Japanese, and Russian i18n fallbacks with real n8n Manager translations.
+- Add direct i18n tests for supported language order, language switching, non-English strings, and placeholder interpolation.
+
 ### Changed
 - Include `server.json` in npm package metadata and add npm homepage/bug-report links.
 - Update GitHub community workflows to current `actions/stale` and `actions/first-interaction` versions.

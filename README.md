@@ -119,7 +119,7 @@ npm test         # Run test suite (vitest)
 
 ### Testing
 
-The project includes **82 tests** covering URL building, server management, safety settings, backup path handling, workflow JSON construction, export/import validation, and error handling.
+The project includes **89 tests** covering URL building, server management, safety settings, backup path handling, workflow JSON construction, export/import validation, i18n language packs, and error handling.
 
 ```bash
 npm test              # Run all tests
