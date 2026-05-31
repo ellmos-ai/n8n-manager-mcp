@@ -611,7 +611,7 @@ server.tool(
     const lines = ["Configured n8n servers:\n"];
     for (const s of config.servers) {
       const def = s.isDefault ? " [DEFAULT]" : "";
-      const keyHint = s.apiKey ? ` (key: ${s.apiKey.substring(0, 8)}...)` : " (no key)";
+      const keyHint = s.apiKey ? " (key: configured)" : " (no key)";
       lines.push(`  ${s.name}: ${s.url}${keyHint}${def}`);
     }
 

@@ -217,7 +217,7 @@ function formatServerList(config: ServerConfig): string[] {
   const lines = ["Configured n8n servers:\n"];
   for (const s of config.servers) {
     const def = s.isDefault ? " [DEFAULT]" : "";
-    const keyHint = s.apiKey ? ` (key: ${s.apiKey.substring(0, 8)}...)` : " (no key)";
+    const keyHint = s.apiKey ? " (key: configured)" : " (no key)";
     lines.push(`  ${s.name}: ${s.url}${keyHint}${def}`);
   }
   return lines;
@@ -572,10 +572,13 @@ describe("n8n-manager-mcp", () => {
       expect(lines.join("\n")).toContain("[DEFAULT]");
     });
 
-    it("truncates API key to first 8 chars", () => {
+    it("does not reveal API key material", () => {
       const config: ServerConfig = { servers: [makeServer({ apiKey: "abcdefghijklmnop" })] };
       const lines = formatServerList(config);
-      expect(lines.join("\n")).toContain("(key: abcdefgh...)");
+      const output = lines.join("\n");
+      expect(output).toContain("(key: configured)");
+      expect(output).not.toContain("abcdefgh");
+      expect(output).not.toContain("abcdefghijklmnop");
     });
   });
 
