@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Replace Spanish, Simplified Chinese, Japanese, and Russian i18n fallbacks with real n8n Manager translations.
 - Add direct i18n tests for supported language order, language switching, non-English strings, and placeholder interpolation.
+- Add GitHub Actions test workflow for Node.js 20, 22, and 24 with build, Vitest, and npm package checks.
 
 ### Changed
 - Include `server.json` in npm package metadata and add npm homepage/bug-report links.

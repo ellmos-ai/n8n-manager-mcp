@@ -7,6 +7,7 @@
 *Teil der [ellmos-ai](https://github.com/ellmos-ai)-Familie.*
 
 [![npm](https://img.shields.io/npm/v/n8n-manager-mcp.svg)](https://www.npmjs.com/package/n8n-manager-mcp)
+[![Tests](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml/badge.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 MCP-Server (Model Context Protocol) zur Verwaltung von n8n-Workflows über KI-Assistenten wie Claude, Cursor und Windsurf.
@@ -128,6 +129,7 @@ npx vitest --watch    # Watch-Modus
 ```
 
 Tests sind auf **Windows**, **macOS** und **Linux** verifiziert.
+GitHub Actions führt zusätzlich Build, Tests und npm-Paketprüfung auf Node.js 20, 22 und 24 aus.
 
 ## Verwandte Projekte
 
