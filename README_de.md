@@ -116,6 +116,7 @@ npm run build    # Einmaliger Build
 npm run dev      # Watch-Modus
 npm start        # Server starten
 npm test         # Tests ausführen (vitest)
+npm run smoke    # Gebauten MCP-Server starten und Tool-Discovery prüfen
 ```
 
 ### Tests
@@ -126,10 +127,12 @@ Das Projekt enthält eine umfassende Test-Suite mit **89 Tests** für die Kernlo
 npm test              # Alle Tests ausführen
 npx vitest run        # Gleiche Funktion
 npx vitest --watch    # Watch-Modus
+npm run smoke         # Manueller stdio-MCP-Smoke-Test (vorher npm run build)
 ```
 
 Tests sind auf **Windows**, **macOS** und **Linux** verifiziert.
 GitHub Actions führt zusätzlich Build, Tests und npm-Paketprüfung auf Node.js 20, 22 und 24 aus.
+Der Smoke-Runner startet `dist/index.js` über den MCP-SDK-Client, prüft alle 18 Tool-Registrierungen und ruft das sichere Katalog-Tool `n8n_describe_nodes` ohne n8n-Zugangsdaten auf.
 
 ## Verwandte Projekte
 

@@ -116,6 +116,7 @@ npm run build    # One-time build
 npm run dev      # Watch mode
 npm start        # Start server
 npm test         # Run test suite (vitest)
+npm run smoke    # Start the built MCP server and verify tool discovery
 ```
 
 ### Testing
@@ -126,10 +127,12 @@ The project includes **89 tests** covering URL building, server management, safe
 npm test              # Run all tests
 npx vitest run        # Same as above
 npx vitest --watch    # Watch mode
+npm run smoke         # Manual stdio MCP smoke test (requires npm run build first)
 ```
 
 Tests are verified on **Windows**, **macOS**, and **Linux**.
 GitHub Actions additionally runs build, test, and npm package checks on Node.js 20, 22, and 24.
+The smoke runner starts `dist/index.js` through the MCP SDK client, verifies all 18 tool registrations, and calls the safe `n8n_describe_nodes` catalog tool without requiring n8n credentials.
 
 ## Related
 
