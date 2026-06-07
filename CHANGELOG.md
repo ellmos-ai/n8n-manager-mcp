@@ -15,6 +15,7 @@ All notable changes to this project will be documented in this file.
 - Update GitHub community workflows to current `actions/stale` and `actions/first-interaction` versions.
 - Clarify Glama and official MCP Registry namespace status in README and `llms.txt`.
 - Align liability text with the actual MIT license.
+- Clarify MCP directory namespace status and add the public Enterprise DNA directory entry.
 
 ## [0.1.8] - 2026-05-23
 

@@ -16,7 +16,8 @@ MCP (Model Context Protocol) server for managing n8n workflows via AI assistants
 
 - [npm package](https://www.npmjs.com/package/n8n-manager-mcp): published as `n8n-manager-mcp`
 - [Glama listing](https://glama.ai/mcp/servers/ellmos-ai/n8n-manager-mcp): public directory page for the ellmos-ai repo
-- Official MCP Registry: this repo contains `server.json` and `mcpName` metadata for `io.github.ellmos-ai/n8n-manager-mcp`; the live registry still has the legacy `io.github.lukisch/n8n-manager-mcp` entry until the namespace is republished.
+- [Enterprise DNA directory](https://enterprisedna.co/directories/mcp/ellmos-ai-n8n-manager-mcp/): additional public directory entry for `ellmos-ai/n8n-manager-mcp`
+- MCP namespace status: this repo contains `server.json` and `mcpName` metadata for `io.github.ellmos-ai/n8n-manager-mcp`; some ecosystem directories still expose the legacy `io.github.lukisch/n8n-manager-mcp` name until their indexes refresh.
 
 ## Features
 
