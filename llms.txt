@@ -32,3 +32,23 @@ Part of the ellmos family. Node.js, MIT. Published as `n8n-manager-mcp` on npm. 
 ## Optional
 
 - [GitHub Issues](https://github.com/ellmos-ai/n8n-manager-mcp/issues): Bug reports and feature requests
+
+## Audience
+
+- AI assistant users who work with n8n and want to manage workflows via Claude, Cursor, or Windsurf
+- Developers building AI agents that automate workflow orchestration via n8n
+- DevOps and automation engineers integrating n8n into AI-assisted pipelines
+- Power users managing multiple n8n instances and needing AI-driven workflow operations
+- Open-source contributors exploring MCP server development with TypeScript and Node.js
+
+## Search Phrases
+
+- n8n MCP server AI assistant workflow management
+- manage n8n workflows via Claude Code Cursor Windsurf
+- MCP server n8n REST API automation TypeScript
+- n8n workflow manager AI integration local-first
+- ellmos-ai MCP server n8n automation
+- create update delete n8n workflows AI agent
+- n8n multi-server management model context protocol
+
+## Last-checked: 2026-06-10
