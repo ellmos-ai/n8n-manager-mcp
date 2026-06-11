@@ -4,7 +4,7 @@
 
 18 tools covering complete n8n workflow management: n8n_list_workflows, n8n_get_workflow (full node graph + connections), n8n_create_workflow (from nodes + connections), n8n_update_workflow, n8n_delete_workflow, n8n_activate_workflow (toggle on/off), n8n_list_executions (recent runs with status), n8n_export_workflow (importable JSON), n8n_import_workflow, n8n_safety_status, n8n_set_safety_mode, n8n_list_backups, n8n_restore_workflow, n8n_describe_nodes (built-in catalog with descriptions), n8n_add_server, n8n_list_servers, n8n_remove_server, n8n_ping_server. Multi-server support allows AI agents to move workflows between n8n instances, while the safety layer supports read-only mode, backup-before-mutation, restore from backup, and local audit logging.
 
-Part of the ellmos family. Node.js, MIT. Published as `n8n-manager-mcp` on npm. Publicly listed on Glama and Enterprise DNA under `ellmos-ai/n8n-manager-mcp`. Some MCP ecosystem indexes still expose the legacy `io.github.lukisch/n8n-manager-mcp` entry; this repository includes `server.json` for the ellmos-ai namespace.
+Part of the ellmos family. Node.js, MIT. Published as `n8n-manager-mcp` on npm. Publicly listed on Glama, Enterprise DNA, and PulseMCP under the ellmos-ai namespace. Some MCP ecosystem indexes still expose the legacy `io.github.lukisch/n8n-manager-mcp` entry; this repository includes `server.json` for the ellmos-ai namespace.
 
 ## Docs
 
@@ -13,15 +13,18 @@ Part of the ellmos family. Node.js, MIT. Published as `n8n-manager-mcp` on npm. 
 - [server.json](https://github.com/ellmos-ai/n8n-manager-mcp/blob/main/server.json): MCP Registry metadata for `io.github.ellmos-ai/n8n-manager-mcp`
 - [Glama listing](https://glama.ai/mcp/servers/ellmos-ai/n8n-manager-mcp): Public MCP directory page
 - [Enterprise DNA listing](https://enterprisedna.co/directories/mcp/ellmos-ai-n8n-manager-mcp/): Public MCP directory page for the ellmos-ai namespace
+- [PulseMCP listing](https://www.pulsemcp.com/servers/ellmos-ai-n8n-manager): Public MCP directory page indexed as `ellmos-ai-n8n-manager`
 - [LICENSE](https://github.com/ellmos-ai/n8n-manager-mcp/blob/main/LICENSE): MIT license text
 - [npm package](https://www.npmjs.com/package/n8n-manager-mcp): Published artifact
 
 ## ellmos MCP family (sibling servers)
 
-- [ellmos-filecommander-mcp](https://github.com/ellmos-ai/ellmos-filecommander-mcp): Filesystem, process management, interactive sessions (43 tools)
+- [ellmos-filecommander-mcp](https://github.com/ellmos-ai/ellmos-filecommander-mcp): Filesystem, process management, interactive sessions (44 tools)
 - [ellmos-codecommander-mcp](https://github.com/ellmos-ai/ellmos-codecommander-mcp): Code analysis, AST parsing, import management (17 tools)
 - [ellmos-clatcher-mcp](https://github.com/ellmos-ai/ellmos-clatcher-mcp): Utility tools -- repair, convert, detect, batch ops (12 tools)
 - [ellmos-controlcenter-mcp](https://github.com/ellmos-ai/ellmos-controlcenter-mcp): MCP stack discovery, profile management, control plane (10 tools)
+- [ellmos-homebase-mcp](https://github.com/ellmos-ai/ellmos-homebase-mcp): Persistent memory, knowledge garden, routing, swarm coordination, API probing (44 tools)
+- [ellmos-servercommander-mcp](https://github.com/ellmos-ai/ellmos-servercommander-mcp): Remote server operations and SSH-safe deployment helpers (8 tools)
 
 ## Broader ellmos ecosystem
 
@@ -44,11 +47,14 @@ Part of the ellmos family. Node.js, MIT. Published as `n8n-manager-mcp` on npm. 
 ## Search Phrases
 
 - n8n MCP server AI assistant workflow management
+- n8n workflow management MCP server
 - manage n8n workflows via Claude Code Cursor Windsurf
+- create update delete n8n workflows with AI agent
 - MCP server n8n REST API automation TypeScript
+- n8n multi-server workflow export import MCP
 - n8n workflow manager AI integration local-first
 - ellmos-ai MCP server n8n automation
-- create update delete n8n workflows AI agent
-- n8n multi-server management model context protocol
+- io.github.ellmos-ai n8n-manager-mcp
+- n8n Manager MCP PulseMCP Glama Enterprise DNA
 
-## Last-checked: 2026-06-10
+## Last-checked: 2026-06-11

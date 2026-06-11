@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 - Clarify Glama and official MCP Registry namespace status in README and `llms.txt`.
 - Align liability text with the actual MIT license.
 - Clarify MCP directory namespace status and add the public Enterprise DNA directory entry.
+- Refresh discovery metadata with the PulseMCP listing, broader n8n workflow MCP search phrases, current ellmos MCP family entries, and npm keywords.
 
 ## [0.1.8] - 2026-05-23
 

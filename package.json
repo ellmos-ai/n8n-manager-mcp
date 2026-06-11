@@ -28,8 +28,12 @@
     "model-context-protocol",
     "n8n",
     "workflow",
+    "workflow-management",
+    "n8n-workflows",
     "automation",
     "claude",
+    "claude-code",
+    "ai-automation",
     "ai-tools",
     "mcp-server"
   ],
