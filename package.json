@@ -1,6 +1,6 @@
 {
   "name": "n8n-manager-mcp",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "mcpName": "io.github.ellmos-ai/n8n-manager-mcp",
   "description": "MCP server for n8n workflow management -- view, create, sync, and manage n8n workflows via AI assistants",
   "type": "module",
@@ -49,6 +49,7 @@
   "homepage": "https://github.com/ellmos-ai/n8n-manager-mcp#readme",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",
+    "update-notifier": "^7.3.1",
     "zod": "^3.23.8"
   },
   "overrides": {
