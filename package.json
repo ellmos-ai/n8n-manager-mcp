@@ -1,6 +1,6 @@
 {
   "name": "n8n-manager-mcp",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "mcpName": "io.github.ellmos-ai/n8n-manager-mcp",
   "description": "MCP server for n8n workflow management -- view, create, sync, and manage n8n workflows via AI assistants",
   "type": "module",
@@ -13,6 +13,7 @@
     "LICENSE",
     "README.md",
     "README_de.md",
+    "CHANGELOG.md",
     "server.json",
     "scripts/smoke-mcp.js"
   ],
@@ -41,7 +42,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ellmos-ai/n8n-manager-mcp.git"
+    "url": "git+https://github.com/ellmos-ai/n8n-manager-mcp.git"
   },
   "bugs": {
     "url": "https://github.com/ellmos-ai/n8n-manager-mcp/issues"

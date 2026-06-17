@@ -6,7 +6,7 @@
  * Connects directly to n8n servers via REST API.
  *
  * @author Lukas Geiger
- * @version 0.1.8
+ * @version 0.1.10
  * @license MIT
  */
 
@@ -243,7 +243,7 @@ async function n8nRequest(
 
 const server = new McpServer({
   name: "n8n-manager-mcp",
-  version: "0.1.8",
+  version: "0.1.10",
 });
 
 server.tool(
