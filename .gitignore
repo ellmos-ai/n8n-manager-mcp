@@ -7,6 +7,40 @@ desktop.ini
 .idea/
 *.tgz
 
+# Local config and credential material
+.env
+.env.*
+!.env.example
+!.env.sample
+.npmrc
+.pypirc
+servers.json
+.n8n-manager-mcp/
+backups/
+audit.log
+*.local.json
+*.secret.json
+secrets.json
+credentials.json
+credential*.json
+token.json
+tokens.json
+*.token.json
+*recovery*codes*.txt
+id_rsa
+id_ed25519
+id_ecdsa
+id_dsa
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.cer
+*.db
+*.sqlite
+*.sqlite3
+
 # Internal planning files
 PLAN.txt
 PLAN_*.txt

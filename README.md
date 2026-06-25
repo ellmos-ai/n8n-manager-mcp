@@ -124,7 +124,7 @@ npm run smoke    # Start the built MCP server and verify tool discovery
 
 ### Testing
 
-The project includes **89 tests** covering URL building, server management, safety settings, backup path handling, workflow JSON construction, export/import validation, i18n language packs, and error handling.
+The project includes **92 tests** covering URL building, server management, safety settings, backup path handling, workflow JSON construction, export/import validation, i18n language packs, repository hygiene, and error handling.
 
 ```bash
 npm test              # Run all tests

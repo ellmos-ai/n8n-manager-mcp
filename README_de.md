@@ -124,7 +124,7 @@ npm run smoke    # Gebauten MCP-Server starten und Tool-Discovery prüfen
 
 ### Tests
 
-Das Projekt enthält eine umfassende Test-Suite mit **89 Tests** für die Kernlogik aller 18 Tools, i18n-Sprachpakete und Fehlerbehandlung.
+Das Projekt enthält eine umfassende Test-Suite mit **92 Tests** für die Kernlogik aller 18 Tools, i18n-Sprachpakete, Repository-Hygiene und Fehlerbehandlung.
 
 ```bash
 npm test              # Alle Tests ausführen
