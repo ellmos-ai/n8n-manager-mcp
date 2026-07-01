@@ -69,6 +69,43 @@ function getDefaultServer(config) {
 function getServerByName(config, name) {
     return config.servers.find(s => s.name === name);
 }
+function normalizeServerInput(name, rawUrl, apiKey) {
+    const normalizedName = name.trim();
+    if (!normalizedName) {
+        throw new Error("Server name is required.");
+    }
+    if (/[\r\n]/.test(normalizedName)) {
+        throw new Error("Server name must be a single line.");
+    }
+    const key = apiKey.trim();
+    if (!key) {
+        throw new Error("API key is required.");
+    }
+    if (/\s/.test(key)) {
+        throw new Error("API key must not contain whitespace.");
+    }
+    let parsed;
+    try {
+        parsed = new URL(rawUrl.trim());
+    }
+    catch {
+        throw new Error("Server URL must be a valid http(s) URL.");
+    }
+    if (!["http:", "https:"].includes(parsed.protocol)) {
+        throw new Error("Server URL must use http or https.");
+    }
+    if (parsed.username || parsed.password) {
+        throw new Error("Server URL must not contain embedded credentials.");
+    }
+    if (parsed.search || parsed.hash) {
+        throw new Error("Server URL must not contain a query string or fragment.");
+    }
+    return {
+        name: normalizedName,
+        url: parsed.toString().replace(/\/+$/, ""),
+        apiKey: key,
+    };
+}
 function sanitizePathPart(value) {
     return value.replace(/[^a-zA-Z0-9_.-]/g, "_").slice(0, 80) || "unknown";
 }
@@ -159,7 +196,7 @@ async function loadBackupWorkflow(backupPath) {
 // n8n API Client
 // ============================================================================
 async function n8nRequest(server, method, endpoint, body) {
-    const url = `${server.url.replace(/\/$/, "")}/api/v1${endpoint}`;
+    const url = `${server.url.replace(/\/+$/, "")}/api/v1${endpoint}`;
     const headers = {
         "X-N8N-API-KEY": server.apiKey,
         "Content-Type": "application/json",
@@ -452,16 +489,29 @@ server.tool("n8n_add_server", "Add or update an n8n server connection. The API k
     api_key: z.string().describe("n8n API key (from Settings > API in n8n)"),
     is_default: z.boolean().optional().default(false).describe("Set as default server"),
 }, async ({ name, url, api_key, is_default }) => {
+    let normalized;
+    try {
+        normalized = normalizeServerInput(name, url, api_key);
+    }
+    catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        return { content: [{ type: "text", text: `Invalid server configuration: ${message}` }] };
+    }
     const config = await loadConfig();
     // Remove existing server with same name
-    config.servers = config.servers.filter(s => s.name !== name);
+    config.servers = config.servers.filter(s => s.name !== normalized.name);
     // If is_default, clear other defaults
     if (is_default) {
         config.servers.forEach(s => s.isDefault = false);
     }
-    config.servers.push({ name, url: url.replace(/\/$/, ""), apiKey: api_key, isDefault: is_default || config.servers.length === 0 });
+    config.servers.push({
+        name: normalized.name,
+        url: normalized.url,
+        apiKey: normalized.apiKey,
+        isDefault: is_default || config.servers.length === 0,
+    });
     await saveConfig(config);
-    return { content: [{ type: "text", text: `Server "${name}" added (${url}). ${is_default ? "Set as default." : ""}` }] };
+    return { content: [{ type: "text", text: `Server "${normalized.name}" added (${normalized.url}). ${is_default ? "Set as default." : ""}` }] };
 });
 // ── Tool: n8n_list_servers ───────────────────────────────────────────
 server.tool("n8n_list_servers", "List all configured n8n server connections.", {}, async () => {

@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Security
 - Harden repository hygiene for local n8n server configs, tokens, recovery codes, private keys, local backups, audit logs, and SQLite files.
+- Validate `n8n_add_server` input before saving local server configuration: reject malformed URLs, non-HTTP schemes, embedded credentials, query strings, fragments, empty names, and whitespace-bearing API keys.
 
 ## [0.1.10] - 2026-06-17
 

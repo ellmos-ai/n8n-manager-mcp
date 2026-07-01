@@ -36,6 +36,12 @@ interface SafetySettings {
   auditLog: boolean;
 }
 
+interface NormalizedServerInput {
+  name: string;
+  url: string;
+  apiKey: string;
+}
+
 // ============================================================================
 // Test Helpers -- mirror the logic from src/index.ts
 // ============================================================================
@@ -67,6 +73,46 @@ function getDefaultServer(config: ServerConfig): N8nServer | undefined {
 
 function getServerByName(config: ServerConfig, name: string): N8nServer | undefined {
   return config.servers.find(s => s.name === name);
+}
+
+function normalizeServerInput(name: string, rawUrl: string, apiKey: string): NormalizedServerInput {
+  const normalizedName = name.trim();
+  if (!normalizedName) {
+    throw new Error("Server name is required.");
+  }
+  if (/[\r\n]/.test(normalizedName)) {
+    throw new Error("Server name must be a single line.");
+  }
+
+  const key = apiKey.trim();
+  if (!key) {
+    throw new Error("API key is required.");
+  }
+  if (/\s/.test(key)) {
+    throw new Error("API key must not contain whitespace.");
+  }
+
+  let parsed: URL;
+  try {
+    parsed = new URL(rawUrl.trim());
+  } catch {
+    throw new Error("Server URL must be a valid http(s) URL.");
+  }
+  if (!["http:", "https:"].includes(parsed.protocol)) {
+    throw new Error("Server URL must use http or https.");
+  }
+  if (parsed.username || parsed.password) {
+    throw new Error("Server URL must not contain embedded credentials.");
+  }
+  if (parsed.search || parsed.hash) {
+    throw new Error("Server URL must not contain a query string or fragment.");
+  }
+
+  return {
+    name: normalizedName,
+    url: parsed.toString().replace(/\/+$/, ""),
+    apiKey: key,
+  };
 }
 
 const DEFAULT_SAFETY: SafetySettings = {
@@ -112,7 +158,7 @@ function blockMessageForReadOnly(action: string, safety: SafetySettings): string
 }
 
 function buildUrl(server: N8nServer, endpoint: string): string {
-  return `${server.url.replace(/\/$/, "")}/api/v1${endpoint}`;
+  return `${server.url.replace(/\/+$/, "")}/api/v1${endpoint}`;
 }
 
 function buildHeaders(server: N8nServer): Record<string, string> {
@@ -175,8 +221,10 @@ function addServer(
   apiKey: string,
   isDefault: boolean
 ): ServerConfig {
+  const normalized = normalizeServerInput(name, url, apiKey);
+
   // Remove existing server with same name
-  config.servers = config.servers.filter(s => s.name !== name);
+  config.servers = config.servers.filter(s => s.name !== normalized.name);
 
   // If is_default, clear other defaults
   if (isDefault) {
@@ -184,9 +232,9 @@ function addServer(
   }
 
   config.servers.push({
-    name,
-    url: url.replace(/\/$/, ""),
-    apiKey,
+    name: normalized.name,
+    url: normalized.url,
+    apiKey: normalized.apiKey,
     isDefault: isDefault || config.servers.length === 0,
   });
 
@@ -315,9 +363,7 @@ describe("n8n-manager-mcp", () => {
 
     it("handles multiple trailing slashes", () => {
       const srv = makeServer({ url: "http://localhost:5678///" });
-      // regex /\/$/ only strips one, leaving //, which is the source behavior
-      const result = buildUrl(srv, "/workflows");
-      expect(result).toContain("/api/v1/workflows");
+      expect(buildUrl(srv, "/workflows")).toBe("http://localhost:5678/api/v1/workflows");
     });
   });
 
@@ -487,6 +533,35 @@ describe("n8n-manager-mcp", () => {
       expect(config.servers).toHaveLength(1);
       expect(config.servers[0].url).toBe("http://new:5678");
       expect(config.servers[0].apiKey).toBe("new-key");
+    });
+
+    it("trims server input before saving", () => {
+      let config: ServerConfig = { servers: [] };
+      config = addServer(config, "  prod  ", "  https://n8n.example.com/  ", "  key123  ", false);
+      expect(config.servers[0]).toMatchObject({
+        name: "prod",
+        url: "https://n8n.example.com",
+        apiKey: "key123",
+      });
+    });
+
+    it("rejects non-http server URLs", () => {
+      expect(() => normalizeServerInput("prod", "file:///tmp/server", "key")).toThrow("http or https");
+    });
+
+    it("rejects server URLs with embedded credentials", () => {
+      expect(() => normalizeServerInput("prod", "https://user:pass@n8n.example.com", "key")).toThrow("embedded credentials");
+    });
+
+    it("rejects server URLs with query strings or fragments", () => {
+      expect(() => normalizeServerInput("prod", "https://n8n.example.com?apiKey=secret", "key")).toThrow("query string");
+      expect(() => normalizeServerInput("prod", "https://n8n.example.com/#token", "key")).toThrow("fragment");
+    });
+
+    it("rejects empty names and whitespace API keys", () => {
+      expect(() => normalizeServerInput("  ", "https://n8n.example.com", "key")).toThrow("Server name");
+      expect(() => normalizeServerInput("prod", "https://n8n.example.com", "  ")).toThrow("API key");
+      expect(() => normalizeServerInput("prod", "https://n8n.example.com", "key with spaces")).toThrow("whitespace");
     });
 
     it("removes an existing server", () => {

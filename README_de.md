@@ -110,6 +110,7 @@ Sicherheitsstandard:
 - `audit_log: true` schreibt Ergebnisse von Änderungen nach `~/.n8n-manager-mcp/audit.log`.
 - `read_only: false` kann mit `n8n_set_safety_mode` oder `N8N_MANAGER_READ_ONLY=1` aktiviert werden.
 - Backups liegen unter `~/.n8n-manager-mcp/backups/` und können mit den Backup-Tools aufgelistet oder wiederhergestellt werden.
+- `n8n_add_server` validiert Serververbindungen vor dem Speichern: URLs müssen `http`- oder `https`-Basis-URLs ohne eingebettete Zugangsdaten, Query-Strings oder Fragmente sein; API-Keys dürfen keine Whitespaces enthalten.
 
 ## Entwicklung
 
@@ -124,7 +125,7 @@ npm run smoke    # Gebauten MCP-Server starten und Tool-Discovery prüfen
 
 ### Tests
 
-Das Projekt enthält eine umfassende Test-Suite mit **92 Tests** für die Kernlogik aller 18 Tools, i18n-Sprachpakete, Repository-Hygiene und Fehlerbehandlung.
+Das Projekt enthält eine umfassende Test-Suite mit **97 Tests** für die Kernlogik aller 18 Tools, Server-Eingabevalidierung, i18n-Sprachpakete, Repository-Hygiene und Fehlerbehandlung.
 
 ```bash
 npm test              # Alle Tests ausführen

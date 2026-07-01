@@ -110,6 +110,7 @@ Safety defaults:
 - `audit_log: true` appends mutation outcomes to `~/.n8n-manager-mcp/audit.log`.
 - `read_only: false` can be enabled with `n8n_set_safety_mode` or `N8N_MANAGER_READ_ONLY=1`.
 - Backups are stored under `~/.n8n-manager-mcp/backups/` and can be listed/restored with the backup tools.
+- `n8n_add_server` validates server connection input before saving: URLs must be `http` or `https` base URLs without embedded credentials, query strings, or fragments, and API keys must not contain whitespace.
 
 ## Development
 
@@ -124,7 +125,7 @@ npm run smoke    # Start the built MCP server and verify tool discovery
 
 ### Testing
 
-The project includes **92 tests** covering URL building, server management, safety settings, backup path handling, workflow JSON construction, export/import validation, i18n language packs, repository hygiene, and error handling.
+The project includes **97 tests** covering URL building, server input validation, server management, safety settings, backup path handling, workflow JSON construction, export/import validation, i18n language packs, repository hygiene, and error handling.
 
 ```bash
 npm test              # Run all tests
