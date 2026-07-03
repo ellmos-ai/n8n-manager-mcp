@@ -4,9 +4,15 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.1.11] - 2026-07-03
+
 ### Security
 - Harden repository hygiene for local n8n server configs, tokens, recovery codes, private keys, local backups, audit logs, and SQLite files.
 - Validate `n8n_add_server` input before saving local server configuration: reject malformed URLs, non-HTTP schemes, embedded credentials, query strings, fragments, empty names, and whitespace-bearing API keys.
+- URL-encode `workflow_id`/`target_workflow_id`/`status` before embedding them in n8n REST API request paths and query strings (`n8n_get_workflow`, `n8n_update_workflow`, `n8n_delete_workflow`, `n8n_activate_workflow`, `n8n_export_workflow`, `n8n_restore_workflow`, `n8n_list_executions`). These are free-form strings from the MCP caller; unescaped, characters like `&`, `?`, or `/` could inject extra query parameters or alter the request path against the configured n8n server.
+
+### Added
+- Regression tests covering the new URL-encoding behavior for workflow IDs and execution filters.
 
 ## [0.1.10] - 2026-06-17
 

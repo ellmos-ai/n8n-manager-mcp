@@ -139,6 +139,10 @@ function sanitizePathPart(value: string): string {
   return value.replace(/[^a-zA-Z0-9_.-]/g, "_").slice(0, 80) || "unknown";
 }
 
+function encodeUrlPart(value: string): string {
+  return encodeURIComponent(value);
+}
+
 function backupTimestamp(date: Date): string {
   return date.toISOString().replace(/[:.]/g, "-");
 }
@@ -171,9 +175,13 @@ function buildHeaders(server: N8nServer): Record<string, string> {
 
 function buildExecutionsEndpoint(limit: number, workflowId?: string, status?: string): string {
   let endpoint = `/executions?limit=${limit}`;
-  if (workflowId) endpoint += `&workflowId=${workflowId}`;
-  if (status) endpoint += `&status=${status}`;
+  if (workflowId) endpoint += `&workflowId=${encodeUrlPart(workflowId)}`;
+  if (status) endpoint += `&status=${encodeUrlPart(status)}`;
   return endpoint;
+}
+
+function buildWorkflowPathEndpoint(workflowId: string): string {
+  return `/workflows/${encodeUrlPart(workflowId)}`;
 }
 
 function buildWorkflowNodes(nodes: Array<{ type: string; name: string; parameters?: Record<string, unknown>; position?: number[] }>) {
@@ -889,6 +897,45 @@ describe("n8n-manager-mcp", () => {
     it("appends both workflowId and status", () => {
       const ep = buildExecutionsEndpoint(50, "wf-456", "success");
       expect(ep).toBe("/executions?limit=50&workflowId=wf-456&status=success");
+    });
+
+    it("URL-encodes a workflowId containing an ampersand so it cannot inject extra query params", () => {
+      const ep = buildExecutionsEndpoint(20, "wf&status=error");
+      expect(ep).toBe("/executions?limit=20&workflowId=wf%26status%3Derror");
+      // Regression guard: the raw, unescaped value must never appear in the endpoint.
+      expect(ep).not.toContain("wf&status=error");
+    });
+
+    it("URL-encodes a workflowId containing a question mark or slash", () => {
+      const ep = buildExecutionsEndpoint(20, "wf?../executions");
+      expect(ep).toContain("workflowId=wf%3F..%2Fexecutions");
+    });
+  });
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // Workflow ID Path Encoding
+  // ─────────────────────────────────────────────────────────────────────────
+
+  describe("Workflow ID Path Encoding", () => {
+    it("leaves a plain alphanumeric workflow ID unchanged", () => {
+      expect(buildWorkflowPathEndpoint("abc123")).toBe("/workflows/abc123");
+    });
+
+    it("encodes a workflow ID that attempts path traversal", () => {
+      const endpoint = buildWorkflowPathEndpoint("../../etc/passwd");
+      expect(endpoint).not.toContain("../");
+      expect(endpoint).toBe("/workflows/..%2F..%2Fetc%2Fpasswd");
+    });
+
+    it("encodes a workflow ID that attempts to append a query string", () => {
+      const endpoint = buildWorkflowPathEndpoint("123?active=true");
+      expect(endpoint).toBe("/workflows/123%3Factive%3Dtrue");
+      expect(endpoint).not.toContain("?active=true".replace("?", "?"));
+    });
+
+    it("encodes a workflow ID containing a slash so it cannot change the API path segment", () => {
+      const endpoint = buildWorkflowPathEndpoint("123/../../executions");
+      expect(endpoint).toBe("/workflows/123%2F..%2F..%2Fexecutions");
     });
   });
 

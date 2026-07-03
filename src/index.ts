@@ -6,7 +6,7 @@
  * Connects directly to n8n servers via REST API.
  *
  * @author Lukas Geiger
- * @version 0.1.10
+ * @version 0.1.11
  * @license MIT
  */
 
@@ -161,6 +161,16 @@ function sanitizePathPart(value: string): string {
   return value.replace(/[^a-zA-Z0-9_.-]/g, "_").slice(0, 80) || "unknown";
 }
 
+/**
+ * Encode a user-supplied ID or filter value for safe embedding in an n8n API
+ * URL path segment or query parameter. workflow_id/status are free-form
+ * strings from the MCP caller; without this, characters like "&", "?", "/",
+ * or ".." could inject extra query parameters or alter the request path.
+ */
+function encodeUrlPart(value: string): string {
+  return encodeURIComponent(value);
+}
+
 function backupTimestamp(): string {
   return new Date().toISOString().replace(/[:.]/g, "-");
 }
@@ -197,7 +207,7 @@ async function backupWorkflow(
     return { ok: true };
   }
 
-  const result = await n8nRequest(srv, "GET", `/workflows/${workflowId}`);
+  const result = await n8nRequest(srv, "GET", `/workflows/${encodeUrlPart(workflowId)}`);
   if (!result.ok) {
     return { ok: false, message: `Backup failed before ${reason}: Error ${result.status}: ${JSON.stringify(result.data)}` };
   }
@@ -289,7 +299,7 @@ async function n8nRequest(
 
 const server = new McpServer({
   name: "n8n-manager-mcp",
-  version: "0.1.10",
+  version: "0.1.11",
 });
 
 server.tool(
@@ -378,7 +388,7 @@ server.tool(
     const srv = server_name ? getServerByName(config, server_name) : getDefaultServer(config);
     if (!srv) return { content: [{ type: "text" as const, text: "Error: No server configured." }] };
 
-    const result = await n8nRequest(srv, "GET", `/workflows/${workflow_id}`);
+    const result = await n8nRequest(srv, "GET", `/workflows/${encodeUrlPart(workflow_id)}`);
     if (!result.ok) return { content: [{ type: "text" as const, text: `Error ${result.status}: ${JSON.stringify(result.data)}` }] };
 
     return { content: [{ type: "text" as const, text: JSON.stringify(result.data, null, 2) }] };
@@ -497,7 +507,7 @@ server.tool(
       return { content: [{ type: "text" as const, text: backup.message || "Backup failed before update." }] };
     }
 
-    const result = await n8nRequest(srv, "PUT", `/workflows/${workflow_id}`, data);
+    const result = await n8nRequest(srv, "PUT", `/workflows/${encodeUrlPart(workflow_id)}`, data);
     if (!result.ok) {
       await writeAudit(config, { action: "update_workflow", server: srv.name, workflowId: workflow_id, outcome: "failed", message: JSON.stringify(result.data), backupPath: backup.path });
       return { content: [{ type: "text" as const, text: `Error ${result.status}: ${JSON.stringify(result.data)}` }] };
@@ -531,7 +541,7 @@ server.tool(
       return { content: [{ type: "text" as const, text: backup.message || "Backup failed before delete." }] };
     }
 
-    const result = await n8nRequest(srv, "DELETE", `/workflows/${workflow_id}`);
+    const result = await n8nRequest(srv, "DELETE", `/workflows/${encodeUrlPart(workflow_id)}`);
     if (!result.ok) {
       await writeAudit(config, { action: "delete_workflow", server: srv.name, workflowId: workflow_id, outcome: "failed", message: JSON.stringify(result.data), backupPath: backup.path });
       return { content: [{ type: "text" as const, text: `Error ${result.status}: ${JSON.stringify(result.data)}` }] };
@@ -566,7 +576,7 @@ server.tool(
       return { content: [{ type: "text" as const, text: backup.message || "Backup failed before activation change." }] };
     }
 
-    const result = await n8nRequest(srv, "PATCH", `/workflows/${workflow_id}`, { active });
+    const result = await n8nRequest(srv, "PATCH", `/workflows/${encodeUrlPart(workflow_id)}`, { active });
     if (!result.ok) {
       await writeAudit(config, { action: "activate_workflow", server: srv.name, workflowId: workflow_id, outcome: "failed", message: JSON.stringify(result.data), backupPath: backup.path });
       return { content: [{ type: "text" as const, text: `Error ${result.status}: ${JSON.stringify(result.data)}` }] };
@@ -595,8 +605,8 @@ server.tool(
     if (!srv) return { content: [{ type: "text" as const, text: "Error: No server configured." }] };
 
     let endpoint = `/executions?limit=${limit}`;
-    if (workflow_id) endpoint += `&workflowId=${workflow_id}`;
-    if (status) endpoint += `&status=${status}`;
+    if (workflow_id) endpoint += `&workflowId=${encodeUrlPart(workflow_id)}`;
+    if (status) endpoint += `&status=${encodeUrlPart(status)}`;
 
     const result = await n8nRequest(srv, "GET", endpoint);
     if (!result.ok) return { content: [{ type: "text" as const, text: `Error ${result.status}: ${JSON.stringify(result.data)}` }] };
@@ -747,7 +757,7 @@ server.tool(
     const srv = server_name ? getServerByName(config, server_name) : getDefaultServer(config);
     if (!srv) return { content: [{ type: "text" as const, text: "Error: No server configured." }] };
 
-    const result = await n8nRequest(srv, "GET", `/workflows/${workflow_id}`);
+    const result = await n8nRequest(srv, "GET", `/workflows/${encodeUrlPart(workflow_id)}`);
     if (!result.ok) return { content: [{ type: "text" as const, text: `Error ${result.status}: ${JSON.stringify(result.data)}` }] };
 
     // Clean export (remove server-specific fields that n8n rejects on POST)
@@ -811,7 +821,7 @@ server.tool(
       }
     }
 
-    const endpoint = target_workflow_id ? `/workflows/${target_workflow_id}` : "/workflows";
+    const endpoint = target_workflow_id ? `/workflows/${encodeUrlPart(target_workflow_id)}` : "/workflows";
     const method = target_workflow_id ? "PUT" : "POST";
     const result = await n8nRequest(srv, method, endpoint, workflow);
     if (!result.ok) {
@@ -822,7 +832,7 @@ server.tool(
     const restored = result.data as { id?: string; name?: string };
     const restoredId = target_workflow_id || restored.id || "unknown";
     if (activate && restoredId !== "unknown") {
-      const actResult = await n8nRequest(srv, "PATCH", `/workflows/${restoredId}`, { active: true });
+      const actResult = await n8nRequest(srv, "PATCH", `/workflows/${encodeUrlPart(restoredId)}`, { active: true });
       if (!actResult.ok) {
         await writeAudit(config, { action: "activate_restored_workflow", server: srv.name, workflowId: restoredId, outcome: "failed", message: JSON.stringify(actResult.data) });
         return { content: [{ type: "text" as const, text: `Workflow restored (ID: ${restoredId}) but activation failed: ${JSON.stringify(actResult.data)}` }] };
