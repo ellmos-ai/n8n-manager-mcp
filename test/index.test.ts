@@ -930,7 +930,7 @@ describe("n8n-manager-mcp", () => {
     it("encodes a workflow ID that attempts to append a query string", () => {
       const endpoint = buildWorkflowPathEndpoint("123?active=true");
       expect(endpoint).toBe("/workflows/123%3Factive%3Dtrue");
-      expect(endpoint).not.toContain("?active=true".replace("?", "?"));
+      expect(endpoint).not.toContain("?active=true");
     });
 
     it("encodes a workflow ID containing a slash so it cannot change the API path segment", () => {
