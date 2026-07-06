@@ -125,7 +125,7 @@ npm run smoke    # Start the built MCP server and verify tool discovery
 
 ### Testing
 
-The project includes **97 tests** covering URL building, server input validation, server management, safety settings, backup path handling, workflow JSON construction, export/import validation, i18n language packs, repository hygiene, and error handling.
+The project includes **103 tests** covering URL building, server input validation, server management, safety settings, backup path handling, workflow JSON construction, export/import validation, i18n language packs, repository hygiene, and error handling.
 
 ```bash
 npm test              # Run all tests
@@ -140,7 +140,7 @@ The smoke runner starts `dist/index.js` through the MCP SDK client, verifies all
 
 ## Related
 
-- [n8n-workflow-manager](https://github.com/ellmos-ai/n8n-workflow-manager) -- Full web UI + REST API for n8n workflow management (Python)
+- **[n8n-workflow-manager](https://github.com/ellmos-ai/n8n-workflow-manager)** — the **state & history layer for humans** (Web UI + REST API, Python): per-workflow change history and decision log, visual graph viewer, multi-server sync. Designed as a **pair** with this MCP server — the MCP is the **AI action layer** (create/update/delete/activate), the manager is where you review, document, and roll back. **Memory & context (roadmap):** an MCP server alone can't *guarantee* an agent checks prior context before a destructive change — that enforcement belongs in the manager (client-agnostic), with conversational context optionally from a pull-based history index like [ctx](https://github.com/ctxrs/ctx) (Apache-2.0). Planned: a shared history/decision store + a *check-history-before-mutating* guard.
 - [n8n](https://n8n.io/) -- The workflow automation platform
 
 ## License

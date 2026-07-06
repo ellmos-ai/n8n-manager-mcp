@@ -125,7 +125,7 @@ npm run smoke    # Gebauten MCP-Server starten und Tool-Discovery prüfen
 
 ### Tests
 
-Das Projekt enthält eine umfassende Test-Suite mit **97 Tests** für die Kernlogik aller 18 Tools, Server-Eingabevalidierung, i18n-Sprachpakete, Repository-Hygiene und Fehlerbehandlung.
+Das Projekt enthält eine umfassende Test-Suite mit **103 Tests** für die Kernlogik aller 18 Tools, Server-Eingabevalidierung, i18n-Sprachpakete, Repository-Hygiene und Fehlerbehandlung.
 
 ```bash
 npm test              # Alle Tests ausführen
@@ -140,7 +140,7 @@ Der Smoke-Runner startet `dist/index.js` über den MCP-SDK-Client, prüft alle 1
 
 ## Verwandte Projekte
 
-- [n8n-workflow-manager](https://github.com/ellmos-ai/n8n-workflow-manager) — Vollständige Web-UI + REST API für n8n-Workflow-Verwaltung (Python)
+- **[n8n-workflow-manager](https://github.com/ellmos-ai/n8n-workflow-manager)** — die **Zustands- und Verlaufsschicht für Menschen** (Web-UI + REST API, Python): Versionshistorie und Entscheidungs-Log pro Workflow, visueller Graph-Viewer, Multi-Server-Sync. Als **Paar** mit diesem MCP-Server gedacht — der MCP ist die **KI-Aktionsschicht** (erstellen/aktualisieren/löschen/aktivieren), der Manager ist der Ort zum Prüfen, Dokumentieren und Zurückrollen. **Gedächtnis & Kontext (Roadmap):** ein MCP-Server allein kann nicht *garantieren*, dass ein Agent vor einer destruktiven Änderung den vorhandenen Kontext prüft — diese Durchsetzung gehört in den Manager (client-unabhängig), konversationeller Kontext optional aus einem pull-basierten Verlaufsindex wie [ctx](https://github.com/ctxrs/ctx) (Apache-2.0). Geplant: ein gemeinsamer Verlaufs-/Entscheidungsspeicher + ein *Verlauf-vor-Änderung-prüfen*-Guard.
 - [n8n](https://n8n.io/) — Die Workflow-Automatisierungsplattform
 
 ## Lizenz

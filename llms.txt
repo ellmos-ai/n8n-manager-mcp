@@ -57,4 +57,4 @@ Part of the ellmos family. Node.js, MIT. Published as `n8n-manager-mcp` on npm. 
 - io.github.ellmos-ai n8n-manager-mcp
 - n8n Manager MCP PulseMCP Glama Enterprise DNA
 
-## Last-checked: 2026-06-11
+## Last-checked: 2026-07-06
