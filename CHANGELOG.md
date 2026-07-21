@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.1.12] - 2026-07-21
+
+### Security
+- Refresh the `hono` override to `^4.12.31`, resolving the current Hono advisory while retaining the latest compatible MCP SDK line and the package's Node.js 18 support.
+- Record that the current MCP SDK release still carries an advisory through its optional HTTP transport dependency; its only published remediation requires either a vulnerable older SDK or a Node.js 20-only incompatible transitive override. This stdio-only server does not invoke that transport.
+
 ## [0.1.11] - 2026-07-03
 
 ### Security

@@ -1,6 +1,6 @@
 {
   "name": "n8n-manager-mcp",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "mcpName": "io.github.ellmos-ai/n8n-manager-mcp",
   "description": "MCP server for n8n workflow management -- view, create, sync, and manage n8n workflows via AI assistants",
   "type": "module",
@@ -54,8 +54,7 @@
     "zod": "^3.23.8"
   },
   "overrides": {
-    "hono": "^4.12.18",
-    "@hono/node-server": "^1.19.13",
+    "hono": "^4.12.31",
     "fast-uri": "^3.1.2",
     "ip-address": "^10.1.1",
     "qs": "^6.15.2"

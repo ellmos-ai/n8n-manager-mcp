@@ -6,7 +6,7 @@
  * Connects directly to n8n servers via REST API.
  *
  * @author Lukas Geiger
- * @version 0.1.11
+ * @version 0.1.12
  * @license MIT
  */
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
@@ -230,7 +230,7 @@ async function n8nRequest(server, method, endpoint, body) {
 // ============================================================================
 const server = new McpServer({
     name: "n8n-manager-mcp",
-    version: "0.1.11",
+    version: "0.1.12",
 });
 server.tool("n8n_safety_status", "Show n8n Manager safety settings, backup directory, and audit log location.", {}, async () => {
     const config = await loadConfig();
