@@ -299,7 +299,7 @@ async function n8nRequest(
 
 const server = new McpServer({
   name: "n8n-manager-mcp",
-  version: "0.1.12",
+  version: "0.1.13",
 });
 
 server.tool(

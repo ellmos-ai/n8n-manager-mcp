@@ -230,7 +230,7 @@ async function n8nRequest(server, method, endpoint, body) {
 // ============================================================================
 const server = new McpServer({
     name: "n8n-manager-mcp",
-    version: "0.1.12",
+    version: "0.1.13",
 });
 server.tool("n8n_safety_status", "Show n8n Manager safety settings, backup directory, and audit log location.", {}, async () => {
     const config = await loadConfig();

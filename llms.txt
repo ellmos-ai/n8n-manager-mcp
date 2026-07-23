@@ -19,11 +19,11 @@ Part of the ellmos family. Node.js, MIT. Published as `n8n-manager-mcp` on npm. 
 
 ## ellmos MCP family (sibling servers)
 
-- [ellmos-filecommander-mcp](https://github.com/ellmos-ai/ellmos-filecommander-mcp): Filesystem, process management, interactive sessions (44 tools)
-- [ellmos-codecommander-mcp](https://github.com/ellmos-ai/ellmos-codecommander-mcp): Code analysis, AST parsing, import management (17 tools)
+- [ellmos-filecommander-mcp](https://github.com/ellmos-ai/ellmos-filecommander-mcp): Filesystem, process management, interactive sessions (46 tools)
+- [ellmos-codecommander-mcp](https://github.com/ellmos-ai/ellmos-codecommander-mcp): Code analysis, AST parsing, import management (22 tools)
 - [ellmos-clatcher-mcp](https://github.com/ellmos-ai/ellmos-clatcher-mcp): Utility tools -- repair, convert, detect, batch ops (12 tools)
-- [ellmos-controlcenter-mcp](https://github.com/ellmos-ai/ellmos-controlcenter-mcp): MCP stack discovery, profile management, control plane (10 tools)
-- [ellmos-homebase-mcp](https://github.com/ellmos-ai/ellmos-homebase-mcp): Persistent memory, knowledge garden, routing, swarm coordination, API probing (44 tools)
+- [ellmos-controlcenter-mcp](https://github.com/ellmos-ai/ellmos-controlcenter-mcp): MCP stack discovery, profile management, control plane (20 tools)
+- [ellmos-homebase-mcp](https://github.com/ellmos-ai/ellmos-homebase-mcp): Persistent memory, knowledge garden, routing, swarm coordination, API probing (45 tools)
 - [ellmos-servercommander-mcp](https://github.com/ellmos-ai/ellmos-servercommander-mcp): Remote server operations and SSH-safe deployment helpers (8 tools)
 
 ## Broader ellmos ecosystem
