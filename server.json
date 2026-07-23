@@ -15,7 +15,9 @@
       "registryType": "npm",
       "identifier": "n8n-manager-mcp",
       "version": "0.1.12",
-      "transport": { "type": "stdio" },
+      "transport": {
+        "type": "stdio"
+      },
       "runtimeHint": "npx"
     }
   ]
