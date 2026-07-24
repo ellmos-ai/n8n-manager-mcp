@@ -45,3 +45,6 @@ id_dsa
 PLAN.txt
 PLAN_*.txt
 *-protocoll.txt
+
+# mcp-publisher login artifacts (credentials, never commit)
+.mcpregistry_*
