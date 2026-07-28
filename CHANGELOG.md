@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Maintenance
+- Technical hygiene & maintenance check [G 2026-07-29]: verified 103/103 tests passing, updated `llms.txt` verification timestamp to 2026-07-29.
+
 ## [0.1.14] - 2026-07-25
 
 ### Security & Maintenance
