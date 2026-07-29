@@ -7,7 +7,7 @@ Thanks for your interest in contributing!
 1. Fork and clone: `git clone https://github.com/YOUR_USERNAME/n8n-manager-mcp.git`
 2. Install: `npm install`
 3. Build: `npm run build`
-4. Requires: Node.js 18+, a running n8n instance
+4. Requires: Node.js 20+, a running n8n instance
 
 ## How to Contribute
 

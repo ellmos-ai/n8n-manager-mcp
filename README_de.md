@@ -34,6 +34,8 @@ MCP-Server (Model Context Protocol) zur Verwaltung von n8n-Workflows über KI-As
 
 ## Installation
 
+Benötigt Node.js 20 oder neuer.
+
 ### Claude Desktop
 
 In `claude_desktop_config.json` einfügen:

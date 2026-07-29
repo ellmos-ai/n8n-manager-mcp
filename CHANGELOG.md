@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Maintenance
 - Technical hygiene & maintenance check [G 2026-07-29]: verified 103/103 tests passing, updated `llms.txt` verification timestamp to 2026-07-29.
+- Reconcile the legacy `master` maintenance line into `main` and require Node.js 20+ so the patched `@hono/node-server` 2.x line can replace the vulnerable 1.x line.
 
 ## [0.1.14] - 2026-07-25
 

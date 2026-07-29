@@ -34,6 +34,8 @@ MCP (Model Context Protocol) server for managing n8n workflows via AI assistants
 
 ## Installation
 
+Requires Node.js 20 or newer.
+
 ### Claude Desktop
 
 Add to `claude_desktop_config.json`:
