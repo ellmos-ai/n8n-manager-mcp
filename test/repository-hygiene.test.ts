@@ -85,6 +85,7 @@ describe("repository hygiene", () => {
       "README_de.md",
       "CHANGELOG.md",
       "server.json",
+      "smithery.yaml",
       "scripts/smoke-mcp.js",
     ]);
     expect(packageJson.files).not.toContain("config/");

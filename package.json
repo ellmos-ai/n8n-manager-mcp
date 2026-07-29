@@ -15,6 +15,7 @@
     "README_de.md",
     "CHANGELOG.md",
     "server.json",
+    "smithery.yaml",
     "scripts/smoke-mcp.js"
   ],
   "scripts": {
@@ -55,14 +56,17 @@
   },
   "overrides": {
     "hono": "^4.12.31",
+    "@hono/node-server": "^2.0.5",
     "fast-uri": "^3.1.4",
     "ip-address": "^10.1.1",
-    "qs": "^6.15.2"
+    "qs": "^6.15.2",
+    "vitest": "^3.2.6",
+    "postcss": "^8.5.18"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
     "typescript": "^5.3.3",
-    "vitest": "^3.0.8"
+    "vitest": "^3.2.6"
   },
   "engines": {
     "node": ">=18.0.0"
