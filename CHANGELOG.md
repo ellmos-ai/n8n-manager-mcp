@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased] - 2026-08-04
+
+### Changed
+- Enhanced Discoverability, README design, SEO & LLM Indexing (Pfad B Audit).
+- Added interactive Mermaid architecture diagram visualizing MCP Stdio integration, safety layer, and multi-server n8n REST API orchestration.
+- Added Node.js, Vitest (103 passed), Ecosystem (`ellmos-ai`), and Umbrella (`open-bricks`) Shields.io status badges.
+- Added GFM `llms.txt` Callout note in both English (`README.md`) and German (`README_de.md`) documentation.
+- Updated `llms.txt` verification timestamp to 2026-08-04.
+
 ## [0.1.14] - 2026-07-25
 
 ### Security & Maintenance

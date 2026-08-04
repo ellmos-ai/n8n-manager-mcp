@@ -4,13 +4,35 @@
 
 **🇩🇪 [Deutsche Version](README_de.md)**
 
-*Part of the [ellmos-ai](https://github.com/ellmos-ai) family.*
+*Part of the [ellmos-ai](https://github.com/ellmos-ai) family and [open-bricks](https://github.com/open-bricks) umbrella.*
 
 [![npm](https://img.shields.io/npm/v/n8n-manager-mcp.svg)](https://www.npmjs.com/package/n8n-manager-mcp)
 [![Tests](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml/badge.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
+[![Vitest](https://img.shields.io/badge/Vitest-103%20passed-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
+[![Node.js](https://img.shields.io/badge/Node.js-%3E%3D20-blue.svg)](https://nodejs.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Ecosystem: ellmos--ai](https://img.shields.io/badge/Ecosystem-ellmos--ai-blue.svg)](https://github.com/ellmos-ai)
+[![Umbrella: open--bricks](https://img.shields.io/badge/Umbrella-open--bricks-purple.svg)](https://github.com/open-bricks)
+
+> [!NOTE]
+> **For AI Assistants & LLMs:** An [`llms.txt`](llms.txt) index file is available in the root directory for fast context ingestion, tool catalog references, and directory listings.
 
 MCP (Model Context Protocol) server for managing n8n workflows via AI assistants like Claude, Cursor, and Windsurf.
+
+## System Architecture
+
+```mermaid
+graph TD
+    A["AI Client (Claude / Cursor / Windsurf)"] -->|MCP Stdio Protocol| B["n8n Manager MCP Server"]
+    subgraph "n8n Manager MCP Server"
+        B --> C["Tool Router (18 Tools)"]
+        C --> D["Safety Layer (Read-Only / Backups / Audit)"]
+        C --> E["Multi-Server Manager"]
+    end
+    E -->|REST API (API Key / Basic Auth)| F["n8n Instance 1 (Local)"]
+    E -->|REST API (API Key / Basic Auth)| G["n8n Instance 2 (Cloud / Remote)"]
+    D --> H[("Local Store (~/.n8n-manager-mcp/)")]
+```
 
 ## Directory Status
 
