@@ -48,3 +48,6 @@ PLAN_*.txt
 
 # mcp-publisher login artifacts (credentials, never commit)
 .mcpregistry_*
+
+# Interne Multi-Agenten-Koordination (LOCK-System)
+LOCK*.txt

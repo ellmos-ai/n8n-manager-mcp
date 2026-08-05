@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased] - 2026-08-04
 
+### Security (2026-08-05)
+- Close both open Dependabot advisories via lockfile update: `fast-uri`
+  (high, GHSA-7p8r-x3mc-p8w7) and `hono` (moderate, GHSA-8j4g-w8fx-2239).
+  `npm audit` reports 0 vulnerabilities; build and 103/103 Vitest tests
+  stay green.
+
 ### Changed
 - Enhanced Discoverability, README design, SEO & LLM Indexing (Pfad B Audit).
 - Added interactive Mermaid architecture diagram visualizing MCP Stdio integration, safety layer, and multi-server n8n REST API orchestration.
