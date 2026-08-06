@@ -4,6 +4,30 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased] - 2026-08-04
 
+### Changed (2026-08-07)
+- Reconcile the diverged `main` and `master` branches (open since 0.1.14) back
+  into a single line of development, section by section rather than by taking
+  either side wholesale.
+- Adopt the dependency `overrides` from `master` (`@hono/node-server`,
+  `postcss`) and raise `vitest` from `^3.0.8` to the current line in both
+  `devDependencies` and `overrides`.
+- Raise the declared Node.js floor from 18 to 20 in `package.json` (`engines`),
+  both READMEs and `llms.txt`. The `@hono/node-server` 2.x override requires
+  Node 20 and the CI matrix has only ever tested 20/22/24, so the advertised
+  `>=18` was wrong.
+
+### Removed (2026-08-07)
+- Drop `smithery.yaml`, its `package.json` `files` entry and its assertion in
+  the repository-hygiene test. The listing it advertised does not exist:
+  `smithery.ai/server/@ellmos-ai/n8n-manager-mcp` returns HTTP 404. Same
+  finding and same removal as in `ellmos-clatcher-mcp` and
+  `ellmos-codecommander-mcp`.
+
+### Maintenance
+- Technical hygiene & maintenance check [G 2026-07-29]: 103/103 tests verified.
+  The `llms.txt` timestamp from that run has since been superseded by the
+  2026-08-04 audit below.
+
 ### Security (2026-08-05)
 - Close both open Dependabot advisories via lockfile update: `fast-uri`
   (high, GHSA-7p8r-x3mc-p8w7) and `hono` (moderate, GHSA-8j4g-w8fx-2239).
