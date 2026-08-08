@@ -8,7 +8,7 @@
 
 [![npm](https://img.shields.io/npm/v/n8n-manager-mcp.svg)](https://www.npmjs.com/package/n8n-manager-mcp)
 [![Tests](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml/badge.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
-[![Vitest](https://img.shields.io/badge/Vitest-103%20bestanden-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
+[![Vitest](https://img.shields.io/badge/Vitest-109%20bestanden-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D20-blue.svg)](https://nodejs.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Ecosystem: ellmos--ai](https://img.shields.io/badge/Ecosystem-ellmos--ai-blue.svg)](https://github.com/ellmos-ai)
@@ -131,8 +131,9 @@ Sicherheitsstandard:
 - `backup_before_mutations: true` speichert Workflow-JSON vor Aktualisieren, Löschen, Aktivieren/Deaktivieren und überschreibender Wiederherstellung.
 - `audit_log: true` schreibt Ergebnisse von Änderungen nach `~/.n8n-manager-mcp/audit.log`.
 - `read_only: false` kann mit `n8n_set_safety_mode` oder `N8N_MANAGER_READ_ONLY=1` aktiviert werden.
-- Backups liegen unter `~/.n8n-manager-mcp/backups/` und können mit den Backup-Tools aufgelistet oder wiederhergestellt werden.
+- Backups liegen unter `~/.n8n-manager-mcp/backups/` und können mit den Backup-Tools aufgelistet oder wiederhergestellt werden. Server-/Workflow-Namen werden auf sichere einzelne Pfadsegmente reduziert; reservierte Namen, Separatoren, Traversal sowie Symlink-/Reparse-Ausbrüche verlassen dieses Root nicht, und die Liste zeigt nur reguläre `.json`-Backups.
 - `n8n_add_server` validiert Serververbindungen vor dem Speichern: URLs müssen `http`- oder `https`-Basis-URLs ohne eingebettete Zugangsdaten, Query-Strings oder Fragmente sein; API-Keys dürfen keine Whitespaces enthalten.
+- Die Default-Semantik von `n8n_add_server` ist explizit: Der erste Server wird Default; ein Update ohne `is_default` bewahrt das bisherige Flag; `true` macht den Server zum Default; `false` entfernt sein Flag absichtlich, danach fällt die Default-Suche auf den ersten konfigurierten Server zurück.
 
 ## Entwicklung
 
@@ -147,7 +148,7 @@ npm run smoke    # Gebauten MCP-Server starten und Tool-Discovery prüfen
 
 ### Tests
 
-Das Projekt enthält eine umfassende Test-Suite mit **103 Tests** für die Kernlogik aller 18 Tools, Server-Eingabevalidierung, i18n-Sprachpakete, Repository-Hygiene und Fehlerbehandlung.
+Das Projekt enthält eine umfassende Test-Suite mit **109 Tests** für die Kernlogik aller 18 Tools, Server-Eingabevalidierung, i18n-Sprachpakete, Repository-Hygiene und Fehlerbehandlung.
 
 ```bash
 npm test              # Alle Tests ausführen

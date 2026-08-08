@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased] - 2026-08-04
 
+### Fixed (2026-08-08)
+- Constrain generated backup directories and files to the configured backup
+  root, including reserved-name mapping, regular-JSON listing, and
+  symlink/reparse-aware restore checks.
+- Preserve an existing server's default flag when `n8n_add_server` updates it
+  without `is_default`; explicit `true` promotes and explicit `false` removes
+  the flag, with deterministic first-server fallback when none remains.
+- Raise the transitive `nanoid` override to `^3.3.17`; the refreshed lockfile
+  resolves `3.3.18` and `npm audit` reports zero vulnerabilities.
+
+### Verification (2026-08-08)
+- Fresh `npm ci`, `npm run build`, and `npm test` pass with 109/109 tests;
+  `npm pack --dry-run --json` contains the built server and backup-path module,
+  and `npm run smoke` discovers all 18 tools.
+- The latest landed `main` CI run (commit `21e268b`) is green on Node.js 20,
+  22, and 24; this local change remains unpushed pending normal review.
+
 ### Changed (2026-08-07)
 - Reconcile the diverged `main` and `master` branches (open since 0.1.14) back
   into a single line of development, section by section rather than by taking

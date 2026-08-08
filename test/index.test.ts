@@ -13,6 +13,7 @@ import * as fs from "fs/promises";
 import * as fsSync from "fs";
 import * as path from "path";
 import * as os from "os";
+import { isPathInside, resolveBackupPath, sanitizePathPart } from "../src/backup-paths.js";
 
 // ============================================================================
 // Types (mirrored from src/index.ts)
@@ -135,10 +136,6 @@ function getSafety(config: ServerConfig): SafetySettings {
   return { ...DEFAULT_SAFETY, ...(config.safety || {}) };
 }
 
-function sanitizePathPart(value: string): string {
-  return value.replace(/[^a-zA-Z0-9_.-]/g, "_").slice(0, 80) || "unknown";
-}
-
 function encodeUrlPart(value: string): string {
   return encodeURIComponent(value);
 }
@@ -148,9 +145,8 @@ function backupTimestamp(date: Date): string {
 }
 
 function buildBackupPath(configDir: string, srv: N8nServer, workflowId: string, reason: string, date: Date): string {
-  return path.join(
-    configDir,
-    "backups",
+  return resolveBackupPath(
+    path.join(configDir, "backups"),
     sanitizePathPart(srv.name),
     `${sanitizePathPart(workflowId)}-${backupTimestamp(date)}-${sanitizePathPart(reason)}.json`
   );
@@ -227,23 +223,29 @@ function addServer(
   name: string,
   url: string,
   apiKey: string,
-  isDefault: boolean
+  isDefault?: boolean
 ): ServerConfig {
   const normalized = normalizeServerInput(name, url, apiKey);
+  const existing = config.servers.find(s => s.name === normalized.name);
+  const wasDefault = existing?.isDefault === true;
 
   // Remove existing server with same name
   config.servers = config.servers.filter(s => s.name !== normalized.name);
 
   // If is_default, clear other defaults
-  if (isDefault) {
+  if (isDefault === true) {
     config.servers.forEach(s => s.isDefault = false);
   }
+
+  const shouldBeDefault = isDefault === true ||
+    (isDefault === undefined && wasDefault) ||
+    config.servers.length === 0;
 
   config.servers.push({
     name: normalized.name,
     url: normalized.url,
     apiKey: normalized.apiKey,
-    isDefault: isDefault || config.servers.length === 0,
+    isDefault: shouldBeDefault,
   });
 
   return config;
@@ -483,6 +485,9 @@ describe("n8n-manager-mcp", () => {
     it("sanitizes server and workflow names for backup paths", () => {
       expect(sanitizePathPart("prod/server:main")).toBe("prod_server_main");
       expect(sanitizePathPart("")).toBe("unknown");
+      expect(sanitizePathPart(".")).toBe("_dot_");
+      expect(sanitizePathPart("..")).toBe("_dotdot_");
+      expect(sanitizePathPart("CON")).toBe("_reserved_CON_");
     });
 
     it("builds deterministic backup paths under the config directory", () => {
@@ -490,6 +495,50 @@ describe("n8n-manager-mcp", () => {
       const backupPath = buildBackupPath(configDir, srv, "wf:123", "pre-restore", new Date("2026-05-23T12:00:00.000Z"));
       expect(backupPath).toContain(path.join(configDir, "backups", "prod_server"));
       expect(path.basename(backupPath)).toBe("wf_123-2026-05-23T12-00-00-000Z-pre-restore.json");
+    });
+
+    it("keeps reserved, absolute, separator, and long names inside the backup root", () => {
+      const backupRoot = path.join(configDir, "backups");
+      const values = [
+        ".", "..", "/absolute/path", "C:\\temp\\outside", "..\\..\\outside",
+        "CON", "x".repeat(200),
+      ];
+      for (const value of values) {
+        const backupPath = buildBackupPath(
+          configDir,
+          makeServer({ name: value }),
+          value,
+          value,
+          new Date("2026-05-23T12:00:00.000Z"),
+        );
+        expect(isPathInside(backupRoot, backupPath)).toBe(true);
+        expect(path.relative(backupRoot, backupPath)).not.toMatch(/^\.\.(?:[\\/]|$)/);
+      }
+    });
+
+    it("rejects lexical backup paths outside the configured root", () => {
+      expect(() => resolveBackupPath(path.join(configDir, "backups"), "..", "outside.json")).toThrow(
+        "Backup path must be inside",
+      );
+      expect(isPathInside(path.join(configDir, "backups"), path.join(configDir, "outside.json"))).toBe(false);
+    });
+
+    it("detects a symlinked backup file after realpath resolution", async () => {
+      const backupRoot = path.join(configDir, "backups");
+      const outside = path.join(tmpDir, "outside.json");
+      const link = path.join(backupRoot, "linked.json");
+      await fs.mkdir(backupRoot, { recursive: true });
+      await fs.writeFile(outside, JSON.stringify({ workflow: {} }), "utf-8");
+      try {
+        await fs.symlink(outside, link, "file");
+      } catch {
+        // Symlink creation can be denied on Windows CI; lexical checks above
+        // still exercise the invariant in that environment.
+        return;
+      }
+      const resolvedLink = await fs.realpath(link);
+      const resolvedRoot = await fs.realpath(backupRoot);
+      expect(isPathInside(resolvedRoot, resolvedLink)).toBe(false);
     });
 
     it("backup payloads preserve the full original workflow", async () => {
@@ -541,6 +590,55 @@ describe("n8n-manager-mcp", () => {
       expect(config.servers).toHaveLength(1);
       expect(config.servers[0].url).toBe("http://new:5678");
       expect(config.servers[0].apiKey).toBe("new-key");
+    });
+
+    it("preserves the existing default when is_default is omitted on update", async () => {
+      let config: ServerConfig = {
+        servers: [
+          makeServer({ name: "prod", isDefault: true }),
+          makeServer({ name: "staging", isDefault: false }),
+        ],
+      };
+      config = addServer(config, "prod", "http://prod-new:5678", "new-key");
+
+      expect(config.servers.find(s => s.name === "prod")?.isDefault).toBe(true);
+      expect(getDefaultServer(config)?.name).toBe("prod");
+      await saveConfig(configFile, configDir, config);
+      const loaded = await loadConfig(configFile, configDir);
+      expect(loaded.servers.find(s => s.name === "prod")?.isDefault).toBe(true);
+      expect(getDefaultServer(loaded)?.name).toBe("prod");
+    });
+
+    it("treats explicit false as intentional default removal", async () => {
+      let config: ServerConfig = {
+        servers: [
+          makeServer({ name: "prod", isDefault: true }),
+          makeServer({ name: "staging", isDefault: false }),
+        ],
+      };
+      config = addServer(config, "prod", "http://prod-new:5678", "new-key", false);
+
+      expect(config.servers.find(s => s.name === "prod")?.isDefault).toBe(false);
+      expect(config.servers.some(s => s.isDefault)).toBe(false);
+      expect(getDefaultServer(config)?.name).toBe("staging");
+      await saveConfig(configFile, configDir, config);
+      const loaded = await loadConfig(configFile, configDir);
+      expect(loaded.servers.some(s => s.isDefault)).toBe(false);
+      expect(getDefaultServer(loaded)?.name).toBe("staging");
+    });
+
+    it("promotes an explicitly selected replacement default", () => {
+      let config: ServerConfig = {
+        servers: [
+          makeServer({ name: "prod", isDefault: true }),
+          makeServer({ name: "staging", isDefault: false }),
+        ],
+      };
+      config = addServer(config, "staging", "http://staging-new:5678", "new-key", true);
+
+      expect(config.servers.find(s => s.name === "prod")?.isDefault).toBe(false);
+      expect(config.servers.find(s => s.name === "staging")?.isDefault).toBe(true);
+      expect(getDefaultServer(config)?.name).toBe("staging");
     });
 
     it("trims server input before saving", () => {

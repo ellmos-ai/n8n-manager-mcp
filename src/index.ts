@@ -20,6 +20,7 @@ import * as fs from "fs/promises";
 import * as fsSync from "fs";
 import * as path from "path";
 import { homedir } from "os";
+import { isPathInside, resolveBackupPath, sanitizePathPart } from "./backup-paths.js";
 
 // ============================================================================
 // Types
@@ -157,8 +158,17 @@ function normalizeServerInput(name: string, rawUrl: string, apiKey: string): Nor
   };
 }
 
-function sanitizePathPart(value: string): string {
-  return value.replace(/[^a-zA-Z0-9_.-]/g, "_").slice(0, 80) || "unknown";
+async function getSecureBackupRoot(create: boolean): Promise<string | null> {
+  const backupRoot = path.resolve(BACKUP_DIR);
+  if (create) {
+    await fs.mkdir(backupRoot, { recursive: true });
+  }
+  const stat = await fs.lstat(backupRoot).catch(() => null);
+  if (!stat) return null;
+  if (!stat.isDirectory() || stat.isSymbolicLink()) {
+    throw new Error(`Backup root must be a regular directory: ${BACKUP_DIR}`);
+  }
+  return backupRoot;
 }
 
 /**
@@ -212,10 +222,24 @@ async function backupWorkflow(
     return { ok: false, message: `Backup failed before ${reason}: Error ${result.status}: ${JSON.stringify(result.data)}` };
   }
 
-  const serverDir = path.join(BACKUP_DIR, sanitizePathPart(srv.name));
+  const backupRoot = await getSecureBackupRoot(true);
+  if (!backupRoot) {
+    return { ok: false, message: `Backup root is unavailable: ${BACKUP_DIR}` };
+  }
+  const serverName = sanitizePathPart(srv.name);
+  const serverDir = resolveBackupPath(backupRoot, serverName);
   await fs.mkdir(serverDir, { recursive: true });
+  const serverStat = await fs.lstat(serverDir).catch(() => null);
+  if (!serverStat?.isDirectory() || serverStat.isSymbolicLink()) {
+    return { ok: false, message: `Backup server directory is not safe: ${serverDir}` };
+  }
   const fileName = `${sanitizePathPart(workflowId)}-${backupTimestamp()}-${sanitizePathPart(reason)}.json`;
-  const backupPath = path.join(serverDir, fileName);
+  const backupPath = resolveBackupPath(backupRoot, serverName, fileName);
+  const rootReal = await fs.realpath(backupRoot);
+  const serverReal = await fs.realpath(serverDir);
+  if (!isPathInside(rootReal, serverReal)) {
+    return { ok: false, message: `Backup server directory escapes ${BACKUP_DIR}` };
+  }
   const payload = {
     backupSchema: 1,
     timestamp: new Date().toISOString(),
@@ -230,17 +254,29 @@ async function backupWorkflow(
 
 async function listBackupFiles(serverName?: string, workflowId?: string): Promise<string[]> {
   try {
-    const servers = serverName ? [sanitizePathPart(serverName)] : await fs.readdir(BACKUP_DIR);
+    const backupRoot = await getSecureBackupRoot(false);
+    if (!backupRoot) return [];
+    const rootReal = await fs.realpath(backupRoot);
+    const serverEntries = serverName
+      ? [{ name: sanitizePathPart(serverName), isDirectory: () => true, isSymbolicLink: () => false }]
+      : await fs.readdir(backupRoot, { withFileTypes: true });
     const files: string[] = [];
-    for (const serverDirName of servers) {
-      const serverDir = path.join(BACKUP_DIR, serverDirName);
-      const stat = await fs.stat(serverDir).catch(() => null);
-      if (!stat?.isDirectory()) continue;
-      const entries = await fs.readdir(serverDir);
+    for (const serverEntry of serverEntries) {
+      if (!serverEntry.isDirectory() || serverEntry.isSymbolicLink()) continue;
+      const serverDirName = serverEntry.name;
+      const serverDir = resolveBackupPath(backupRoot, serverDirName);
+      const serverStat = await fs.lstat(serverDir).catch(() => null);
+      if (!serverStat?.isDirectory() || serverStat.isSymbolicLink()) continue;
+      const serverReal = await fs.realpath(serverDir).catch(() => null);
+      if (!serverReal || !isPathInside(rootReal, serverReal)) continue;
+      const entries = await fs.readdir(serverDir, { withFileTypes: true });
       for (const entry of entries) {
-        if (!entry.endsWith(".json")) continue;
-        if (workflowId && !entry.startsWith(`${sanitizePathPart(workflowId)}-`)) continue;
-        files.push(path.join(serverDir, entry));
+        if (!entry.isFile() || entry.isSymbolicLink() || !entry.name.endsWith(".json")) continue;
+        if (workflowId && !entry.name.startsWith(`${sanitizePathPart(workflowId)}-`)) continue;
+        const backupPath = resolveBackupPath(backupRoot, serverDirName, entry.name);
+        const fileReal = await fs.realpath(backupPath).catch(() => null);
+        if (!fileReal || !isPathInside(rootReal, fileReal)) continue;
+        files.push(backupPath);
       }
     }
     return files.sort().reverse();
@@ -251,9 +287,18 @@ async function listBackupFiles(serverName?: string, workflowId?: string): Promis
 
 async function loadBackupWorkflow(backupPath: string): Promise<Record<string, unknown>> {
   const resolved = path.resolve(backupPath);
-  const backupRoot = path.resolve(BACKUP_DIR);
-  if (!resolved.startsWith(backupRoot + path.sep)) {
+  const backupRoot = await getSecureBackupRoot(false);
+  if (!backupRoot || !isPathInside(backupRoot, resolved)) {
     throw new Error(`Backup path must be inside ${BACKUP_DIR}`);
+  }
+  const rootReal = await fs.realpath(backupRoot);
+  const fileReal = await fs.realpath(resolved).catch(() => null);
+  if (!fileReal || !isPathInside(rootReal, fileReal)) {
+    throw new Error(`Backup path must resolve inside ${BACKUP_DIR}`);
+  }
+  const fileStat = await fs.lstat(resolved).catch(() => null);
+  if (!fileStat?.isFile() || fileStat.isSymbolicLink()) {
+    throw new Error("Backup path must refer to a regular file");
   }
   const data = JSON.parse(await fs.readFile(resolved, "utf-8")) as { workflow?: unknown };
   if (!data.workflow || typeof data.workflow !== "object") {
@@ -635,7 +680,9 @@ server.tool(
     name: z.string().describe("Server name (e.g. 'production', 'staging')"),
     url: z.string().describe("n8n server URL (e.g. 'http://localhost:5678')"),
     api_key: z.string().describe("n8n API key (from Settings > API in n8n)"),
-    is_default: z.boolean().optional().default(false).describe("Set as default server"),
+    is_default: z.boolean().optional().describe(
+      "Optional default policy: omitted preserves an existing server's flag; true promotes this server; false explicitly removes its default flag."
+    ),
   },
   async ({ name, url, api_key, is_default }) => {
     let normalized: NormalizedServerInput;
@@ -648,23 +695,35 @@ server.tool(
 
     const config = await loadConfig();
 
+    const existing = config.servers.find(s => s.name === normalized.name);
+    const wasDefault = existing?.isDefault === true;
+
     // Remove existing server with same name
     config.servers = config.servers.filter(s => s.name !== normalized.name);
 
     // If is_default, clear other defaults
-    if (is_default) {
+    if (is_default === true) {
       config.servers.forEach(s => s.isDefault = false);
     }
+
+    // An omitted flag is an update-preserve operation. An explicit false is
+    // intentional removal; getDefaultServer() then deterministically falls
+    // back to the first configured server when no default remains.
+    const shouldBeDefault = is_default === true ||
+      (is_default === undefined && wasDefault) ||
+      config.servers.length === 0;
 
     config.servers.push({
       name: normalized.name,
       url: normalized.url,
       apiKey: normalized.apiKey,
-      isDefault: is_default || config.servers.length === 0,
+      isDefault: shouldBeDefault,
     });
     await saveConfig(config);
 
-    return { content: [{ type: "text" as const, text: `Server "${normalized.name}" added (${normalized.url}). ${is_default ? "Set as default." : ""}` }] };
+    const defaultNote = shouldBeDefault ? " Set as default." :
+      (is_default === false ? " Default flag removed." : "");
+    return { content: [{ type: "text" as const, text: `Server "${normalized.name}" added (${normalized.url}).${defaultNote}` }] };
   }
 );
 

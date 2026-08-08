@@ -1,0 +1,1 @@
+{"version":3,"file":"backup-paths.d.ts","sourceRoot":"","sources":["../src/backup-paths.ts"],"names":[],"mappings":"AAEA,2EAA2E;AAC3E,wBAAgB,gBAAgB,CAAC,KAAK,EAAE,MAAM,GAAG,MAAM,CAWtD;AAED,gFAAgF;AAChF,wBAAgB,YAAY,CAAC,QAAQ,EAAE,MAAM,EAAE,aAAa,EAAE,MAAM,GAAG,OAAO,CAI7E;AAED,iFAAiF;AACjF,wBAAgB,iBAAiB,CAAC,UAAU,EAAE,MAAM,EAAE,GAAG,KAAK,EAAE,MAAM,EAAE,GAAG,MAAM,CAOhF"}

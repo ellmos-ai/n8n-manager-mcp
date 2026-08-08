@@ -8,7 +8,7 @@
 
 [![npm](https://img.shields.io/npm/v/n8n-manager-mcp.svg)](https://www.npmjs.com/package/n8n-manager-mcp)
 [![Tests](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml/badge.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
-[![Vitest](https://img.shields.io/badge/Vitest-103%20passed-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
+[![Vitest](https://img.shields.io/badge/Vitest-109%20passed-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D20-blue.svg)](https://nodejs.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Ecosystem: ellmos--ai](https://img.shields.io/badge/Ecosystem-ellmos--ai-blue.svg)](https://github.com/ellmos-ai)
@@ -131,8 +131,9 @@ Safety defaults:
 - `backup_before_mutations: true` saves workflow JSON before update, delete, activate/deactivate, and overwrite-restore operations.
 - `audit_log: true` appends mutation outcomes to `~/.n8n-manager-mcp/audit.log`.
 - `read_only: false` can be enabled with `n8n_set_safety_mode` or `N8N_MANAGER_READ_ONLY=1`.
-- Backups are stored under `~/.n8n-manager-mcp/backups/` and can be listed/restored with the backup tools.
+- Backups are stored under `~/.n8n-manager-mcp/backups/` and can be listed/restored with the backup tools. Server/workflow names are reduced to safe single path segments; reserved names, separators, traversal, and symlink/reparse escapes cannot leave that root, and listing exposes only regular `.json` backups.
 - `n8n_add_server` validates server connection input before saving: URLs must be `http` or `https` base URLs without embedded credentials, query strings, or fragments, and API keys must not contain whitespace.
+- `n8n_add_server` default semantics are explicit: the first server becomes default; an update without `is_default` preserves the existing flag; `true` promotes the server; `false` intentionally removes its flag, after which default lookup falls back to the first configured server.
 
 ## Development
 
@@ -147,7 +148,7 @@ npm run smoke    # Start the built MCP server and verify tool discovery
 
 ### Testing
 
-The project includes **103 tests** covering URL building, server input validation, server management, safety settings, backup path handling, workflow JSON construction, export/import validation, i18n language packs, repository hygiene, and error handling.
+The project includes **109 tests** covering URL building, server input validation, server management, safety settings, backup path handling, workflow JSON construction, export/import validation, i18n language packs, repository hygiene, and error handling.
 
 ```bash
 npm test              # Run all tests

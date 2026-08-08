@@ -4,6 +4,10 @@
 
 18 tools covering complete n8n workflow management: n8n_list_workflows, n8n_get_workflow (full node graph + connections), n8n_create_workflow (from nodes + connections), n8n_update_workflow, n8n_delete_workflow, n8n_activate_workflow (toggle on/off), n8n_list_executions (recent runs with status), n8n_export_workflow (importable JSON), n8n_import_workflow, n8n_safety_status, n8n_set_safety_mode, n8n_list_backups, n8n_restore_workflow, n8n_describe_nodes (built-in catalog with descriptions), n8n_add_server, n8n_list_servers, n8n_remove_server, n8n_ping_server. Multi-server support allows AI agents to move workflows between n8n instances, while the safety layer supports read-only mode, backup-before-mutation, restore from backup, and local audit logging.
 
+Verification (2026-08-08): fresh `npm ci`, build, and 109 Vitest tests pass;
+the package dry-run contains the built server and smoke discovery reports all
+18 tools. `npm audit --audit-level=high` reports zero vulnerabilities.
+
 Part of the ellmos family. Node.js, MIT. Published as `n8n-manager-mcp` on npm. Publicly listed on Glama, Enterprise DNA, and PulseMCP under the ellmos-ai namespace. Some MCP ecosystem indexes still expose the legacy `io.github.lukisch/n8n-manager-mcp` entry; this repository includes `server.json` for the ellmos-ai namespace.
 
 ## Docs
@@ -57,4 +61,11 @@ Part of the ellmos family. Node.js, MIT. Published as `n8n-manager-mcp` on npm. 
 - io.github.ellmos-ai n8n-manager-mcp
 - n8n Manager MCP PulseMCP Glama Enterprise DNA
 
-## Last-checked: 2026-08-04
+Current safety contract: backup path segments are sanitized and resolved
+under the configured backup root; reserved names, traversal, and symlink or
+reparse escapes are rejected or mapped safely, and listing returns only
+regular JSON backup files. `n8n_add_server` preserves an existing default when
+`is_default` is omitted on update; `true` promotes and explicit `false`
+removes the flag, with first-server fallback when no default remains.
+
+## Last-checked: 2026-08-08
