@@ -8,7 +8,7 @@
 
 [![npm](https://img.shields.io/npm/v/n8n-manager-mcp.svg)](https://www.npmjs.com/package/n8n-manager-mcp)
 [![Tests](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml/badge.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
-[![Vitest](https://img.shields.io/badge/Vitest-109%20bestanden-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
+[![Vitest](https://img.shields.io/badge/Vitest-Test--Suite-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D20-blue.svg)](https://nodejs.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Ecosystem: ellmos--ai](https://img.shields.io/badge/Ecosystem-ellmos--ai-blue.svg)](https://github.com/ellmos-ai)
@@ -150,7 +150,7 @@ npm run smoke    # Gebauten MCP-Server starten und Tool-Discovery prüfen
 
 ### Tests
 
-Das Projekt enthält eine umfassende Test-Suite mit **109 Tests** für die Kernlogik aller 18 Tools, Server-Eingabevalidierung, i18n-Sprachpakete, Repository-Hygiene und Fehlerbehandlung.
+Die Test-Suite deckt die Kernlogik aller 18 Tools, Server-Eingabevalidierung, i18n-Sprachpakete, Repository-Hygiene und Fehlerbehandlung ab.
 
 ```bash
 npm test              # Alle Tests ausführen

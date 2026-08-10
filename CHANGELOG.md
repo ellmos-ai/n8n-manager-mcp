@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased] - 2026-08-04
 
+### Documentation (2026-08-10)
+- Replace static README test-count badges and prose with stable suite wording,
+  so routine coverage growth cannot leave public documentation stale.
+- Refresh `llms.txt` with the current local verification result.
+
 ### Security (2026-08-10)
 - Make `N8N_MANAGER_READ_ONLY=1` a monotonic enforcement control so persisted
   safety settings cannot re-enable workflow mutations.
