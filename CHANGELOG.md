@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased] - 2026-08-04
 
+### Security (2026-08-10)
+- Make `N8N_MANAGER_READ_ONLY=1` a monotonic enforcement control so persisted
+  safety settings cannot re-enable workflow mutations.
+
 ### Fixed (2026-08-08)
 - Constrain generated backup directories and files to the configured backup
   root, including reserved-name mapping, regular-JSON listing, and

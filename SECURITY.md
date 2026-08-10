@@ -24,6 +24,8 @@ We will respond as soon as possible.
 ## Built-in Safety Controls
 
 - Read-only mode blocks create, update, delete, activate/deactivate, import, and restore operations.
+- `N8N_MANAGER_READ_ONLY=1` enforces read-only mode for the process and cannot
+  be overridden by persisted settings or `n8n_set_safety_mode`.
 - Workflow JSON is backed up before update, delete, activate/deactivate, and overwrite-restore operations by default.
 - Backups are stored locally under `~/.n8n-manager-mcp/backups/`.
 - Mutation results are written to `~/.n8n-manager-mcp/audit.log` by default.

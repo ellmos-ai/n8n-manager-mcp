@@ -131,6 +131,8 @@ Sicherheitsstandard:
 - `backup_before_mutations: true` speichert Workflow-JSON vor Aktualisieren, Löschen, Aktivieren/Deaktivieren und überschreibender Wiederherstellung.
 - `audit_log: true` schreibt Ergebnisse von Änderungen nach `~/.n8n-manager-mcp/audit.log`.
 - `read_only: false` kann mit `n8n_set_safety_mode` oder `N8N_MANAGER_READ_ONLY=1` aktiviert werden.
+  Die Umgebungsvariable ist eine verbindliche Obergrenze: Solange sie aktiv ist,
+  können weder gespeicherte Einstellungen noch `n8n_set_safety_mode` den Lesemodus ausschalten.
 - Backups liegen unter `~/.n8n-manager-mcp/backups/` und können mit den Backup-Tools aufgelistet oder wiederhergestellt werden. Server-/Workflow-Namen werden auf sichere einzelne Pfadsegmente reduziert; reservierte Namen, Separatoren, Traversal sowie Symlink-/Reparse-Ausbrüche verlassen dieses Root nicht, und die Liste zeigt nur reguläre `.json`-Backups.
 - `n8n_add_server` validiert Serververbindungen vor dem Speichern: URLs müssen `http`- oder `https`-Basis-URLs ohne eingebettete Zugangsdaten, Query-Strings oder Fragmente sein; API-Keys dürfen keine Whitespaces enthalten.
 - Die Default-Semantik von `n8n_add_server` ist explizit: Der erste Server wird Default; ein Update ohne `is_default` bewahrt das bisherige Flag; `true` macht den Server zum Default; `false` entfernt sein Flag absichtlich, danach fällt die Default-Suche auf den ersten konfigurierten Server zurück.

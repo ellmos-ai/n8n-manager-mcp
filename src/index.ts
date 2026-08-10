@@ -21,6 +21,7 @@ import * as fsSync from "fs";
 import * as path from "path";
 import { homedir } from "os";
 import { isPathInside, resolveBackupPath, sanitizePathPart } from "./backup-paths.js";
+import { resolveSafety, type SafetySettings } from "./safety.js";
 
 // ============================================================================
 // Types
@@ -36,12 +37,6 @@ interface N8nServer {
 interface ServerConfig {
   servers: N8nServer[];
   safety?: Partial<SafetySettings>;
-}
-
-interface SafetySettings {
-  readOnly: boolean;
-  backupBeforeMutations: boolean;
-  auditLog: boolean;
 }
 
 interface AuditEntry {
@@ -68,12 +63,6 @@ const CONFIG_FILE = path.join(CONFIG_DIR, "servers.json");
 const BACKUP_DIR = path.join(CONFIG_DIR, "backups");
 const AUDIT_LOG_FILE = path.join(CONFIG_DIR, "audit.log");
 
-const DEFAULT_SAFETY: SafetySettings = {
-  readOnly: ["1", "true", "yes", "on"].includes((process.env.N8N_MANAGER_READ_ONLY || "").toLowerCase()),
-  backupBeforeMutations: true,
-  auditLog: true,
-};
-
 async function ensureConfigDir(): Promise<void> {
   try {
     await fs.mkdir(CONFIG_DIR, { recursive: true });
@@ -99,15 +88,12 @@ async function saveConfig(config: ServerConfig): Promise<void> {
 function normalizeConfig(config: Partial<ServerConfig>): ServerConfig {
   return {
     servers: Array.isArray(config.servers) ? config.servers : [],
-    safety: {
-      ...DEFAULT_SAFETY,
-      ...(config.safety || {}),
-    },
+    safety: resolveSafety(config.safety),
   };
 }
 
 function getSafety(config: ServerConfig): SafetySettings {
-  return { ...DEFAULT_SAFETY, ...(config.safety || {}) };
+  return resolveSafety(config.safety);
 }
 
 function getDefaultServer(config: ServerConfig): N8nServer | undefined {
