@@ -29,6 +29,11 @@ All notable changes to this project will be documented in this file.
   and `npm run smoke` discovers all 18 tools.
 - The latest landed `main` CI run (commit `21e268b`) is green on Node.js 20,
   22, and 24; this local change remains unpushed pending normal review.
+### Security (2026-08-11)
+- Close the remaining open Dependabot advisories in the lockfile: add the
+  `express-rate-limit` override (`^8.6.2`) and raise `hono` to `^4.13.0`.
+  The `nanoid` and `fast-uri` overrides had already landed on 2026-08-08.
+  `npm audit` reports 0 vulnerabilities.
 
 ### Changed (2026-08-07)
 - Reconcile the diverged `main` and `master` branches (open since 0.1.14) back
