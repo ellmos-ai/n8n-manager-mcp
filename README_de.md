@@ -25,7 +25,7 @@ MCP-Server (Model Context Protocol) zur Verwaltung von n8n-Workflows über KI-As
 graph TD
     A["KI-Client (Claude / Cursor / Windsurf)"] -->|MCP-Stdio-Protokoll| B["n8n Manager MCP Server"]
     subgraph "n8n Manager MCP Server"
-        B --> C["Werkzeug-Router (18 Tools)"]
+        B --> C["Werkzeug-Router (19 Tools)"]
         C --> D["Sicherheitsschicht (Read-Only / Backups / Audit)"]
         C --> E["Multi-Server-Verwaltung"]
     end
@@ -45,7 +45,7 @@ graph TD
 
 ## Funktionen
 
-- **18 Tools** für vollständige n8n-Workflow-Verwaltung
+- **19 Tools** für vollständige n8n-Workflow-Verwaltung
 - Workflows auflisten, erstellen, aktualisieren, löschen und aktivieren/deaktivieren
 - Sicherheitsfunktionen: Read-only-Modus, Backup vor Löschen/Aktualisieren, lokale Wiederherstellung und Audit-Log
 - Multi-Server-Unterstützung (Verbindung zu mehreren n8n-Instanzen)
@@ -121,6 +121,33 @@ Nach der Installation können folgende Befehle im KI-Assistenten verwendet werde
 | `n8n_ping_server` | Serververbindung testen |
 | `n8n_remove_server` | Server entfernen |
 | `n8n_describe_nodes` | Verfügbare n8n-Node-Typen durchsuchen |
+| `n8n_manager_history` | Versionshistorie, protokollierte Entscheidungen und Sync-Historie aus einem optionalen n8n-workflow-manager lesen (opt-in, nur lesend) |
+
+## Optional: Anbindung an den n8n-workflow-manager
+
+n8n selbst hält nicht fest, *warum* ein Workflow geändert wurde. Das Schwesterprojekt
+[n8n-workflow-manager](https://github.com/ellmos-ai/n8n-workflow-manager) tut genau das:
+Es speichert Versionen, eine verpflichtende Entscheidung je Änderung und eine
+Sync-Historie in einer lokalen Datenbank. `n8n_manager_history` macht diesen Bestand
+aus diesem MCP-Server lesbar.
+
+Die Anbindung ist **opt-in und nur lesend**:
+
+- Ohne `N8N_MCP_MANAGER_URL` ändert sich nichts — jedes Tool spricht wie bisher direkt mit n8n.
+- Ist sie gesetzt (etwa `http://127.0.0.1:8100`), liest `n8n_manager_history` aus dem laufenden
+  Manager. Ohne `workflow_id` listet das Tool dessen Workflows, mit `workflow_id` zeigt es die
+  vollständige Historie.
+- Die IDs sind **Manager-IDs, keine n8n-Instanz-IDs**. Der Manager speichert diese Zuordnung,
+  stellt aber keine Route zum Auflösen bereit — dieser Server rät deshalb keine Übersetzung.
+- Ist der Manager konfiguriert, aber nicht erreichbar, **scheitert das Tool mit klarer Meldung**,
+  statt still aus der n8n-Instanz zu antworten: Dort gibt es keine Entscheidungshistorie, eine
+  ersatzweise Antwort wäre also eine andere Antwort.
+- `n8n_safety_status` meldet den **gemessenen** Zustand der Anbindung (konfiguriert, erreichbar,
+  Manager-Version) — nicht bloß die gesetzte Umgebungsvariable.
+
+Einrichtung: `pip install n8n-workflow-manager`, dann `n8n-manager serve` (bindet an
+`127.0.0.1:8100`). Die Manager-API ist bewusst unauthentifiziert und nur über Loopback
+erreichbar; eine Nicht-Loopback-URL wird in `n8n_safety_status` ausdrücklich angemerkt.
 
 ## Konfiguration
 
@@ -150,7 +177,7 @@ npm run smoke    # Gebauten MCP-Server starten und Tool-Discovery prüfen
 
 ### Tests
 
-Die Test-Suite deckt die Kernlogik aller 18 Tools, Server-Eingabevalidierung, i18n-Sprachpakete, Repository-Hygiene und Fehlerbehandlung ab.
+Die Test-Suite deckt die Kernlogik aller 19 Tools, Server-Eingabevalidierung, i18n-Sprachpakete, Repository-Hygiene und Fehlerbehandlung ab. Die Manager-Anbindung wird gegen einen lokalen Stub-HTTP-Server geprüft — einschließlich ihrer Weigerung, ersatzweise direkt n8n abzufragen.
 
 ```bash
 npm test              # Alle Tests ausführen
@@ -161,7 +188,7 @@ npm run smoke         # Manueller stdio-MCP-Smoke-Test (vorher npm run build)
 
 Tests sind auf **Windows**, **macOS** und **Linux** verifiziert.
 GitHub Actions führt zusätzlich Build, Tests und npm-Paketprüfung auf Node.js 20, 22 und 24 aus.
-Der Smoke-Runner startet `dist/index.js` über den MCP-SDK-Client, prüft alle 18 Tool-Registrierungen und ruft das sichere Katalog-Tool `n8n_describe_nodes` ohne n8n-Zugangsdaten auf.
+Der Smoke-Runner startet `dist/index.js` über den MCP-SDK-Client, prüft alle 19 Tool-Registrierungen und ruft das sichere Katalog-Tool `n8n_describe_nodes` ohne n8n-Zugangsdaten auf.
 
 ## Verwandte Projekte
 

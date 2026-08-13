@@ -4,6 +4,28 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased] - 2026-08-04
 
+### Added (2026-08-13)
+- First step of the planned conversion from a standalone tool server towards an
+  adapter over the `n8n-workflow-manager` module: a new read-only tool
+  `n8n_manager_history` surfaces that module's version history, recorded
+  decisions, sync history, and remote bindings to any MCP client.
+- New module `src/manager-client.ts` holds the seam (URL resolution, probing,
+  reads, formatting) with an injectable `fetch`, so the shipped code is the code
+  under test rather than a copy of its logic.
+- `n8n_safety_status` now reports the *measured* seam state -- configured,
+  reachable, manager version -- instead of only echoing the environment, and
+  warns when the manager URL is not loopback (its API is unauthenticated).
+
+The seam is strictly opt-in and changes no existing behaviour: without
+`N8N_MCP_MANAGER_URL` every tool talks to n8n directly exactly as before. When
+the variable is set but the manager does not answer, the tool fails with an
+explicit message and does **not** substitute a direct n8n query -- that store
+holds no decision history, so a substituted answer would be a different answer.
+Workflow IDs in this tool are the manager's own IDs; the manager records the
+mapping to n8n instance IDs but exposes no route to resolve it, so no
+translation is attempted here. Mutations, backup-store convergence, and the
+decision requirement remain future steps.
+
 ### Documentation (2026-08-10)
 - Replace static README test-count badges and prose with stable suite wording,
   so routine coverage growth cannot leave public documentation stale.

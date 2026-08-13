@@ -25,7 +25,7 @@ MCP (Model Context Protocol) server for managing n8n workflows via AI assistants
 graph TD
     A["AI Client (Claude / Cursor / Windsurf)"] -->|MCP Stdio Protocol| B["n8n Manager MCP Server"]
     subgraph "n8n Manager MCP Server"
-        B --> C["Tool Router (18 Tools)"]
+        B --> C["Tool Router (19 Tools)"]
         C --> D["Safety Layer (Read-Only / Backups / Audit)"]
         C --> E["Multi-Server Manager"]
     end
@@ -45,7 +45,7 @@ graph TD
 
 ## Features
 
-- **18 Tools** for complete n8n workflow management
+- **19 Tools** for complete n8n workflow management
 - List, create, update, delete, and activate/deactivate workflows
 - Safety controls: read-only mode, backup-before-delete/update, local restore, and audit log
 - Multi-server support (connect to multiple n8n instances)
@@ -121,6 +121,31 @@ After installation, use these commands in your AI assistant:
 | `n8n_ping_server` | Test server connection |
 | `n8n_remove_server` | Remove a server |
 | `n8n_describe_nodes` | Browse available n8n node types |
+| `n8n_manager_history` | Read version history, recorded decisions, and sync history from an optional n8n-workflow-manager (opt-in, read-only) |
+
+## Optional: n8n-workflow-manager seam
+
+n8n itself keeps no record of *why* a workflow changed. The sibling project
+[n8n-workflow-manager](https://github.com/ellmos-ai/n8n-workflow-manager) does: it
+stores versions, a mandatory decision per mutation, and a sync history in a local
+database. `n8n_manager_history` makes that record readable from this MCP server.
+
+The seam is **opt-in and read-only**:
+
+- Without `N8N_MCP_MANAGER_URL`, nothing changes — every tool talks to n8n directly, as before.
+- With it set (for example `http://127.0.0.1:8100`), `n8n_manager_history` reads from the
+  running manager. Omit `workflow_id` to list the manager's workflows, pass it for full history.
+- IDs are **manager IDs, not n8n instance IDs**. The manager stores that mapping but exposes
+  no route to resolve it, so this server does not guess a translation.
+- If the manager is configured but unreachable, the tool **fails with an explicit message**
+  instead of quietly answering from the n8n instance — that store has no decision history,
+  so a substituted answer would be a different answer.
+- `n8n_safety_status` reports the *measured* state of the seam (configured, reachable,
+  manager version), not just the environment variable.
+
+Setup: `pip install n8n-workflow-manager`, then `n8n-manager serve` (binds `127.0.0.1:8100`).
+The manager API is unauthenticated and loopback-only by design; a non-loopback URL is
+flagged in `n8n_safety_status`.
 
 ## Configuration
 
@@ -150,7 +175,7 @@ npm run smoke    # Start the built MCP server and verify tool discovery
 
 ### Testing
 
-The test suite covers URL building, server input validation, server management, safety settings, backup path handling, workflow JSON construction, export/import validation, i18n language packs, repository hygiene, and error handling.
+The test suite covers URL building, server input validation, server management, safety settings, backup path handling, workflow JSON construction, export/import validation, i18n language packs, repository hygiene, and error handling. The manager seam is tested against a local stub HTTP server, including its refusal to fall back to a direct n8n query.
 
 ```bash
 npm test              # Run all tests
@@ -161,7 +186,7 @@ npm run smoke         # Manual stdio MCP smoke test (requires npm run build firs
 
 Tests are verified on **Windows**, **macOS**, and **Linux**.
 GitHub Actions additionally runs build, test, and npm package checks on Node.js 20, 22, and 24.
-The smoke runner starts `dist/index.js` through the MCP SDK client, verifies all 18 tool registrations, and calls the safe `n8n_describe_nodes` catalog tool without requiring n8n credentials.
+The smoke runner starts `dist/index.js` through the MCP SDK client, verifies all 19 tool registrations, and calls the safe `n8n_describe_nodes` catalog tool without requiring n8n credentials.
 
 ## Related
 
