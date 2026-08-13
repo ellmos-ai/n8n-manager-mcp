@@ -4,6 +4,27 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased] - 2026-08-04
 
+### Fixed (2026-08-13)
+- Validate workflow, execution, and backup list limits as finite positive
+  integers in the documented range 1..1000, and validate workflow connection
+  output/input indices in the range 0..1000 before API, filesystem, or array
+  access. The existing defaults remain unchanged.
+
+### Documentation (2026-08-13)
+- Correct the EN/DE platform-verification statement: the current workflow runs
+  on Ubuntu Linux with Node.js 20, 22, and 24; macOS is not claimed without a
+  macOS runner.
+
+### Verification (2026-08-13)
+- Local Windows `Microsoft Windows NT 10.0.26200.0` / PowerShell `7.6.3` run at
+  commit `1c5149d` with Node.js `v24.13.1` and npm `11.8.0`: `npm test` passed
+  with 134/134 tests, `npm run build`, `npm run smoke` (including invalid
+  numeric MCP calls), and `npm pack --dry-run --json` passed. No n8n instance or
+  credentials were used.
+- The recorded landed GitHub Actions evidence includes commit `21e268b` on the
+  Ubuntu `latest` runner, green for Node.js 20, 22, and 24; no macOS result is
+  inferred from that run.
+
 ### Documentation (2026-08-10)
 - Replace static README test-count badges and prose with stable suite wording,
   so routine coverage growth cannot leave public documentation stale.
