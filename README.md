@@ -122,6 +122,12 @@ After installation, use these commands in your AI assistant:
 | `n8n_remove_server` | Remove a server |
 | `n8n_describe_nodes` | Browse available n8n node types |
 
+Numeric guardrails are part of the MCP schemas: workflow, execution, and
+backup list limits are finite positive integers from **1 to 1000** (the existing
+defaults remain 100, 20, and 20), and workflow connection `from_output`/
+`to_input` indices are finite non-negative integers from **0 to 1000**. Invalid
+values are rejected before any n8n API, filesystem, or workflow-array access.
+
 ## Configuration
 
 Server connections and safety settings are stored in `~/.n8n-manager-mcp/servers.json`.
@@ -159,8 +165,10 @@ npx vitest --watch    # Watch mode
 npm run smoke         # Manual stdio MCP smoke test (requires npm run build first)
 ```
 
-Tests are verified on **Windows**, **macOS**, and **Linux**.
-GitHub Actions additionally runs build, test, and npm package checks on Node.js 20, 22, and 24.
+The current verification record covers Windows locally and Ubuntu Linux in
+GitHub Actions; macOS is not claimed because the workflow has no macOS runner.
+GitHub Actions runs build, test, and npm package checks on Node.js 20, 22, and
+24. The commit-specific local record is kept in `CHANGELOG.md`.
 The smoke runner starts `dist/index.js` through the MCP SDK client, verifies all 18 tool registrations, and calls the safe `n8n_describe_nodes` catalog tool without requiring n8n credentials.
 
 ## Related

@@ -96,6 +96,23 @@ try {
     throw new Error("n8n_describe_nodes did not return the webhook trigger catalog entry.");
   }
 
+  const invalidCalls = [
+    ["n8n_list_workflows", { limit: 0 }],
+    ["n8n_list_executions", { limit: 1.5 }],
+    ["n8n_list_backups", { limit: 1001 }],
+    ["n8n_create_workflow", {
+      name: "invalid connection probe",
+      nodes: [],
+      connections: [{ from_node: "A", to_node: "B", from_output: -1 }],
+    }],
+  ];
+  for (const [name, args] of invalidCalls) {
+    const result = await client.callTool({ name, arguments: args });
+    if (!result.isError) {
+      throw new Error(`${name} accepted an invalid numeric argument`);
+    }
+  }
+
   console.log(`MCP smoke passed: ${toolNames.length} tools listed and n8n_describe_nodes responded.`);
 } catch (error) {
   const message = error instanceof Error ? error.message : String(error);

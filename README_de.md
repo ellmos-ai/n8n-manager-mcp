@@ -122,6 +122,13 @@ Nach der Installation können folgende Befehle im KI-Assistenten verwendet werde
 | `n8n_remove_server` | Server entfernen |
 | `n8n_describe_nodes` | Verfügbare n8n-Node-Typen durchsuchen |
 
+Numerische Leitplanken sind Teil der MCP-Schemas: Listenlimits für Workflows,
+Ausführungen und Backups sind endliche positive Ganzzahlen von **1 bis 1000**
+(die bisherigen Defaults bleiben 100, 20 und 20), und die Workflow-Verbindungs-
+indizes `from_output`/`to_input` sind endliche nichtnegative Ganzzahlen von
+**0 bis 1000**. Ungültige Werte werden vor API-, Dateisystem- oder
+Workflow-Array-Zugriffen abgewiesen.
+
 ## Konfiguration
 
 Serververbindungen und Sicherheitseinstellungen werden in `~/.n8n-manager-mcp/servers.json` gespeichert.
@@ -159,8 +166,11 @@ npx vitest --watch    # Watch-Modus
 npm run smoke         # Manueller stdio-MCP-Smoke-Test (vorher npm run build)
 ```
 
-Tests sind auf **Windows**, **macOS** und **Linux** verifiziert.
-GitHub Actions führt zusätzlich Build, Tests und npm-Paketprüfung auf Node.js 20, 22 und 24 aus.
+Der aktuelle Verifikationsbeleg umfasst lokale Tests unter Windows und Ubuntu
+Linux in GitHub Actions; macOS wird nicht behauptet, weil der Workflow keinen
+macOS-Runner enthält. GitHub Actions führt Build, Tests und npm-Paketprüfung
+auf Node.js 20, 22 und 24 aus. Der commitbezogene lokale Beleg steht in
+`CHANGELOG.md`.
 Der Smoke-Runner startet `dist/index.js` über den MCP-SDK-Client, prüft alle 18 Tool-Registrierungen und ruft das sichere Katalog-Tool `n8n_describe_nodes` ohne n8n-Zugangsdaten auf.
 
 ## Verwandte Projekte

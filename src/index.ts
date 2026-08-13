@@ -22,6 +22,14 @@ import * as path from "path";
 import { homedir } from "os";
 import { isPathInside, resolveBackupPath, sanitizePathPart } from "./backup-paths.js";
 import { resolveSafety, type SafetySettings } from "./safety.js";
+import {
+  connectionIndexInputSchema,
+  listBackupsLimitSchema,
+  listExecutionsLimitSchema,
+  listWorkflowsLimitSchema,
+  MAX_CONNECTION_INDEX,
+  MAX_LIST_LIMIT,
+} from "./input-validation.js";
 
 // ============================================================================
 // Types
@@ -382,7 +390,7 @@ server.tool(
   "List all workflows on an n8n server. Returns workflow names, IDs, active status, and node counts.",
   {
     server_name: z.string().optional().describe("Server name from config. Uses default if omitted."),
-    limit: z.number().optional().default(100).describe("Max number of workflows to return"),
+    limit: listWorkflowsLimitSchema.describe(`Max number of workflows to return (integer 1-${MAX_LIST_LIMIT})`),
   },
   async ({ server_name, limit }) => {
     const config = await loadConfig();
@@ -442,8 +450,8 @@ server.tool(
     connections: z.array(z.object({
       from_node: z.string().describe("Source node name"),
       to_node: z.string().describe("Target node name"),
-      from_output: z.number().optional().default(0),
-      to_input: z.number().optional().default(0),
+      from_output: connectionIndexInputSchema.describe(`Source output index (integer 0-${MAX_CONNECTION_INDEX})`),
+      to_input: connectionIndexInputSchema.describe(`Target input index (integer 0-${MAX_CONNECTION_INDEX})`),
     })).optional().describe("Array of connections between nodes"),
     server_name: z.string().optional().describe("Server name. Uses default if omitted."),
     activate: z.boolean().optional().default(false).describe("Activate workflow after creation"),
@@ -627,7 +635,7 @@ server.tool(
   {
     workflow_id: z.string().optional().describe("Filter by workflow ID"),
     status: z.enum(["success", "error", "waiting"]).optional().describe("Filter by status"),
-    limit: z.number().optional().default(20).describe("Max results"),
+    limit: listExecutionsLimitSchema.describe(`Max results (integer 1-${MAX_LIST_LIMIT})`),
     server_name: z.string().optional().describe("Server name. Uses default if omitted."),
   },
   async ({ workflow_id, status, limit, server_name }) => {
@@ -820,7 +828,7 @@ server.tool(
   {
     server_name: z.string().optional().describe("Optional server name filter."),
     workflow_id: z.string().optional().describe("Optional workflow ID filter."),
-    limit: z.number().optional().default(20).describe("Maximum backups to show."),
+    limit: listBackupsLimitSchema.describe(`Maximum backups to show (integer 1-${MAX_LIST_LIMIT}).`),
   },
   async ({ server_name, workflow_id, limit }) => {
     const files = (await listBackupFiles(server_name, workflow_id)).slice(0, limit);
