@@ -1,0 +1,7 @@
+startCommand:
+  type: stdio
+  config:
+    command: npx
+    args:
+      - "-y"
+      - "n8n-manager-mcp"

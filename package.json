@@ -15,6 +15,9 @@
     "README_de.md",
     "CHANGELOG.md",
     "server.json",
+    "glama.json",
+    "smithery.yaml",
+    "llms.txt",
     "scripts/smoke-mcp.js"
   ],
   "scripts": {
