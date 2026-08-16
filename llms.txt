@@ -4,8 +4,8 @@
 
 19 tools covering complete n8n workflow management: n8n_list_workflows, n8n_get_workflow (full node graph + connections), n8n_create_workflow (from nodes + connections), n8n_update_workflow, n8n_delete_workflow, n8n_activate_workflow (toggle on/off), n8n_list_executions (recent runs with status), n8n_export_workflow (importable JSON), n8n_import_workflow, n8n_safety_status, n8n_set_safety_mode, n8n_list_backups, n8n_restore_workflow, n8n_describe_nodes (built-in catalog with descriptions), n8n_add_server, n8n_list_servers, n8n_remove_server, n8n_ping_server, n8n_manager_history (opt-in, read-only: version history, recorded decisions, and sync history from a running n8n-workflow-manager module; enabled with N8N_MCP_MANAGER_URL, never falls back to a direct n8n query when the manager is unreachable). Multi-server support allows AI agents to move workflows between n8n instances, while the safety layer supports read-only mode, backup-before-mutation, restore from backup, and local audit logging.
 
-Verification (2026-08-13): fresh `npm test`, build, smoke discovery, and
-package dry-run pass with 149 Vitest tests; `npm audit --omit=dev` reports zero
+Verification (2026-08-16): fresh `npm test`, build, smoke discovery, and
+package dry-run pass with 169 Vitest tests; `npm audit --omit=dev` reports zero
 vulnerabilities.
 The package dry-run contains the built server and smoke discovery reports all
 19 tools.
@@ -70,4 +70,4 @@ regular JSON backup files. `n8n_add_server` preserves an existing default when
 `is_default` is omitted on update; `true` promotes and explicit `false`
 removes the flag, with first-server fallback when no default remains.
 
-## Last-checked: 2026-08-08
+## Last-checked: 2026-08-16

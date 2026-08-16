@@ -20,7 +20,7 @@
     "mcp-server"
   ],
   "tools": {
-    "count": 18
+    "count": 19
   },
   "features": [
     "Workflow CRUD",

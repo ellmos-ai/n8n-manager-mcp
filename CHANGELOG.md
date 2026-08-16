@@ -2,7 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased] - 2026-08-04
+## [Unreleased] - 2026-08-16
+
+### Discoverability & Parity (2026-08-16)
+- Synchronized README badges across German and English versions (169 tests passed, 19 tools, Node >= 20, LLM-Ready, MIT, ellmos-ai ecosystem, open-bricks umbrella).
+- Added sibling tools integration matrix (`ProFiler`, `DokuZen`, `safe-start-for-codex`, `automation-master`, `DevCenter`, `CodeBox`).
+- Synchronized `glama.json` tool count to 19.
+- Updated `llms.txt` timestamp to 2026-08-16 and test count to 169 Vitest tests.
+- Added automated metadata, manifest, and tool parity test suite in `test/metadata.test.ts` (169/169 passed).
 
 ### Added (2026-08-13)
 - First step of the planned conversion from a standalone tool server towards an
