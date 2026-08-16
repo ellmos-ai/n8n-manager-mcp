@@ -6,7 +6,7 @@
  * Connects directly to n8n servers via REST API.
  *
  * @author Lukas Geiger
- * @version 0.1.14
+ * @version 0.1.15
  * @license MIT
  */
 
@@ -30,6 +30,16 @@ import {
   MAX_CONNECTION_INDEX,
   MAX_LIST_LIMIT,
 } from "./input-validation.js";
+import {
+  MANAGER_URL_ENV,
+  ManagerUnavailable,
+  fetchWorkflowHistory,
+  formatHistory,
+  formatWorkflowIndex,
+  listManagerWorkflows,
+  probeManager,
+  resolveManagerUrl,
+} from "./manager-client.js";
 
 // ============================================================================
 // Types
@@ -338,12 +348,12 @@ async function n8nRequest(
 
 const server = new McpServer({
   name: "n8n-manager-mcp",
-  version: "0.1.14",
+  version: "0.1.15",
 });
 
 server.tool(
   "n8n_safety_status",
-  "Show n8n Manager safety settings, backup directory, and audit log location.",
+  "Show n8n Manager safety settings, backup directory, audit log location, and whether the optional n8n-workflow-manager seam is configured and reachable.",
   {},
   async () => {
     const config = await loadConfig();
@@ -357,7 +367,87 @@ server.tool(
       `  backups: ${BACKUP_DIR}`,
       `  audit_log_file: ${AUDIT_LOG_FILE}`,
     ];
+
+    // Measured, not merely configured: a URL in the environment says nothing
+    // about whether the manager answers.
+    let status;
+    try {
+      status = await probeManager(resolveManagerUrl());
+    } catch (error: unknown) {
+      const detail = error instanceof Error ? error.message : String(error);
+      lines.push(`  manager_seam: misconfigured -- ${detail}`);
+      return { content: [{ type: "text" as const, text: lines.join("\n") }] };
+    }
+
+    lines.push(`  manager_seam: ${status.configured ? "configured" : "off"} (${status.detail})`);
+    if (status.configured) {
+      lines.push(`  manager_url: ${status.url}`);
+      lines.push(`  manager_reachable: ${status.reachable}`);
+      if (status.reachable && status.version) {
+        lines.push(
+          `  manager_version: ${status.version} (workflows: ${status.workflows ?? "?"}, servers: ${status.servers ?? "?"})`
+        );
+      }
+      if (!status.loopback) {
+        lines.push(
+          "  manager_warning: the manager API has no authentication; a non-loopback URL exposes workflow data unless the transport is secured."
+        );
+      }
+    }
     return { content: [{ type: "text" as const, text: lines.join("\n") }] };
+  }
+);
+
+// ── Tool: n8n_manager_history ────────────────────────────────────────
+
+server.tool(
+  "n8n_manager_history",
+  "Read version history, recorded decisions, and sync history from a running n8n-workflow-manager. Requires the N8N_MCP_MANAGER_URL environment variable; without it, this MCP talks to n8n directly and no such history exists. Read-only.",
+  {
+    workflow_id: z
+      .number()
+      .int()
+      .positive()
+      .optional()
+      .describe("Manager workflow ID (NOT the n8n instance ID). Omit to list the known workflows."),
+    limit: z.number().optional().default(100).describe("Max entries per history section (1-500)."),
+  },
+  async ({ workflow_id, limit }) => {
+    let baseUrl: string | null;
+    try {
+      baseUrl = resolveManagerUrl();
+    } catch (error: unknown) {
+      return { content: [{ type: "text" as const, text: (error as Error).message }] };
+    }
+    if (!baseUrl) {
+      return {
+        content: [
+          {
+            type: "text" as const,
+            text:
+              `The n8n-workflow-manager seam is not configured, so there is no history to read. ` +
+              `Install and start the manager (pip install n8n-workflow-manager, then "n8n-manager serve"), ` +
+              `and set ${MANAGER_URL_ENV} (for example http://127.0.0.1:8100). ` +
+              `The direct n8n tools of this server keep working unchanged; n8n itself stores no decision history.`,
+          },
+        ],
+      };
+    }
+
+    try {
+      if (workflow_id === undefined) {
+        const workflows = await listManagerWorkflows(baseUrl);
+        return { content: [{ type: "text" as const, text: formatWorkflowIndex(workflows, baseUrl) }] };
+      }
+      const effectiveLimit = Math.max(1, Math.min(Math.trunc(limit ?? 100), 500));
+      const history = await fetchWorkflowHistory(baseUrl, workflow_id, effectiveLimit);
+      return { content: [{ type: "text" as const, text: formatHistory(history, effectiveLimit) }] };
+    } catch (error: unknown) {
+      if (error instanceof ManagerUnavailable) {
+        return { content: [{ type: "text" as const, text: error.message }] };
+      }
+      throw error;
+    }
   }
 );
 

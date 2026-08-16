@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased] - 2026-08-04
 
+### Added (2026-08-13)
+- First step of the planned conversion from a standalone tool server towards an
+  adapter over the `n8n-workflow-manager` module: a new read-only tool
+  `n8n_manager_history` surfaces that module's version history, recorded
+  decisions, sync history, and remote bindings to any MCP client.
+- New module `src/manager-client.ts` holds the seam (URL resolution, probing,
+  reads, formatting) with an injectable `fetch`, so the shipped code is the code
+  under test rather than a copy of its logic.
+- `n8n_safety_status` now reports the *measured* seam state -- configured,
+  reachable, manager version -- instead of only echoing the environment, and
+  warns when the manager URL is not loopback (its API is unauthenticated).
+- Packaging: include `glama.json`, `smithery.yaml`, and `llms.txt` in npm package files.
+
 ### Fixed (2026-08-13)
 - Validate workflow, execution, and backup list limits as finite positive
   integers in the documented range 1..1000, and validate workflow connection
@@ -14,16 +27,6 @@ All notable changes to this project will be documented in this file.
 - Correct the EN/DE platform-verification statement: the current workflow runs
   on Ubuntu Linux with Node.js 20, 22, and 24; macOS is not claimed without a
   macOS runner.
-
-### Verification (2026-08-13)
-- Local Windows `Microsoft Windows NT 10.0.26200.0` / PowerShell `7.6.3` run at
-  commit `1c5149d` with Node.js `v24.13.1` and npm `11.8.0`: `npm test` passed
-  with 134/134 tests, `npm run build`, `npm run smoke` (including invalid
-  numeric MCP calls), and `npm pack --dry-run --json` passed. No n8n instance or
-  credentials were used.
-- The recorded landed GitHub Actions evidence includes commit `21e268b` on the
-  Ubuntu `latest` runner, green for Node.js 20, 22, and 24; no macOS result is
-  inferred from that run.
 
 ### Documentation (2026-08-10)
 - Replace static README test-count badges and prose with stable suite wording,
@@ -50,6 +53,11 @@ All notable changes to this project will be documented in this file.
   and `npm run smoke` discovers all 18 tools.
 - The latest landed `main` CI run (commit `21e268b`) is green on Node.js 20,
   22, and 24; this local change remains unpushed pending normal review.
+### Security (2026-08-11)
+- Close the remaining open Dependabot advisories in the lockfile: add the
+  `express-rate-limit` override (`^8.6.2`) and raise `hono` to `^4.13.0`.
+  The `nanoid` and `fast-uri` overrides had already landed on 2026-08-08.
+  `npm audit` reports 0 vulnerabilities.
 
 ### Changed (2026-08-07)
 - Reconcile the diverged `main` and `master` branches (open since 0.1.14) back

@@ -27,6 +27,7 @@ const expectedTools = [
   "n8n_list_executions",
   "n8n_list_servers",
   "n8n_list_workflows",
+  "n8n_manager_history",
   "n8n_ping_server",
   "n8n_remove_server",
   "n8n_restore_workflow",
