@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 ### Technical Hygiene & CI Hardening (2026-08-21)
 - Hardened GitHub Actions CI workflow (`.github/workflows/tests.yml`) to official `actions/checkout@v4` and `actions/setup-node@v4` with Node.js LTS matrix (20, 22) and integrated `npm run smoke` step.
 - Upgraded `SECURITY.md` to comprehensive bilingual security policy (German/English) with Local-First invariants, Zero-Egress guarantees, monotonic Read-Only guardrails, automated backups, audit logging, and direct security contact addresses (`security@ellmos.ai`, `support@lukasgeiger.com`).
+- Included `SECURITY.md` in `package.json` `files` array for clean npm distribution and validated in `test/repository-hygiene.test.ts`.
 - Extended automated metadata and parity test suite in `test/metadata.test.ts` with CI workflow verification, security policy parity, and bilingual documentation consistency (172/172 tests passed).
 - Updated README badges (172 passed tests) across English and German documentation and refreshed `llms.txt` verification timestamp to 2026-08-21.
 
