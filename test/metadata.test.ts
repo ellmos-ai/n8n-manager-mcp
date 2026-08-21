@@ -57,4 +57,47 @@ describe("metadata and manifest parity", () => {
       expect(fs.existsSync(path.join(repoRoot, file)), `Missing required file: ${file}`).toBe(true);
     }
   });
+
+  it("validates GitHub Actions CI workflow structure and step matrix", () => {
+    const ciWorkflowPath = path.join(repoRoot, ".github", "workflows", "tests.yml");
+    expect(fs.existsSync(ciWorkflowPath)).toBe(true);
+    const ciWorkflow = fs.readFileSync(ciWorkflowPath, "utf-8");
+
+    expect(ciWorkflow).toContain("uses: actions/checkout@v4");
+    expect(ciWorkflow).toContain("uses: actions/setup-node@v4");
+    expect(ciWorkflow).toContain("node-version: [20, 22]");
+    expect(ciWorkflow).toContain("run: npm ci");
+    expect(ciWorkflow).toContain("run: npm run build");
+    expect(ciWorkflow).toContain("run: npm test");
+    expect(ciWorkflow).toContain("run: npm run smoke");
+    expect(ciWorkflow).toContain("run: npm pack --dry-run --json");
+  });
+
+  it("verifies bilingual security policy and direct contact points", () => {
+    const secPath = path.join(repoRoot, "SECURITY.md");
+    expect(fs.existsSync(secPath)).toBe(true);
+    const secContent = fs.readFileSync(secPath, "utf-8");
+
+    expect(secContent).toContain("## Deutsch");
+    expect(secContent).toContain("## English");
+    expect(secContent).toContain("security@ellmos.ai");
+    expect(secContent).toContain("support@lukasgeiger.com");
+    expect(secContent).toContain("Local-First");
+    expect(secContent).toContain("N8N_MANAGER_READ_ONLY=1");
+    expect(secContent).toContain("~/.n8n-manager-mcp/backups/");
+    expect(secContent).toContain("~/.n8n-manager-mcp/audit.log");
+  });
+
+  it("verifies documentation badge synchronization and links across languages", () => {
+    const readme = fs.readFileSync(path.join(repoRoot, "README.md"), "utf-8");
+    const readmeDe = fs.readFileSync(path.join(repoRoot, "README_de.md"), "utf-8");
+
+    expect(readme).toContain("172%20passed");
+    expect(readmeDe).toContain("172%20passed");
+    expect(readme).toContain("README_de.md");
+    expect(readmeDe).toContain("README.md");
+    expect(readme).toContain("https://github.com/open-bricks");
+    expect(readmeDe).toContain("https://github.com/open-bricks");
+  });
 });
+
