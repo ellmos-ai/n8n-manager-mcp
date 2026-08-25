@@ -7,9 +7,11 @@
 *Teil der [ellmos-ai](https://github.com/ellmos-ai)-Familie und des [open-bricks](https://github.com/open-bricks)-Dachverbunds.*
 
 [![npm](https://img.shields.io/npm/v/n8n-manager-mcp.svg)](https://www.npmjs.com/package/n8n-manager-mcp)
-[![Tests](https://img.shields.io/badge/Tests-172%20passed-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
+[![Tests](https://img.shields.io/badge/Tests-178%20passed-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
 [![MCP Tools](https://img.shields.io/badge/MCP%20Tools-19%20tools-blue.svg)](https://github.com/ellmos-ai/n8n-manager-mcp)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D20-blue.svg)](https://nodejs.org)
+[![Sicherheit](https://img.shields.io/badge/Sicherheit-Backups%20%7C%20Audit%20%7C%20Read--Only-success.svg)](SECURITY.md)
+[![Security](https://img.shields.io/badge/Security-48h%20SLA%20%7C%20Local--First-blue.svg)](SECURITY.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![LLM Ready](https://img.shields.io/badge/LLM--Ready-llms.txt-orange.svg)](llms.txt)
 [![Ecosystem: ellmos--ai](https://img.shields.io/badge/Ecosystem-ellmos--ai-blue.svg)](https://github.com/ellmos-ai)
@@ -19,6 +21,22 @@
 > **Für KI-Assistenten & LLMs:** Ein [`llms.txt`](llms.txt)-Index steht im Root-Verzeichnis für schnelle Kontext-Erfassung, Werkzeug-Kataloge und Ökosystem-Einstiegspunkte bereit.
 
 MCP-Server (Model Context Protocol) zur Verwaltung von n8n-Workflows über KI-Assistenten wie Claude, Cursor und Windsurf.
+
+## Schnellnavigation
+
+- [Überblick & Architektur](#systemarchitektur)
+- [Verzeichnis-Status](#verzeichnis-status)
+- [Kernfähigkeiten & Sicherheitsinvarianten](#kernfähigkeiten--sicherheitsinvarianten)
+- [Funktionen](#funktionen)
+- [Installation](#installation)
+- [Schnellstart](#schnellstart)
+- [Verfügbare Tools (19 Tools)](#verfügbare-tools)
+- [Optional: Anbindung an den n8n-workflow-manager](#optional-anbindung-an-den-n8n-workflow-manager)
+- [Konfiguration & Sicherheitsstandard](#konfiguration)
+- [Entwicklung & Tests](#entwicklung)
+- [Verwandte Projekte](#verwandte-projekte)
+- [ellmos-ai-Ökosystem](#ellmos-ai-ökosystem)
+- [Haftung & Lizenz](#haftung--liability)
 
 ## Systemarchitektur
 
@@ -43,6 +61,21 @@ graph TD
 - [PulseMCP-Eintrag](https://www.pulsemcp.com/servers/ellmos-ai-n8n-manager): indexiert als `ellmos-ai-n8n-manager`
 - MCP-Namespace-Status: Dieses Repo enthält `server.json` und `mcpName`-Metadaten für `io.github.ellmos-ai/n8n-manager-mcp`; einzelne Ökosystem-Verzeichnisse zeigen bis zur Index-Aktualisierung noch den älteren Namen `io.github.lukisch/n8n-manager-mcp`.
 - Suchkontext: am besten auffindbar über `n8n MCP server`, `n8n workflow management MCP`, `AI assistant n8n workflows` und `ellmos-ai n8n-manager-mcp`.
+
+## Kernfähigkeiten & Sicherheitsinvarianten
+
+| Fähigkeit / Invariante | Technische Garantie | Anwendervorteil |
+| :--- | :--- | :--- |
+| **100% Local-First & Zero-Egress** | MCP-Stdio-Transport; standardmäßig nur an `127.0.0.1` gebunden; keine externe Telemetrie | Vollständige Privatsphäre; keine Workflow-Logik oder Zugangsdaten verlassen das lokale System |
+| **Monotones Read-Only-Schutzgating** | `N8N_MANAGER_READ_ONLY=1` erzwingt eine prozessweite Obergrenze gegen Werkzeug-Overrides | Verlässlicher Schutz gegen versehentliches Löschen oder Ändern kritischer Produktions-Workflows |
+| **Automatische Pre-Mutation-Backups** | Vollständige JSON-Snapshots unter `~/.n8n-manager-mcp/backups/` vor Update/Löschen | 1-Klick-Wiederherstellung über `n8n_restore_workflow` nach Fehlern oder ungewollten Änderungen |
+| **Lokale Audit-Protokollierung** | Strukturierter JSON-Audit-Trail im Append-Only-Format unter `~/.n8n-manager-mcp/audit.log` | Lückenlose forensische Nachvollziehbarkeit aller Agentenaktionen und Ausführungsergebnisse |
+| **Multi-Server & Zugangsdaten-Isolation** | Isolierte Server-Konfigurationen in `servers.json`; API-Key-Whitespace-Validierung | Mühelose Workflow-Migration zwischen Entwicklungs-, Staging- und Produktiv-Instanzen |
+| **Strikte Eingabe- & Pfadtraversal-Sperre** | Feste Limits (1..1000), Verbindungsindizes (0..1000), Abweisung von Pfadausbrüchen | Resistent gegen Directory-Traversal-Angriffe, Prototype-Pollution und fehlerhafte Payloads |
+| **Non-Elevation & User-Space-Sicherheit** | Ausführung ausschließlich im unprivilegierten Benutzerkontext | Keine Administrator- oder Root-Rechte für lokalen Betrieb oder CI-Pipelines erforderlich |
+| **Opt-In Decision-History-Seam** | Sauberer Adapter zu `n8n-workflow-manager` via `N8N_MCP_MANAGER_URL`; explizites Fail-Fast | Verbindet menschliche Entscheidungsdokumentation mit MCP ohne Seiteneffekte im Standardmodus |
+| **Integrierter Node-Katalog & Introspektion** | Umfassender Offline-Katalog für Trigger-, Action-, Logic-, Transform- und KI-Nodes | LLMs generieren valide Node-Verbindungen ohne zeitraubende API-Netzwerk-Trial-and-Error-Aufrufe |
+| **Multi-Node & Multi-OS CI-Matrix** | Automatisierte GitHub Actions CI auf Node.js 20, 22 mit Concurrency-Abbruch | Garantiert dauerhafte Plattformstabilität und regressionsfreie Verteilbarkeit |
 
 ## Funktionen
 
@@ -241,9 +274,30 @@ Dieser MCP-Server ist Teil des **[ellmos-ai](https://github.com/ellmos-ai)**-Ök
 ### Desktop-Software & Geschwisterwerkzeuge
 
 Unsere Partnerorganisation **[open-bricks](https://github.com/open-bricks)** und Partnersuiten bündeln KI-native Desktop-Anwendungen und Entwicklerwerkzeuge:
-- **[ProFiler](https://github.com/file-bricks/ProFiler)** (file-bricks) — Erweiterte Datei- und Asset-Management-Werkbank
-- **[DokuZen](https://github.com/doc-bricks/DokuZen)** (doc-bricks) — Markdown- und Dokumenten-Workspace
-- **[safe-start-for-codex](https://github.com/dev-bricks/safe-start-for-codex)** (dev-bricks) — Schneller und robuster Agent-Bootstrap
-- **[automation-master](https://github.com/dev-bricks/automation-master)** (dev-bricks) — Zentrale Multi-Host-Automationsorchestrierung
-- **[DevCenter](https://github.com/dev-bricks/DevCenter)** (dev-bricks) — Zentrales Entwickler-Dashboard für lokale Software-Ökosysteme
-- **[CodeBox](https://github.com/dev-bricks/CodeBox)** (dev-bricks) — Isolierte Werkzeugausführungsumgebung
+
+| Repository | Org / Suite | Fokus & Kernfunktionalität |
+| :--- | :--- | :--- |
+| **[ProFiler](https://github.com/file-bricks/ProFiler)** | `file-bricks` | Erweiterte Datei- und Asset-Management-Werkbank mit Duplikaterkennung |
+| **[ExplorerPro](https://github.com/file-bricks/ExplorerPro)** | `file-bricks` | Moderner Mehr-Reiter-Dateimanager mit flexibler Stapelverarbeitung |
+| **[WinStorePackager](https://github.com/file-bricks/WinStorePackager)** | `file-bricks` | MSIX-Paketierung und Microsoft Store Release-Vorbereitung |
+| **[DokuZen](https://github.com/doc-bricks/DokuZen)** | `doc-bricks` | Offline-Markdown-Editor, Live-Vorschau und Dokument-Strukturierung |
+| **[PDFtoPDFocr](https://github.com/doc-bricks/PDFtoPDFocr)** | `doc-bricks` | Lokale OCR-Pipeline zur Umwandlung gescannter PDFs in durchsuchbare Dokumente |
+| **[USR_PDFunlock](https://github.com/doc-bricks/USR_PDFunlock)** | `doc-bricks` | Geburtstags- und Datums-Passwortwiederherstellung für PDF-Archive |
+| **[UniversalInvoiceMail](https://github.com/doc-bricks/UniversalInvoiceMail)** | `doc-bricks` | Automatisierte Rechnungsextraktion und E-Mail-Verarbeitung |
+| **[CleanMarkdown](https://github.com/doc-bricks/CleanMarkdown)** | `doc-bricks` | Verlustfreie Formatierungs- und Typographie-Bereinigung für Markdown |
+| **[safe-start-for-codex](https://github.com/dev-bricks/safe-start-for-codex)** | `dev-bricks` | Schneller und robuster Agent-Bootstrap mit Umgebungsvalidierung |
+| **[automation-master](https://github.com/dev-bricks/automation-master)** | `dev-bricks` | Zentrale Multi-Host-Automationsorchestrierung und Aufgabenüberwachung |
+| **[DevCenter](https://github.com/dev-bricks/DevCenter)** | `dev-bricks` | Zentrales Entwickler-Dashboard für lokale Software-Ökosysteme |
+| **[CodeBox](https://github.com/dev-bricks/CodeBox)** | `dev-bricks` | Isolierte mehrsprachige Werkzeug- und Codeausführungsumgebung |
+| **[githubbot](https://github.com/dev-bricks/githubbot)** | `dev-bricks` | Automatisierte Multi-Org-Repository-Wartungs- und Discoverability-Engine |
+| **[swarm-ai](https://github.com/ellmos-ai/swarm-ai)** | `ellmos-ai` | Verteiltes Multi-Agenten-Schwarm-Framework mit Stigmergie-Koordination |
+| **[ellmos-core](https://github.com/ellmos-ai/ellmos-core)** | `ellmos-ai` | Enterprise KI-Agenten-Backend, hybrides RAG und mandantenfähige Sicherheit |
+| **[open-bricks](https://github.com/open-bricks)** | `open-bricks` | Dachportal und Katalog für alle lokalen KI-Softwareprodukte |
+
+## Haftung / Liability
+
+Dieses Projekt ist eine **unentgeltliche Open-Source-Schenkung** im Sinne der §§ 516 ff. BGB. Die Haftung des Urhebers ist gemäß **§ 521 BGB** auf **Vorsatz und grobe Fahrlässigkeit** beschränkt. Ergänzend gilt der Haftungsausschluss der MIT-Lizenz.
+
+Nutzung auf eigenes Risiko. Keine Wartungszusage, keine Verfügbarkeitsgarantie, keine Gewähr für Fehlerfreiheit oder Eignung für einen bestimmten Zweck.
+
+This project is an unpaid open-source donation under the MIT License. Liability is limited to intent and gross negligence (§ 521 German Civil Code). Use at your own risk. No warranty, no maintenance guarantee, no fitness-for-purpose assumed.

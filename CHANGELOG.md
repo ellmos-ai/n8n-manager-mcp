@@ -2,14 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [0.1.16] - 2026-08-25
 
-### Technical Hygiene & CI Hardening (2026-08-21)
-- Hardened GitHub Actions CI workflow (`.github/workflows/tests.yml`) to official `actions/checkout@v4` and `actions/setup-node@v4` with Node.js LTS matrix (20, 22) and integrated `npm run smoke` step.
-- Upgraded `SECURITY.md` to comprehensive bilingual security policy (German/English) with Local-First invariants, Zero-Egress guarantees, monotonic Read-Only guardrails, automated backups, audit logging, and direct security contact addresses (`security@ellmos.ai`, `support@lukasgeiger.com`).
-- Included `SECURITY.md` in `package.json` `files` array for clean npm distribution and validated in `test/repository-hygiene.test.ts`.
-- Extended automated metadata and parity test suite in `test/metadata.test.ts` with CI workflow verification, security policy parity, and bilingual documentation consistency (172/172 tests passed).
-- Updated README badges (172 passed tests) across English and German documentation and refreshed `llms.txt` verification timestamp to 2026-08-21.
+### Discoverability, README-Design & CI Concurrency Hardening (2026-08-25)
+- **CI Matrix & Concurrency:** Hardened GitHub Actions CI workflow (`.github/workflows/tests.yml`) with automated `concurrency` cancellation (`cancel-in-progress: true`) on branch pushes.
+- **Bilingual Security Policy:** Upgraded `SECURITY.md` with structured Supported Versions matrix (`0.1.x`), 48h Response SLA, and official security contacts (`security@ellmos.ai`, `support@lukasgeiger.com`, `lukas@open-bricks.org`) with 100% DE/EN parity.
+- **Quick Navigation & Discoverability:** Added structured quick-navigation jump-links (13 anchors) and bilingual Core Capabilities & Safety Invariants matrix in `README.md` and `README_de.md`.
+- **Sibling Tools & Ecosystem Matrix:** Expanded partner repositories table to 16 sibling tools across `ellmos-ai`, `dev-bricks`, `file-bricks`, `doc-bricks`, and `open-bricks`.
+- **Badges & Metadata Synchronization:** Updated Shields.io badges (Node >=20, Safety Backups/Audit/Read-Only, Security 48h SLA/Local-First, MIT, LLM-Ready, Ecosystem ellmos-ai, Umbrella open-bricks), bumped version to `0.1.16` across `package.json`, `server.json`, `glama.json`, and `src/index.ts`.
+- **Repository Hygiene & Gitignore:** Added sync conflict patterns (`*.sync-conflict-*`, `*.conflict`, `*-CONFLIT-*`) and test coverage artifacts to `.gitignore`.
+- **Contract Test Suite:** Extended `test/metadata.test.ts` with contract tests for CI concurrency, quick navigation, capabilities table, ecosystem matrix, security policy SLA / supported versions.
+- **LLM Context:** Synchronized `llms.txt` Last-checked timestamp to `2026-08-25` and referenced `SECURITY.md`.
 
 ## [0.1.15] - 2026-08-16
 

@@ -7,9 +7,11 @@
 *Part of the [ellmos-ai](https://github.com/ellmos-ai) family and [open-bricks](https://github.com/open-bricks) umbrella.*
 
 [![npm](https://img.shields.io/npm/v/n8n-manager-mcp.svg)](https://www.npmjs.com/package/n8n-manager-mcp)
-[![Tests](https://img.shields.io/badge/Tests-172%20passed-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
+[![Tests](https://img.shields.io/badge/Tests-178%20passed-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
 [![MCP Tools](https://img.shields.io/badge/MCP%20Tools-19%20tools-blue.svg)](https://github.com/ellmos-ai/n8n-manager-mcp)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D20-blue.svg)](https://nodejs.org)
+[![Safety](https://img.shields.io/badge/Safety-Backups%20%7C%20Audit%20%7C%20Read--Only-success.svg)](SECURITY.md)
+[![Security](https://img.shields.io/badge/Security-48h%20SLA%20%7C%20Local--First-blue.svg)](SECURITY.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![LLM Ready](https://img.shields.io/badge/LLM--Ready-llms.txt-orange.svg)](llms.txt)
 [![Ecosystem: ellmos--ai](https://img.shields.io/badge/Ecosystem-ellmos--ai-blue.svg)](https://github.com/ellmos-ai)
@@ -19,6 +21,22 @@
 > **For AI Assistants & LLMs:** An [`llms.txt`](llms.txt) index file is available in the root directory for fast context ingestion, tool catalog references, and directory listings.
 
 MCP (Model Context Protocol) server for managing n8n workflows via AI assistants like Claude, Cursor, and Windsurf.
+
+## Quick Navigation
+
+- [Overview & Architecture](#system-architecture)
+- [Directory Status](#directory-status)
+- [Core Capabilities & Safety Invariants](#core-capabilities--safety-invariants)
+- [Features](#features)
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Available Tools (19 Tools)](#available-tools)
+- [Optional: n8n-workflow-manager Seam](#optional-n8n-workflow-manager-seam)
+- [Configuration & Safety Defaults](#configuration)
+- [Development & Testing](#development)
+- [Related Projects](#related)
+- [ellmos-ai Ecosystem](#ellmos-ai-ecosystem)
+- [Liability & License](#haftung--liability)
 
 ## System Architecture
 
@@ -43,6 +61,21 @@ graph TD
 - [PulseMCP listing](https://www.pulsemcp.com/servers/ellmos-ai-n8n-manager): indexed as `ellmos-ai-n8n-manager`
 - MCP namespace status: this repo contains `server.json` and `mcpName` metadata for `io.github.ellmos-ai/n8n-manager-mcp`; some ecosystem directories still expose the legacy `io.github.lukisch/n8n-manager-mcp` name until their indexes refresh.
 - Search context: best matched by `n8n MCP server`, `n8n workflow management MCP`, `AI assistant n8n workflows`, and `ellmos-ai n8n-manager-mcp`.
+
+## Core Capabilities & Safety Invariants
+
+| Capability / Invariant | Technical Guarantee | User Benefit |
+| :--- | :--- | :--- |
+| **100% Local-First & Zero-Egress** | MCP Stdio transport; binds only to `127.0.0.1` by default; no external telemetry | Complete privacy; no workflow logic or credentials ever leave your host |
+| **Monotonic Read-Only Enforcement** | `N8N_MANAGER_READ_ONLY=1` establishes a process-level ceiling immune to tool override | Provable air-gapping against accidental workflow deletions or alterations |
+| **Automated Pre-Mutation Backups** | Full workflow JSON snapshots stored under `~/.n8n-manager-mcp/backups/` before mutate/delete | Instant 1-click rollback via `n8n_restore_workflow` upon unwanted modifications |
+| **Local Audit Trail** | Append-only structured JSON log in `~/.n8n-manager-mcp/audit.log` | Complete forensic visibility over all agent actions and execution outcomes |
+| **Multi-Server & Isolated Credentials** | Encrypted/isolated server configs in `servers.json`; API key whitespace validation | Seamless cross-instance workflow migration between staging and production |
+| **Strict Input & Path Traversal Guard** | Bounded numeric limits (1..1000), connection indices (0..1000), path escape rejection | Immune to directory traversal, prototype pollution, and malformed payload crashes |
+| **Non-Elevation & User-Space Security** | Operates strictly as unprivileged user process | Zero root/administrator privilege requirements for local or CI execution |
+| **Opt-In Decision History Seam** | Clean adapter to `n8n-workflow-manager` via `N8N_MCP_MANAGER_URL`; explicit fail-fast | Bridges human decision logs and versioning without corrupting standard MCP mode |
+| **Built-in Node Catalog & Introspection** | Comprehensive offline catalog for triggers, actions, logic, transform, and AI nodes | LLMs formulate valid node connections without trial-and-error network calls |
+| **Multi-Node & Multi-OS CI Matrix** | Automated GitHub Actions CI across Node.js 20, 22 with Concurrency cancellation | Guaranteed cross-platform stability and regression-free distribution |
 
 ## Features
 
@@ -238,12 +271,25 @@ This MCP server is part of the **[ellmos-ai](https://github.com/ellmos-ai)** eco
 ### Desktop Software & Sibling Tools
 
 Our partner organization **[open-bricks](https://github.com/open-bricks)** and sister suites bundle AI-native desktop applications and developer utilities:
-- **[ProFiler](https://github.com/file-bricks/ProFiler)** (file-bricks) — Advanced file and asset management workbench
-- **[DokuZen](https://github.com/doc-bricks/DokuZen)** (doc-bricks) — Markdown and document workspace
-- **[safe-start-for-codex](https://github.com/dev-bricks/safe-start-for-codex)** (dev-bricks) — Fast and reliable agent bootstrap
-- **[automation-master](https://github.com/dev-bricks/automation-master)** (dev-bricks) — Central multi-host automation orchestrator
-- **[DevCenter](https://github.com/dev-bricks/DevCenter)** (dev-bricks) — Unified dashboard for local developer ecosystems
-- **[CodeBox](https://github.com/dev-bricks/CodeBox)** (dev-bricks) — Sandboxed tool execution environment
+
+| Repository | Org / Suite | Focus & Functionality |
+| :--- | :--- | :--- |
+| **[ProFiler](https://github.com/file-bricks/ProFiler)** | `file-bricks` | Advanced file and asset management workbench with duplicate detection |
+| **[ExplorerPro](https://github.com/file-bricks/ExplorerPro)** | `file-bricks` | Tabbed, filterable file manager with smart batch processing |
+| **[WinStorePackager](https://github.com/file-bricks/WinStorePackager)** | `file-bricks` | MSIX packaging and Windows Store release preparation |
+| **[DokuZen](https://github.com/doc-bricks/DokuZen)** | `doc-bricks` | Offline Markdown editor, live preview, and document structuring workbench |
+| **[PDFtoPDFocr](https://github.com/doc-bricks/PDFtoPDFocr)** | `doc-bricks` | Offline OCR pipeline converting scanned PDF documents to searchable PDFs |
+| **[USR_PDFunlock](https://github.com/doc-bricks/USR_PDFunlock)** | `doc-bricks` | Birthday/date password recovery tool for protected PDF archives |
+| **[UniversalInvoiceMail](https://github.com/doc-bricks/UniversalInvoiceMail)** | `doc-bricks` | Automated invoice extraction and email processing |
+| **[CleanMarkdown](https://github.com/doc-bricks/CleanMarkdown)** | `doc-bricks` | Lossless formatting and typography cleanup for technical markdown |
+| **[safe-start-for-codex](https://github.com/dev-bricks/safe-start-for-codex)** | `dev-bricks` | Fast, reliable agent bootstrap and environment check runner |
+| **[automation-master](https://github.com/dev-bricks/automation-master)** | `dev-bricks` | Central multi-host automation orchestrator and task monitor |
+| **[DevCenter](https://github.com/dev-bricks/DevCenter)** | `dev-bricks` | Unified developer workspace dashboard for local tool chains |
+| **[CodeBox](https://github.com/dev-bricks/CodeBox)** | `dev-bricks` | Sandboxed multi-language tool execution environment |
+| **[githubbot](https://github.com/dev-bricks/githubbot)** | `dev-bricks` | Automated multi-org repository maintenance and discoverability engine |
+| **[swarm-ai](https://github.com/ellmos-ai/swarm-ai)** | `ellmos-ai` | Distributed multi-agent swarming framework with stigmergic coordination |
+| **[ellmos-core](https://github.com/ellmos-ai/ellmos-core)** | `ellmos-ai` | Enterprise AI agent backend, hybrid RAG, and multi-tenant security |
+| **[open-bricks](https://github.com/open-bricks)** | `open-bricks` | Umbrella portal and catalog across all local-first AI software products |
 
 ## Haftung / Liability
 

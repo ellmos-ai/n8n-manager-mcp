@@ -15,7 +15,7 @@ describe("metadata and manifest parity", () => {
     const glamaJson = JSON.parse(fs.readFileSync(path.join(repoRoot, "glama.json"), "utf-8")) as { version: string };
     const srcIndex = fs.readFileSync(path.join(repoRoot, "src", "index.ts"), "utf-8");
 
-    expect(pkg.version).toBe("0.1.15");
+    expect(pkg.version).toBe("0.1.16");
     expect(serverJson.version).toBe(pkg.version);
     expect(serverJson.packages?.[0]?.version).toBe(pkg.version);
     expect(glamaJson.version).toBe(pkg.version);
@@ -51,6 +51,7 @@ describe("metadata and manifest parity", () => {
       "CHANGELOG.md",
       "SECURITY.md",
       "LICENSE",
+      ".gitignore",
     ];
 
     for (const file of requiredFiles) {
@@ -71,33 +72,137 @@ describe("metadata and manifest parity", () => {
     expect(ciWorkflow).toContain("run: npm test");
     expect(ciWorkflow).toContain("run: npm run smoke");
     expect(ciWorkflow).toContain("run: npm pack --dry-run --json");
+    expect(ciWorkflow).toContain("concurrency:");
+    expect(ciWorkflow).toContain("cancel-in-progress: true");
   });
 
-  it("verifies bilingual security policy and direct contact points", () => {
+  it("verifies bilingual security policy, SLAs, supported versions, and direct contact points", () => {
     const secPath = path.join(repoRoot, "SECURITY.md");
     expect(fs.existsSync(secPath)).toBe(true);
     const secContent = fs.readFileSync(secPath, "utf-8");
 
     expect(secContent).toContain("## Deutsch");
     expect(secContent).toContain("## English");
+    expect(secContent).toContain("`0.1.x`");
+    expect(secContent).toContain("48 Stunden");
+    expect(secContent).toContain("48 hours");
     expect(secContent).toContain("security@ellmos.ai");
     expect(secContent).toContain("support@lukasgeiger.com");
+    expect(secContent).toContain("lukas@open-bricks.org");
     expect(secContent).toContain("Local-First");
     expect(secContent).toContain("N8N_MANAGER_READ_ONLY=1");
     expect(secContent).toContain("~/.n8n-manager-mcp/backups/");
     expect(secContent).toContain("~/.n8n-manager-mcp/audit.log");
   });
 
+  it("verifies quick navigation anchors and sections across READMEs", () => {
+    const readme = fs.readFileSync(path.join(repoRoot, "README.md"), "utf-8");
+    const readmeDe = fs.readFileSync(path.join(repoRoot, "README_de.md"), "utf-8");
+
+    expect(readme).toContain("## Quick Navigation");
+    expect(readmeDe).toContain("## Schnellnavigation");
+    expect(readme).toContain("#system-architecture");
+    expect(readmeDe).toContain("#systemarchitektur");
+    expect(readme).toContain("#core-capabilities--safety-invariants");
+    expect(readmeDe).toContain("#kernfähigkeiten--sicherheitsinvarianten");
+    expect(readme).toContain("#available-tools");
+    expect(readmeDe).toContain("#verfügbare-tools");
+    expect(readme).toContain("#ellmos-ai-ecosystem");
+    expect(readmeDe).toContain("#ellmos-ai-ökosystem");
+  });
+
+  it("verifies core capabilities and safety invariants tables across READMEs", () => {
+    const readme = fs.readFileSync(path.join(repoRoot, "README.md"), "utf-8");
+    const readmeDe = fs.readFileSync(path.join(repoRoot, "README_de.md"), "utf-8");
+
+    expect(readme).toContain("## Core Capabilities & Safety Invariants");
+    expect(readmeDe).toContain("## Kernfähigkeiten & Sicherheitsinvarianten");
+    expect(readme).toContain("100% Local-First & Zero-Egress");
+    expect(readmeDe).toContain("100% Local-First & Zero-Egress");
+    expect(readme).toContain("Monotonic Read-Only Enforcement");
+    expect(readmeDe).toContain("Monotones Read-Only-Schutzgating");
+    expect(readme).toContain("Automated Pre-Mutation Backups");
+    expect(readmeDe).toContain("Automatische Pre-Mutation-Backups");
+    expect(readme).toContain("Local Audit Trail");
+    expect(readmeDe).toContain("Lokale Audit-Protokollierung");
+  });
+
+  it("verifies sibling tools and ecosystem matrix across READMEs", () => {
+    const readme = fs.readFileSync(path.join(repoRoot, "README.md"), "utf-8");
+    const readmeDe = fs.readFileSync(path.join(repoRoot, "README_de.md"), "utf-8");
+
+    const siblingRepos = [
+      "ProFiler",
+      "ExplorerPro",
+      "WinStorePackager",
+      "DokuZen",
+      "PDFtoPDFocr",
+      "USR_PDFunlock",
+      "UniversalInvoiceMail",
+      "CleanMarkdown",
+      "safe-start-for-codex",
+      "automation-master",
+      "DevCenter",
+      "CodeBox",
+      "githubbot",
+      "swarm-ai",
+      "ellmos-core",
+      "open-bricks",
+    ];
+
+    for (const repo of siblingRepos) {
+      expect(readme).toContain(repo);
+      expect(readmeDe).toContain(repo);
+    }
+  });
+
+  it("verifies .gitignore patterns for sync conflicts, locks, and test caches", () => {
+    const gitignore = fs.readFileSync(path.join(repoRoot, ".gitignore"), "utf-8");
+
+    expect(gitignore).toContain("*.sync-conflict-*");
+    expect(gitignore).toContain("*.conflict");
+    expect(gitignore).toContain("*-CONFLIT-*");
+    expect(gitignore).toContain("LOCK*.txt");
+    expect(gitignore).toContain(".coverage");
+    expect(gitignore).toContain("coverage/");
+  });
+
+  it("validates package.json manifest fields and npm distribution files", () => {
+    const pkg = JSON.parse(fs.readFileSync(path.join(repoRoot, "package.json"), "utf-8")) as {
+      mcpName: string;
+      type: string;
+      main: string;
+      files: string[];
+    };
+
+    expect(pkg.mcpName).toBe("io.github.ellmos-ai/n8n-manager-mcp");
+    expect(pkg.type).toBe("module");
+    expect(pkg.main).toBe("dist/index.js");
+    expect(pkg.files).toContain("dist/");
+    expect(pkg.files).toContain("SECURITY.md");
+    expect(pkg.files).toContain("llms.txt");
+  });
+
+  it("verifies llms.txt timestamp, security reference, and tool inventory", () => {
+    const llmsTxt = fs.readFileSync(path.join(repoRoot, "llms.txt"), "utf-8");
+
+    expect(llmsTxt).toContain("Last-checked: 2026-08-25");
+    expect(llmsTxt).toContain("SECURITY.md");
+    expect(llmsTxt).toContain("io.github.ellmos-ai/n8n-manager-mcp");
+    expect(llmsTxt).toContain("19 tools covering complete n8n workflow management");
+  });
+
   it("verifies documentation badge synchronization and links across languages", () => {
     const readme = fs.readFileSync(path.join(repoRoot, "README.md"), "utf-8");
     const readmeDe = fs.readFileSync(path.join(repoRoot, "README_de.md"), "utf-8");
 
-    expect(readme).toContain("172%20passed");
-    expect(readmeDe).toContain("172%20passed");
+    expect(readme).toContain("178%20passed");
+    expect(readmeDe).toContain("178%20passed");
     expect(readme).toContain("README_de.md");
     expect(readmeDe).toContain("README.md");
     expect(readme).toContain("https://github.com/open-bricks");
     expect(readmeDe).toContain("https://github.com/open-bricks");
+    expect(readme).toContain("https://github.com/ellmos-ai");
+    expect(readmeDe).toContain("https://github.com/ellmos-ai");
   });
 });
-
