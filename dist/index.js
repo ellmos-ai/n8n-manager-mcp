@@ -6,7 +6,7 @@
  * Connects directly to n8n servers via REST API.
  *
  * @author Lukas Geiger
- * @version 0.1.16
+ * @version 0.1.17
  * @license MIT
  */
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
@@ -19,6 +19,7 @@ import * as fs from "fs/promises";
 import * as path from "path";
 import { homedir } from "os";
 import { isPathInside, resolveBackupPath, sanitizePathPart } from "./backup-paths.js";
+import { writeJsonFileAtomically } from "./config-store.js";
 import { resolveSafety } from "./safety.js";
 import { connectionIndexInputSchema, listBackupsLimitSchema, listExecutionsLimitSchema, listWorkflowsLimitSchema, MAX_CONNECTION_INDEX, MAX_LIST_LIMIT, } from "./input-validation.js";
 import { MANAGER_URL_ENV, ManagerUnavailable, fetchWorkflowHistory, formatHistory, formatWorkflowIndex, listManagerWorkflows, probeManager, resolveManagerUrl, } from "./manager-client.js";
@@ -48,7 +49,7 @@ async function loadConfig() {
 async function saveConfig(config) {
     await ensureConfigDir();
     const normalized = normalizeConfig(config);
-    await fs.writeFile(CONFIG_FILE, JSON.stringify(normalized, null, 2), "utf-8");
+    await writeJsonFileAtomically(CONFIG_FILE, normalized);
 }
 function normalizeConfig(config) {
     return {
@@ -275,7 +276,7 @@ async function n8nRequest(server, method, endpoint, body) {
 // ============================================================================
 const server = new McpServer({
     name: "n8n-manager-mcp",
-    version: "0.1.16",
+    version: "0.1.17",
 });
 server.tool("n8n_safety_status", "Show n8n Manager safety settings, backup directory, audit log location, and whether the optional n8n-workflow-manager seam is configured and reachable.", {}, async () => {
     const config = await loadConfig();

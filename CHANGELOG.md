@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.17] - 2026-08-27
+
+### Fixed
+- Write the local `servers.json` configuration atomically. An interrupted
+  configuration update can no longer leave a truncated file that causes the
+  MCP server to discard all configured n8n connections on its next start.
+- Add a regression test for replacing an existing configuration and cleaning
+  up the temporary write file.
+
 ## [0.1.16] - 2026-08-25
 
 ### Discoverability, README-Design & CI Concurrency Hardening (2026-08-25)

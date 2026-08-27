@@ -15,7 +15,7 @@ describe("metadata and manifest parity", () => {
     const glamaJson = JSON.parse(fs.readFileSync(path.join(repoRoot, "glama.json"), "utf-8")) as { version: string };
     const srcIndex = fs.readFileSync(path.join(repoRoot, "src", "index.ts"), "utf-8");
 
-    expect(pkg.version).toBe("0.1.16");
+    expect(pkg.version).toBe("0.1.17");
     expect(serverJson.version).toBe(pkg.version);
     expect(serverJson.packages?.[0]?.version).toBe(pkg.version);
     expect(glamaJson.version).toBe(pkg.version);
@@ -196,8 +196,8 @@ describe("metadata and manifest parity", () => {
     const readme = fs.readFileSync(path.join(repoRoot, "README.md"), "utf-8");
     const readmeDe = fs.readFileSync(path.join(repoRoot, "README_de.md"), "utf-8");
 
-    expect(readme).toContain("178%20passed");
-    expect(readmeDe).toContain("178%20passed");
+    expect(readme).toContain("179%20passed");
+    expect(readmeDe).toContain("179%20passed");
     expect(readme).toContain("README_de.md");
     expect(readmeDe).toContain("README.md");
     expect(readme).toContain("https://github.com/open-bricks");

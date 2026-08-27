@@ -6,7 +6,7 @@
  * Connects directly to n8n servers via REST API.
  *
  * @author Lukas Geiger
- * @version 0.1.16
+ * @version 0.1.17
  * @license MIT
  */
 
@@ -21,6 +21,7 @@ import * as fsSync from "fs";
 import * as path from "path";
 import { homedir } from "os";
 import { isPathInside, resolveBackupPath, sanitizePathPart } from "./backup-paths.js";
+import { writeJsonFileAtomically } from "./config-store.js";
 import { resolveSafety, type SafetySettings } from "./safety.js";
 import {
   connectionIndexInputSchema,
@@ -100,7 +101,7 @@ async function loadConfig(): Promise<ServerConfig> {
 async function saveConfig(config: ServerConfig): Promise<void> {
   await ensureConfigDir();
   const normalized = normalizeConfig(config);
-  await fs.writeFile(CONFIG_FILE, JSON.stringify(normalized, null, 2), "utf-8");
+  await writeJsonFileAtomically(CONFIG_FILE, normalized);
 }
 
 function normalizeConfig(config: Partial<ServerConfig>): ServerConfig {
@@ -348,7 +349,7 @@ async function n8nRequest(
 
 const server = new McpServer({
   name: "n8n-manager-mcp",
-  version: "0.1.16",
+  version: "0.1.17",
 });
 
 server.tool(
