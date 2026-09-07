@@ -48,8 +48,8 @@ graph TD
         C --> D["Safety Layer (Read-Only / Backups / Audit)"]
         C --> E["Multi-Server Manager"]
     end
-    E -->|REST API (API Key / Basic Auth)| F["n8n Instance 1 (Local)"]
-    E -->|REST API (API Key / Basic Auth)| G["n8n Instance 2 (Cloud / Remote)"]
+    E -->|"REST API (API Key / Basic Auth)"| F["n8n Instance 1 (Local)"]
+    E -->|"REST API (API Key / Basic Auth)"| G["n8n Instance 2 (Cloud / Remote)"]
     D --> H[("Local Store (~/.n8n-manager-mcp/)")]
 ```
 
