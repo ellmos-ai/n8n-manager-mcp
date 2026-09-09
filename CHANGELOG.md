@@ -2,9 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
-## [0.1.17] - 2026-08-27
+## [0.1.17] - 2026-09-09
 
-### Fixed
+### Repository Hygiene & Security Policy Parity (2026-09-09)
+- **Security Policy:** Upgraded `SECURITY.md` with official umbrella security contact (`security@open-bricks.org`) alongside `security@ellmos.ai`, `support@lukasgeiger.com`, and `lukas@open-bricks.org`, maintaining 48h response SLA and 5-business-day triage commitment.
+- **Repository Hygiene & .gitignore:** Hardened `.gitignore` against multi-host conflict copies (`*-conflict-*`, `*.sync-temp-*`), multi-agent locks (`LOCK.*`, `*.lock` with explicit `!package-lock.json` exemption), linter/test caches (`.pytest_cache/`, `.ruff_cache/`, `htmlcov/`, `.wheel-smoke/`, `wheelhouse/`), and temporary editor files (`*.tmp`, `*.bak`, `*.swp`, `*~`).
+- **Contract Test Suite:** Extended `test/metadata.test.ts` with contract tests verifying umbrella security contact `security@open-bricks.org`, hardened `.gitignore` rules, and synchronized metadata parity across all manifests (180 Vitest tests passing).
+- **Metadata & LLM Context:** Synchronized `llms.txt` Last-checked timestamp to `2026-09-09`, updated test verification status, and updated Shields.io test badge to `180 passed` across `README.md` and `README_de.md`.
+
+### Fixed (2026-08-27)
 - Write the local `servers.json` configuration atomically. An interrupted
   configuration update can no longer leave a truncated file that causes the
   MCP server to discard all configured n8n connections on its next start.

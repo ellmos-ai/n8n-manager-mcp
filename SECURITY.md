@@ -25,7 +25,7 @@ Wenn Sie eine Sicherheitslücke in **n8n-manager-mcp** finden, melden Sie diese 
 2. Tragen Sie Titel, Beschreibung, Schweregrad und betroffene Versionen ein
 3. Reichen Sie die Meldung privat ein
 
-Falls Private Vulnerability Reporting im Repository noch nicht aktiv ist, kontaktieren Sie das Sicherheitsteam direkt per E-Mail unter `security@ellmos.ai`, `support@lukasgeiger.com` oder `lukas@open-bricks.org` und veröffentlichen Sie keine Details in einem öffentlichen Issue.
+Falls Private Vulnerability Reporting im Repository noch nicht aktiv ist, kontaktieren Sie das Sicherheitsteam direkt per E-Mail unter `security@open-bricks.org`, `security@ellmos.ai`, `support@lukasgeiger.com` oder `lukas@open-bricks.org` und veröffentlichen Sie keine Details in einem öffentlichen Issue.
 
 ### Reaktionszeit & SLA
 
@@ -70,7 +70,7 @@ If you discover a security vulnerability in **n8n-manager-mcp**, please report i
 2. Fill out title, description, severity rating, and affected versions
 3. Submit privately (not visible to the public until resolved and disclosed)
 
-If Private Vulnerability Reporting is not yet active, please contact the security team directly via email at `security@ellmos.ai`, `support@lukasgeiger.com`, or `lukas@open-bricks.org`.
+If Private Vulnerability Reporting is not yet active, please contact the security team directly via email at `security@open-bricks.org`, `security@ellmos.ai`, `support@lukasgeiger.com`, or `lukas@open-bricks.org`.
 
 ### Response Timeline & SLA
 

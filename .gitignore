@@ -50,14 +50,30 @@ PLAN_*.txt
 .mcpregistry_*
 
 # Interne Multi-Agenten-Koordination (LOCK-System)
+LOCK.*
+*.lock
 LOCK*.txt
+!package-lock.json
 
 # Sync-Konflikte & Backup-Artefakte
 *.sync-conflict-*
 *.conflict
 *-CONFLIT-*
+*-conflict-*
+*.sync-temp-*
 
-# Test & Coverage Artefakte
+# Test, Linter & Coverage Artefakte
 .coverage
 coverage/
 *.lcov
+.pytest_cache/
+.ruff_cache/
+htmlcov/
+.wheel-smoke/
+wheelhouse/
+
+# Temporäre Dateien & Backups
+*.tmp
+*.bak
+*.swp
+*~

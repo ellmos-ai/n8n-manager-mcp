@@ -86,6 +86,7 @@ describe("metadata and manifest parity", () => {
     expect(secContent).toContain("`0.1.x`");
     expect(secContent).toContain("48 Stunden");
     expect(secContent).toContain("48 hours");
+    expect(secContent).toContain("security@open-bricks.org");
     expect(secContent).toContain("security@ellmos.ai");
     expect(secContent).toContain("support@lukasgeiger.com");
     expect(secContent).toContain("lukas@open-bricks.org");
@@ -162,9 +163,29 @@ describe("metadata and manifest parity", () => {
     expect(gitignore).toContain("*.sync-conflict-*");
     expect(gitignore).toContain("*.conflict");
     expect(gitignore).toContain("*-CONFLIT-*");
+    expect(gitignore).toContain("*-conflict-*");
+    expect(gitignore).toContain("*.sync-temp-*");
+    expect(gitignore).toContain("LOCK.*");
+    expect(gitignore).toContain("*.lock");
     expect(gitignore).toContain("LOCK*.txt");
+    expect(gitignore).toContain("!package-lock.json");
     expect(gitignore).toContain(".coverage");
     expect(gitignore).toContain("coverage/");
+    expect(gitignore).toContain(".pytest_cache/");
+    expect(gitignore).toContain(".ruff_cache/");
+    expect(gitignore).toContain(".wheel-smoke/");
+    expect(gitignore).toContain("wheelhouse/");
+    expect(gitignore).toContain("*.tmp");
+    expect(gitignore).toContain("*.bak");
+  });
+
+  it("verifies repository hygiene preserves package-lock.json while ignoring multi-agent locks and sync conflict copies", () => {
+    const gitignore = fs.readFileSync(path.join(repoRoot, ".gitignore"), "utf-8");
+
+    expect(gitignore).toMatch(/!\s*package-lock\.json/);
+    expect(gitignore).toMatch(/LOCK\.\*/);
+    expect(gitignore).toMatch(/\*\.sync-conflict-\*/);
+    expect(gitignore).toMatch(/\*-conflict-\*/);
   });
 
   it("validates package.json manifest fields and npm distribution files", () => {
@@ -186,7 +207,7 @@ describe("metadata and manifest parity", () => {
   it("verifies llms.txt timestamp, security reference, and tool inventory", () => {
     const llmsTxt = fs.readFileSync(path.join(repoRoot, "llms.txt"), "utf-8");
 
-    expect(llmsTxt).toContain("Last-checked: 2026-08-25");
+    expect(llmsTxt).toContain("Last-checked: 2026-09-09");
     expect(llmsTxt).toContain("SECURITY.md");
     expect(llmsTxt).toContain("io.github.ellmos-ai/n8n-manager-mcp");
     expect(llmsTxt).toContain("19 tools covering complete n8n workflow management");
@@ -196,8 +217,8 @@ describe("metadata and manifest parity", () => {
     const readme = fs.readFileSync(path.join(repoRoot, "README.md"), "utf-8");
     const readmeDe = fs.readFileSync(path.join(repoRoot, "README_de.md"), "utf-8");
 
-    expect(readme).toContain("179%20passed");
-    expect(readmeDe).toContain("179%20passed");
+    expect(readme).toContain("180%20passed");
+    expect(readmeDe).toContain("180%20passed");
     expect(readme).toContain("README_de.md");
     expect(readmeDe).toContain("README.md");
     expect(readme).toContain("https://github.com/open-bricks");
