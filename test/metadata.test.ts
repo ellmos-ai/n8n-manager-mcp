@@ -15,7 +15,7 @@ describe("metadata and manifest parity", () => {
     const glamaJson = JSON.parse(fs.readFileSync(path.join(repoRoot, "glama.json"), "utf-8")) as { version: string };
     const srcIndex = fs.readFileSync(path.join(repoRoot, "src", "index.ts"), "utf-8");
 
-    expect(pkg.version).toBe("0.1.17");
+    expect(pkg.version).toBe("0.1.18");
     expect(serverJson.version).toBe(pkg.version);
     expect(serverJson.packages?.[0]?.version).toBe(pkg.version);
     expect(glamaJson.version).toBe(pkg.version);
@@ -50,6 +50,8 @@ describe("metadata and manifest parity", () => {
       "README_de.md",
       "CHANGELOG.md",
       "SECURITY.md",
+      "THIRD_PARTY_LICENSES.md",
+      "MARKETING-LOG.txt",
       "LICENSE",
       ".gitignore",
     ];
@@ -110,6 +112,10 @@ describe("metadata and manifest parity", () => {
     expect(readmeDe).toContain("#verfügbare-tools");
     expect(readme).toContain("#ellmos-ai-ecosystem");
     expect(readmeDe).toContain("#ellmos-ai-ökosystem");
+    expect(readme).toContain("#third-party-licenses");
+    expect(readmeDe).toContain("#drittanbieter-lizenzen");
+    expect(readme).toContain("#changelog");
+    expect(readmeDe).toContain("#änderungsprotokoll");
   });
 
   it("verifies core capabilities and safety invariants tables across READMEs", () => {
@@ -202,13 +208,17 @@ describe("metadata and manifest parity", () => {
     expect(pkg.files).toContain("dist/");
     expect(pkg.files).toContain("SECURITY.md");
     expect(pkg.files).toContain("llms.txt");
+    expect(pkg.files).toContain("THIRD_PARTY_LICENSES.md");
+    expect(pkg.files).toContain("MARKETING-LOG.txt");
   });
 
   it("verifies llms.txt timestamp, security reference, and tool inventory", () => {
     const llmsTxt = fs.readFileSync(path.join(repoRoot, "llms.txt"), "utf-8");
 
-    expect(llmsTxt).toContain("Last-checked: 2026-09-09");
+    expect(llmsTxt).toContain("Last-checked: 2026-09-10");
     expect(llmsTxt).toContain("SECURITY.md");
+    expect(llmsTxt).toContain("THIRD_PARTY_LICENSES.md");
+    expect(llmsTxt).toContain("MARKETING-LOG.txt");
     expect(llmsTxt).toContain("io.github.ellmos-ai/n8n-manager-mcp");
     expect(llmsTxt).toContain("19 tools covering complete n8n workflow management");
   });
@@ -217,13 +227,69 @@ describe("metadata and manifest parity", () => {
     const readme = fs.readFileSync(path.join(repoRoot, "README.md"), "utf-8");
     const readmeDe = fs.readFileSync(path.join(repoRoot, "README_de.md"), "utf-8");
 
-    expect(readme).toContain("180%20passed");
-    expect(readmeDe).toContain("180%20passed");
+    expect(readme).toContain("183%20passed");
+    expect(readmeDe).toContain("183%20passed");
     expect(readme).toContain("README_de.md");
     expect(readmeDe).toContain("README.md");
     expect(readme).toContain("https://github.com/open-bricks");
     expect(readmeDe).toContain("https://github.com/open-bricks");
     expect(readme).toContain("https://github.com/ellmos-ai");
     expect(readmeDe).toContain("https://github.com/ellmos-ai");
+  });
+
+  it("verifies canonical invariant IDs INV-LOCAL-01 through INV-SLA-10 across documentation", () => {
+    const readme = fs.readFileSync(path.join(repoRoot, "README.md"), "utf-8");
+    const readmeDe = fs.readFileSync(path.join(repoRoot, "README_de.md"), "utf-8");
+    const marketingLog = fs.readFileSync(path.join(repoRoot, "MARKETING-LOG.txt"), "utf-8");
+
+    const expectedInvariants = [
+      "INV-LOCAL-01",
+      "INV-READ-02",
+      "INV-BACK-03",
+      "INV-AUDIT-04",
+      "INV-SRV-05",
+      "INV-TRAV-06",
+      "INV-PRIV-07",
+      "INV-SEAM-08",
+      "INV-NODE-09",
+      "INV-SLA-10",
+    ];
+
+    for (const inv of expectedInvariants) {
+      expect(readme, `README.md missing invariant ${inv}`).toContain(inv);
+      expect(readmeDe, `README_de.md missing invariant ${inv}`).toContain(inv);
+      expect(marketingLog, `MARKETING-LOG.txt missing invariant ${inv}`).toContain(inv);
+    }
+  });
+
+  it("verifies Dual-Mermaid diagrams across READMEs", () => {
+    const readme = fs.readFileSync(path.join(repoRoot, "README.md"), "utf-8");
+    const readmeDe = fs.readFileSync(path.join(repoRoot, "README_de.md"), "utf-8");
+
+    for (const doc of [readme, readmeDe]) {
+      expect(doc).toMatch(/(?:flowchart|graph)\s+TD/);
+      expect(doc).toContain("sequenceDiagram");
+      expect(doc).toContain("autonumber");
+      expect(doc).toContain("INV-BACK-03");
+      expect(doc).toContain("INV-READ-02");
+    }
+  });
+
+  it("verifies THIRD_PARTY_LICENSES.md and MARKETING-LOG.txt content integrity", () => {
+    const licenses = fs.readFileSync(path.join(repoRoot, "THIRD_PARTY_LICENSES.md"), "utf-8");
+    const marketing = fs.readFileSync(path.join(repoRoot, "MARKETING-LOG.txt"), "utf-8");
+
+    expect(licenses).toContain("@modelcontextprotocol/sdk");
+    expect(licenses).toContain("zod");
+    expect(licenses).toContain("update-notifier");
+    expect(licenses).toContain("Apache-2.0");
+    expect(licenses).toContain("BSD-2-Clause");
+    expect(licenses).toContain("MIT");
+
+    expect(marketing).toContain("[PERSONA-1]");
+    expect(marketing).toContain("[PERSONA-2]");
+    expect(marketing).toContain("[PERSONA-3]");
+    expect(marketing).toContain("[PERSONA-4]");
+    expect(marketing).toContain("THREE-PHASE DISCOVERABILITY ROADMAP");
   });
 });

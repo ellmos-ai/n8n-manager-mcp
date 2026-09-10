@@ -84,6 +84,8 @@ describe("repository hygiene", () => {
       "README.md",
       "README_de.md",
       "CHANGELOG.md",
+      "THIRD_PARTY_LICENSES.md",
+      "MARKETING-LOG.txt",
       "server.json",
       "glama.json",
       "smithery.yaml",

@@ -1,0 +1,123 @@
+# ==============================================================================
+# n8n-manager-mcp: MARKETING & DISCOVERABILITY LOG
+# ==============================================================================
+# Repository:   ellmos-ai/n8n-manager-mcp
+# Organization: ellmos-ai (Parent: https://github.com/ellmos-ai)
+# Umbrella:     open-bricks (https://github.com/open-bricks)
+# Namespace:    io.github.ellmos-ai/n8n-manager-mcp
+# NPM Package:  n8n-manager-mcp
+# Author:       Lukas Geiger
+# License:      MIT
+# Last Updated: 2026-09-10
+# ==============================================================================
+
+1. PRODUCT POSITIONING & VALUE PROPOSITION
+------------------------------------------------------------------------------
+n8n-manager-mcp is the enterprise-grade, local-first Model Context Protocol (MCP)
+server designed specifically for AI assistants (Claude Code, Claude Desktop,
+Cursor, Windsurf) to manage, build, test, and inspect n8n workflows end-to-end.
+
+Unlike raw API wrappers, n8n-manager-mcp provides:
+- A standardized 19-tool MCP surface covering full workflow lifecycle operations.
+- Zero external runtime telemetry and 100% local stdio IPC transport.
+- Monotonic read-only safety gates (N8N_MANAGER_READ_ONLY=1) immune to tool override.
+- Automated pre-mutation JSON snapshots with 1-click local rollback.
+- Multi-server credential isolation across local and cloud n8n instances.
+- Comprehensive offline node catalog for zero-latency node discovery.
+
+2. TARGET PERSONAS & USER SEGMENTS
+------------------------------------------------------------------------------
+[PERSONA-1] Autonomous AI Agent Engineers & Prompt Developers
+- Context: Engineers equipping LLM agents (Claude Code, Cursor, Windsurf) with
+  autonomous orchestration capabilities.
+- Pain Point: LLMs generating broken workflow JSON, deleting workflows without
+  backups, or guessing node connection parameters.
+- Solution: Built-in n8n_describe_nodes catalog, automatic pre-mutation backups,
+  and robust error diagnostics via stdio.
+
+[PERSONA-2] DevOps & Multi-Instance Workflow Architects
+- Context: Platform teams managing multiple n8n environments (e.g. dev, staging,
+  production).
+- Pain Point: Tedious manual JSON exports, import errors, and secret leaks across
+  instances.
+- Solution: Multi-server management (n8n_add_server, n8n_list_servers, n8n_ping_server),
+  atomic server config storage, and seamless export/import pipelines.
+
+[PERSONA-3] Compliance, SecOps & Enterprise Risk Officers
+- Context: Security teams overseeing developer tools and autonomous agent actions.
+- Pain Point: Accidental deletion of production workflows or unauthorized modifications.
+- Solution: Process-level read-only ceiling (N8N_MANAGER_READ_ONLY=1), append-only
+  audit trail (~/.n8n-manager-mcp/audit.log), and path traversal guards.
+
+[PERSONA-4] Open-Source Ecosystem & MCP Integrators
+- Context: Developers building and cataloging MCP servers for Glama, Smithery,
+  PulseMCP, and Enterprise DNA.
+- Pain Point: Inconsistent manifests, missing license inventories, and lack of CI
+  contract tests.
+- Solution: Validated server.json, glama.json, smithery.yaml, bilingual documentation,
+  and automated contract test suites in Vitest.
+
+3. GOVERNANCE & RUNTIME INVARIANTS
+------------------------------------------------------------------------------
+- INV-LOCAL-01: 100% Local-First & Zero-Egress Stdio Protocol
+  Transport operates purely over local stdio streams; zero telemetry or telemetry
+  beacons; credentials stored locally under ~/.n8n-manager-mcp/.
+- INV-READ-02: Monotonic Read-Only Enforcement
+  N8N_MANAGER_READ_ONLY=1 establishes an immutable process-level ceiling that
+  fails closed against any workflow creation, update, deletion, or restore.
+- INV-BACK-03: Automated Pre-Mutation Backups
+  Full workflow JSON snapshots are automatically captured under
+  ~/.n8n-manager-mcp/backups/ before any mutation or deletion occurs.
+- INV-AUDIT-04: Local Forensic Audit Trail
+  Every operation (invoked tool, server target, workflow ID, outcome, error) is
+  recorded in append-only structured JSON log ~/.n8n-manager-mcp/audit.log.
+- INV-SRV-05: Multi-Server & Isolated Credentials
+  Server configurations are written atomically to servers.json with strict URL
+  validation, whitespace rejection, and isolated authorization headers.
+- INV-TRAV-06: Strict Input & Path Traversal Guard
+  All user inputs and backup paths are validated with bounded limits (1..1000)
+  and realpath containment checks against directory traversal and symlink escapes.
+- INV-PRIV-07: Non-Elevation & User-Space Security
+  Executes purely in unprivileged user space without requiring root or
+  administrative elevation.
+- INV-SEAM-08: Opt-In Decision History Seam
+  Optional adapter to n8n-workflow-manager via N8N_MCP_MANAGER_URL; fails fast
+  and cleanly without corrupting standard MCP operations when absent.
+- INV-NODE-09: Built-in Offline Node Catalog & Introspection
+  Offline node type catalog (triggers, actions, logic, transform, AI) accessible
+  via n8n_describe_nodes for instant context ingestion without network latency.
+- INV-SLA-10: Multi-OS CI & 48h Security Response SLA
+  Automated multi-node CI (Node 20, 22) with concurrency cancellation and public
+  48h security response / 5-day triage commitment.
+
+4. SIBLING ECOSYSTEM PARTNER MATRIX (16 REPOSITORIES)
+------------------------------------------------------------------------------
+The ellmos-ai and open-bricks suites provide coordinated local-first tools:
+1. file-bricks/ProFiler: Advanced file and asset management workbench
+2. file-bricks/ExplorerPro: Tabbed, filterable file manager with smart batch processing
+3. file-bricks/WinStorePackager: MSIX packaging and Windows Store release preparation
+4. doc-bricks/DokuZen: Offline Markdown editor and live preview workbench
+5. doc-bricks/PDFtoPDFocr: Offline OCR pipeline converting scanned PDF documents
+6. doc-bricks/USR_PDFunlock: Password recovery tool for protected PDF archives
+7. doc-bricks/UniversalInvoiceMail: Automated invoice extraction and email processing
+8. doc-bricks/CleanMarkdown: Lossless formatting and typography cleanup for markdown
+9. dev-bricks/safe-start-for-codex: Fast, reliable agent bootstrap and environment runner
+10. dev-bricks/automation-master: Central multi-host automation orchestrator
+11. dev-bricks/DevCenter: Unified developer workspace dashboard
+12. dev-bricks/CodeBox: Sandboxed multi-language tool execution environment
+13. dev-bricks/githubbot: Automated multi-org repository maintenance engine
+14. ellmos-ai/swarm-ai: Distributed multi-agent swarming framework with stigmergy
+15. ellmos-ai/ellmos-core: Enterprise AI agent backend and hybrid RAG
+16. open-bricks/open-bricks: Umbrella portal and catalog across all software products
+
+5. THREE-PHASE DISCOVERABILITY ROADMAP
+------------------------------------------------------------------------------
+- Phase 1 (Registries & Manifest Parity):
+  Complete npm distribution, Glama, Smithery, and PulseMCP metadata alignment;
+  100% manifest consistency between package.json, server.json, and glama.json.
+- Phase 2 (Technical Architecture & Guides):
+  Bilingual READMEs (English & German), interactive Dual-Mermaid diagrams,
+  comprehensive Third-Party Licenses inventory, and machine-readable llms.txt.
+- Phase 3 (Ecosystem Interoperability & Community):
+  Seamless integration with open-compute, BACH, and agent orchestration tools;
+  automated regression testing on every pull request and release tag.

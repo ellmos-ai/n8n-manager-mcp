@@ -7,7 +7,7 @@
 *Teil der [ellmos-ai](https://github.com/ellmos-ai)-Familie und des [open-bricks](https://github.com/open-bricks)-Dachverbunds.*
 
 [![npm](https://img.shields.io/npm/v/n8n-manager-mcp.svg)](https://www.npmjs.com/package/n8n-manager-mcp)
-[![Tests](https://img.shields.io/badge/Tests-180%20passed-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
+[![Tests](https://img.shields.io/badge/Tests-183%20passed-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
 [![MCP Tools](https://img.shields.io/badge/MCP%20Tools-19%20tools-blue.svg)](https://github.com/ellmos-ai/n8n-manager-mcp)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D20-blue.svg)](https://nodejs.org)
 [![Sicherheit](https://img.shields.io/badge/Sicherheit-Backups%20%7C%20Audit%20%7C%20Read--Only-success.svg)](SECURITY.md)
@@ -24,7 +24,7 @@ MCP-Server (Model Context Protocol) zur Verwaltung von n8n-Workflows über KI-As
 
 ## Schnellnavigation
 
-- [Überblick & Architektur](#systemarchitektur)
+- [Systemarchitektur](#systemarchitektur)
 - [Verzeichnis-Status](#verzeichnis-status)
 - [Kernfähigkeiten & Sicherheitsinvarianten](#kernfähigkeiten--sicherheitsinvarianten)
 - [Funktionen](#funktionen)
@@ -34,23 +34,60 @@ MCP-Server (Model Context Protocol) zur Verwaltung von n8n-Workflows über KI-As
 - [Optional: Anbindung an den n8n-workflow-manager](#optional-anbindung-an-den-n8n-workflow-manager)
 - [Konfiguration & Sicherheitsstandard](#konfiguration)
 - [Entwicklung & Tests](#entwicklung)
-- [Verwandte Projekte](#verwandte-projekte)
-- [ellmos-ai-Ökosystem](#ellmos-ai-ökosystem)
+- [Geschwisterprojekte & Ökosystem-Matrix](#ellmos-ai-ökosystem)
+- [Drittanbieter-Lizenzen & Hinweise](#drittanbieter-lizenzen)
+- [Änderungsprotokoll](#änderungsprotokoll)
 - [Haftung & Lizenz](#haftung--liability)
 
 ## Systemarchitektur
 
+### Komponenten-Architektur
+
 ```mermaid
-graph TD
-    A["KI-Client (Claude / Cursor / Windsurf)"] -->|MCP-Stdio-Protokoll| B["n8n Manager MCP Server"]
-    subgraph "n8n Manager MCP Server"
-        B --> C["Werkzeug-Router (19 Tools)"]
-        C --> D["Sicherheitsschicht (Read-Only / Backups / Audit)"]
-        C --> E["Multi-Server-Verwaltung"]
+flowchart TD
+    Client["KI-Client (Claude Code / Desktop / Cursor / Windsurf)"] -->|MCP-Stdio-Protokoll (JSON-RPC 2.0)| Router["Werkzeug-Router (19 Tools)"]
+    subgraph MCPServer["n8n Manager MCP Server (Lokaler Stdio-Prozess)"]
+        Router --> Safety["Sicherheitsschicht (Read-Only-Gate & Traversal-Schutz)"]
+        Safety --> Backup["Pre-Mutation-Snapshot-Engine"]
+        Safety --> MultiServer["Multi-Server-Verwaltung"]
+        Safety --> Catalog["Integrierter Node-Katalog (n8n_describe_nodes)"]
+        Backup --> Audit["Append-Only-Audit-Logger"]
     end
-    E -->|"REST API (API Key / Basic Auth)"| F["n8n-Instanz 1 (Lokal)"]
-    E -->|"REST API (API Key / Basic Auth)"| G["n8n-Instanz 2 (Cloud / Remote)"]
-    D --> H[("Lokaler Speicher (~/.n8n-manager-mcp/)")]
+    MultiServer -->|"REST API (API Key / Auth Header)"| LocalInst["Lokale n8n-Instanz (127.0.0.1:5678)"]
+    MultiServer -->|"REST API (HTTPS / Token)"| CloudInst["Remote- / Cloud-n8n-Instanz"]
+    Backup --> BackupFS[("Backups (~/.n8n-manager-mcp/backups/)")]
+    Audit --> AuditFS[("Audit-Log (~/.n8n-manager-mcp/audit.log)")]
+```
+
+### Sicherer Workflow-Mutations-Lebenszyklus
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor AI as KI-Assistent (Claude / Cursor)
+    participant MCP as n8n-manager-mcp Router
+    participant Safety as Sicherheits- & Read-Only-Gate
+    participant Snapshot as Backup-Engine
+    participant Store as Lokaler Speicher (~/.n8n-manager-mcp)
+    participant N8N as n8n REST API Instanz
+    participant Audit as Forensischer Audit-Logger
+
+    AI->>MCP: Mutations-Tool aufrufen (n8n_update_workflow / n8n_delete_workflow)
+    MCP->>Safety: N8N_MANAGER_READ_ONLY prüfen
+    alt Read-Only aktiv (INV-READ-02)
+        Safety-->>AI: Blockiert: Read-Only-Modus aktiv (Fail-Closed)
+        Safety->>Audit: Blockierten Mutationsversuch aufzeichnen
+    else Mutation zulässig
+        Safety->>Snapshot: Pre-Mutation-Snapshot auslösen (INV-BACK-03)
+        Snapshot->>N8N: GET /workflows/{id} (Aktuellen Zustand abrufen)
+        N8N-->>Snapshot: Aktuelles Workflow-JSON
+        Snapshot->>Store: Zeitgestempeltes Backup speichern (~/backups/{server}/{id}-{timestamp}.json)
+        Snapshot-->>Safety: Backup verifiziert & Pfad aufgelöst
+        Safety->>N8N: Mutation ausführen (PUT / DELETE / PATCH)
+        N8N-->>Safety: Mutations-Antwort (200 OK / Aktualisierte ID)
+        Safety->>Audit: Strukturierten forensischen Beleg anhängen (INV-AUDIT-04)
+        Safety-->>AI: Erfolgsantwort mit Backup-Pfad & Rollback-Beleg
+    end
 ```
 
 ## Verzeichnis-Status
@@ -64,18 +101,18 @@ graph TD
 
 ## Kernfähigkeiten & Sicherheitsinvarianten
 
-| Fähigkeit / Invariante | Technische Garantie | Anwendervorteil |
-| :--- | :--- | :--- |
-| **100% Local-First & Zero-Egress** | MCP-Stdio-Transport; standardmäßig nur an `127.0.0.1` gebunden; keine externe Telemetrie | Vollständige Privatsphäre; keine Workflow-Logik oder Zugangsdaten verlassen das lokale System |
-| **Monotones Read-Only-Schutzgating** | `N8N_MANAGER_READ_ONLY=1` erzwingt eine prozessweite Obergrenze gegen Werkzeug-Overrides | Verlässlicher Schutz gegen versehentliches Löschen oder Ändern kritischer Produktions-Workflows |
-| **Automatische Pre-Mutation-Backups** | Vollständige JSON-Snapshots unter `~/.n8n-manager-mcp/backups/` vor Update/Löschen | 1-Klick-Wiederherstellung über `n8n_restore_workflow` nach Fehlern oder ungewollten Änderungen |
-| **Lokale Audit-Protokollierung** | Strukturierter JSON-Audit-Trail im Append-Only-Format unter `~/.n8n-manager-mcp/audit.log` | Lückenlose forensische Nachvollziehbarkeit aller Agentenaktionen und Ausführungsergebnisse |
-| **Multi-Server & Zugangsdaten-Isolation** | Isolierte Server-Konfigurationen in `servers.json`; API-Key-Whitespace-Validierung | Mühelose Workflow-Migration zwischen Entwicklungs-, Staging- und Produktiv-Instanzen |
-| **Strikte Eingabe- & Pfadtraversal-Sperre** | Feste Limits (1..1000), Verbindungsindizes (0..1000), Abweisung von Pfadausbrüchen | Resistent gegen Directory-Traversal-Angriffe, Prototype-Pollution und fehlerhafte Payloads |
-| **Non-Elevation & User-Space-Sicherheit** | Ausführung ausschließlich im unprivilegierten Benutzerkontext | Keine Administrator- oder Root-Rechte für lokalen Betrieb oder CI-Pipelines erforderlich |
-| **Opt-In Decision-History-Seam** | Sauberer Adapter zu `n8n-workflow-manager` via `N8N_MCP_MANAGER_URL`; explizites Fail-Fast | Verbindet menschliche Entscheidungsdokumentation mit MCP ohne Seiteneffekte im Standardmodus |
-| **Integrierter Node-Katalog & Introspektion** | Umfassender Offline-Katalog für Trigger-, Action-, Logic-, Transform- und KI-Nodes | LLMs generieren valide Node-Verbindungen ohne zeitraubende API-Netzwerk-Trial-and-Error-Aufrufe |
-| **Multi-Node & Multi-OS CI-Matrix** | Automatisierte GitHub Actions CI auf Node.js 20, 22 mit Concurrency-Abbruch | Garantiert dauerhafte Plattformstabilität und regressionsfreie Verteilbarkeit |
+| Invarianten-ID | Fähigkeit / Invariante | Technische Garantie | Anwendervorteil |
+| :--- | :--- | :--- | :--- |
+| `INV-LOCAL-01` | **100% Local-First & Zero-Egress** | MCP-Stdio-Transport; standardmäßig nur an `127.0.0.1` gebunden; keine externe Telemetrie | Vollständige Privatsphäre; keine Workflow-Logik oder Zugangsdaten verlassen das lokale System |
+| `INV-READ-02` | **Monotones Read-Only-Schutzgating** | `N8N_MANAGER_READ_ONLY=1` erzwingt eine prozessweite Obergrenze gegen Werkzeug-Overrides | Verlässlicher Schutz gegen versehentliches Löschen oder Ändern kritischer Produktions-Workflows |
+| `INV-BACK-03` | **Automatische Pre-Mutation-Backups** | Vollständige JSON-Snapshots unter `~/.n8n-manager-mcp/backups/` vor Update/Löschen | 1-Klick-Wiederherstellung über `n8n_restore_workflow` nach Fehlern oder ungewollten Änderungen |
+| `INV-AUDIT-04` | **Lokale Audit-Protokollierung** | Strukturierter JSON-Audit-Trail im Append-Only-Format unter `~/.n8n-manager-mcp/audit.log` | Lückenlose forensische Nachvollziehbarkeit aller Agentenaktionen und Ausführungsergebnisse |
+| `INV-SRV-05` | **Multi-Server & Zugangsdaten-Isolation** | Isolierte Server-Konfigurationen in `servers.json`; API-Key-Whitespace-Validierung | Mühelose Workflow-Migration zwischen Entwicklungs-, Staging- und Produktiv-Instanzen |
+| `INV-TRAV-06` | **Strikte Eingabe- & Pfadtraversal-Sperre** | Feste Limits (1..1000), Verbindungsindizes (0..1000), Abweisung von Pfadausbrüchen | Resistent gegen Directory-Traversal-Angriffe, Prototype-Pollution und fehlerhafte Payloads |
+| `INV-PRIV-07` | **Non-Elevation & User-Space-Sicherheit** | Ausführung ausschließlich im unprivilegierten Benutzerkontext | Keine Administrator- oder Root-Rechte für lokalen Betrieb oder CI-Pipelines erforderlich |
+| `INV-SEAM-08` | **Opt-In Decision-History-Seam** | Sauberer Adapter zu `n8n-workflow-manager` via `N8N_MCP_MANAGER_URL`; explizites Fail-Fast | Verbindet menschliche Entscheidungsdokumentation mit MCP ohne Seiteneffekte im Standardmodus |
+| `INV-NODE-09` | **Integrierter Node-Katalog & Introspektion** | Umfassender Offline-Katalog für Trigger-, Action-, Logic-, Transform- und KI-Nodes | LLMs generieren valide Node-Verbindungen ohne zeitraubende API-Netzwerk-Trial-and-Error-Aufrufe |
+| `INV-SLA-10` | **Multi-Node CI & 48h Sicherheits-SLA** | Automatisierte GitHub Actions CI auf Node.js 20, 22 mit Concurrency-Abbruch; 48h Antwort- / 5-Tage-Triage-Zusage | Garantiert dauerhafte Plattformstabilität, verifizierte Sicherheits-Reaktionszeit und regressionsfreie Verteilbarkeit |
 
 ## Funktionen
 
@@ -293,6 +330,19 @@ Unsere Partnerorganisation **[open-bricks](https://github.com/open-bricks)** und
 | **[swarm-ai](https://github.com/ellmos-ai/swarm-ai)** | `ellmos-ai` | Verteiltes Multi-Agenten-Schwarm-Framework mit Stigmergie-Koordination |
 | **[ellmos-core](https://github.com/ellmos-ai/ellmos-core)** | `ellmos-ai` | Enterprise KI-Agenten-Backend, hybrides RAG und mandantenfähige Sicherheit |
 | **[open-bricks](https://github.com/open-bricks)** | `open-bricks` | Dachportal und Katalog für alle lokalen KI-Softwareprodukte |
+
+## Drittanbieter-Lizenzen
+
+Dieses Projekt steht unter der [MIT-Lizenz](LICENSE).
+Eine vollständige Aufstellung aller direkten Laufzeit-, Entwicklungs- und transitiven Open-Source-Abhängigkeiten sowie deren jeweilige permissive Lizenzen (MIT, Apache-2.0, BSD-2-Clause, BSD-3-Clause) ist in [`THIRD_PARTY_LICENSES.md`](THIRD_PARTY_LICENSES.md) dokumentiert.
+
+## Marketing- & Zielgruppen-Log
+
+Produktpositionierung, Zielgruppen-Personas, Governance-Invarianten-Zuordnung sowie die 3-Phasen-Discoverability-Roadmap sind im [`MARKETING-LOG.txt`](MARKETING-LOG.txt) hinterlegt.
+
+## Änderungsprotokoll
+
+Vollständige Versionshistorie, Release-Notizen und Migrationsschritte sind im [`CHANGELOG.md`](CHANGELOG.md) aufgeführt.
 
 ## Haftung / Liability
 

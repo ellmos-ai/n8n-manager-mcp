@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.18] - 2026-09-10
+
+### Discoverability, Dual Mermaid Architecture, Invariants & Licensing (2026-09-10)
+- **Third-Party Licenses Inventory:** Added comprehensive [`THIRD_PARTY_LICENSES.md`](THIRD_PARTY_LICENSES.md) documenting runtime dependencies (`@modelcontextprotocol/sdk` v1.29.0 MIT, `zod` v3.23.8 MIT, `update-notifier` v7.3.1 BSD-2-Clause), development tooling (`typescript` Apache-2.0, `vitest` MIT, `@types/node` MIT), overrides/transitifs (`hono`, `nanoid`, `fast-uri`, `express-rate-limit`, `ip-address`, `qs`), and permissive open-source compatibility statements.
+- **Marketing & Personas Log:** Added [`MARKETING-LOG.txt`](MARKETING-LOG.txt) covering core positioning, 4 target user personas (Autonomous Agent Engineers, DevOps/Enterprise Architects, SecOps/Compliance Teams, Open-Source MCP Integrators), 10 runtime invariants (`INV-LOCAL-01` to `INV-SLA-10`), sibling matrix (16 tools), and 3-phase discoverability roadmap.
+- **Dual-Mermaid Architecture Diagrams:** Enhanced `README.md` and `README_de.md` with dual diagrams: Component Architecture (`flowchart TD`) and Safe Workflow Mutation Lifecycle (`sequenceDiagram`) with step-by-step pre-mutation snapshot and audit trail visualization.
+- **Formal Invariant Identifiers:** Standardized Core Capabilities table with canonical invariant IDs (`INV-LOCAL-01` through `INV-SLA-10`) across German and English documentation.
+- **Quick Navigation & Section Parity:** Upgraded navigation to 14-point mirrored jump links in both `README.md` and `README_de.md`, adding direct anchors for Third-Party Licenses, Marketing Log, and Changelog.
+- **Package Manifest Files Whitelist:** Updated `package.json` `files` array to distribute `THIRD_PARTY_LICENSES.md` and `MARKETING-LOG.txt` alongside server distributions.
+- **Version Bump & Manifest Parity:** Bumped version to `0.1.18` across `package.json`, `server.json` (root and packages), `glama.json`, and `src/index.ts`.
+- **Contract Test Suite Expansion:** Extended `test/metadata.test.ts` to validate presence and schema of `THIRD_PARTY_LICENSES.md`, `MARKETING-LOG.txt`, invariant IDs (`INV-LOCAL-01`..`INV-SLA-10`), dual Mermaid diagrams, and package distribution manifests.
+
 ## [0.1.17] - 2026-09-09
 
 ### Repository Hygiene & Security Policy Parity (2026-09-09)

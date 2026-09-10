@@ -1,6 +1,6 @@
 {
   "name": "n8n-manager-mcp",
-  "version": "0.1.17",
+  "version": "0.1.18",
   "mcpName": "io.github.ellmos-ai/n8n-manager-mcp",
   "description": "MCP server for n8n workflow management -- view, create, sync, and manage n8n workflows via AI assistants",
   "type": "module",
@@ -14,6 +14,8 @@
     "README.md",
     "README_de.md",
     "CHANGELOG.md",
+    "THIRD_PARTY_LICENSES.md",
+    "MARKETING-LOG.txt",
     "server.json",
     "glama.json",
     "smithery.yaml",
