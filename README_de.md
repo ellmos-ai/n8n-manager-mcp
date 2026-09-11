@@ -45,7 +45,7 @@ MCP-Server (Model Context Protocol) zur Verwaltung von n8n-Workflows über KI-As
 
 ```mermaid
 flowchart TD
-    Client["KI-Client (Claude Code / Desktop / Cursor / Windsurf)"] -->|MCP-Stdio-Protokoll (JSON-RPC 2.0)| Router["Werkzeug-Router (19 Tools)"]
+    Client["KI-Client (Claude Code / Desktop / Cursor / Windsurf)"] -->|"MCP-Stdio-Protokoll (JSON-RPC 2.0)"| Router["Werkzeug-Router (19 Tools)"]
     subgraph MCPServer["n8n Manager MCP Server (Lokaler Stdio-Prozess)"]
         Router --> Safety["Sicherheitsschicht (Read-Only-Gate & Traversal-Schutz)"]
         Safety --> Backup["Pre-Mutation-Snapshot-Engine"]

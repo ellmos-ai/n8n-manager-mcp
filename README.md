@@ -45,7 +45,7 @@ MCP (Model Context Protocol) server for managing n8n workflows via AI assistants
 
 ```mermaid
 flowchart TD
-    Client["AI Client (Claude Code / Desktop / Cursor / Windsurf)"] -->|MCP Stdio Protocol (JSON-RPC 2.0)| Router["Tool Router (19 Tools)"]
+    Client["AI Client (Claude Code / Desktop / Cursor / Windsurf)"] -->|"MCP Stdio Protocol (JSON-RPC 2.0)"| Router["Tool Router (19 Tools)"]
     subgraph MCPServer["n8n Manager MCP Server (Local Stdio Process)"]
         Router --> Safety["Safety Layer (Read-Only Gate & Traversal Guard)"]
         Safety --> Backup["Pre-Mutation Snapshot Engine"]
