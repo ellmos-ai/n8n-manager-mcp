@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.19] - 2026-09-12
+
+### Discoverability, 16-Point Navigation, Comparative Matrix & Transparency (2026-09-12)
+- **16-Point Quick Navigation & Anchor Parity:** Upgraded documentation navigation to a fully indexed 16-point table in both English (`README.md`) and German (`README_de.md`) with 100% mutual anchor parity (`#target-personas--discoverability` / `#zielgruppen--auffindbarkeit`, `#comparative-matrix--alternatives` / `#vergleichsmatrix--alternativen`, `#third-party-licenses--transparency` / `#drittanbieter-lizenzen--transparenz`).
+- **Target Personas & Discoverability:** Added dedicated persona mappings covering 4 primary user archetypes (Autonomous AI Agents & Swarms, DevOps & Multi-Environment Engineers, SecOps & Enterprise Compliance Teams, Open-Source Ecosystem Integrators) with core requirements, solved pain points, and dual-language high-intent discovery terms.
+- **10-Dimension Comparative Matrix:** Added comprehensive comparative evaluation contrasting `n8n-manager-mcp` against 4 alternatives (Direct n8n REST API via Curl/Axios, Standard Agent Shell/CLI scripts, Manual n8n Web Canvas UI, and Generic Cloud SaaS Wrappers) across 10 critical operational dimensions (Interface, Safety Guardrails, Mutation Snapshots, Rollback Facility, Forensic Audit Log, Node Introspection, Multi-Server Isolation, Zero-Egress Privacy, Workflow Migration, and Permissive Licensing).
+- **Third-Party Transparency & Auditing:** Added dedicated Third-Party Licenses & Transparency section in both READMEs summarizing direct runtime dependencies, 100% permissive license composition (MIT, BSD-2-Clause, Apache-2.0), zero external telemetry commitment, and zero AGPL/copyleft dependencies.
+- **Marketing Log & Keyword Matrix Expansion:** Updated [`MARKETING-LOG.txt`](MARKETING-LOG.txt) with dual-language keyword matrix, 5-way comparative matrix, roadmap milestone completions, and updated timestamp.
+- **Version Bump & Manifest Parity:** Bumped version to `0.1.19` across `package.json`, `server.json` (root and packages array), `glama.json`, and `src/index.ts`.
+- **Machine-Readable LLM Context:** Updated [`llms.txt`](llms.txt) with version `0.1.19`, Last-checked date `2026-09-12`, 16-point navigation overview, and architecture links.
+- **Contract Test Suite Expansion:** Extended `test/metadata.test.ts` to assert version `0.1.19`, 16-point navigation anchors, comparative matrix dimensions, and target persona definitions.
+
 ## [0.1.18] - 2026-09-10
 
 ### Discoverability, Dual Mermaid Architecture, Invariants & Licensing (2026-09-10)

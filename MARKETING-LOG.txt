@@ -8,7 +8,8 @@
 # NPM Package:  n8n-manager-mcp
 # Author:       Lukas Geiger
 # License:      MIT
-# Last Updated: 2026-09-10
+# Version:      0.1.19
+# Last Updated: 2026-09-12
 # ==============================================================================
 
 1. PRODUCT POSITIONING & VALUE PROPOSITION
@@ -17,7 +18,7 @@ n8n-manager-mcp is the enterprise-grade, local-first Model Context Protocol (MCP
 server designed specifically for AI assistants (Claude Code, Claude Desktop,
 Cursor, Windsurf) to manage, build, test, and inspect n8n workflows end-to-end.
 
-Unlike raw API wrappers, n8n-manager-mcp provides:
+Unlike raw API wrappers or ad-hoc shell scripts, n8n-manager-mcp provides:
 - A standardized 19-tool MCP surface covering full workflow lifecycle operations.
 - Zero external runtime telemetry and 100% local stdio IPC transport.
 - Monotonic read-only safety gates (N8N_MANAGER_READ_ONLY=1) immune to tool override.
@@ -34,6 +35,7 @@ Unlike raw API wrappers, n8n-manager-mcp provides:
   backups, or guessing node connection parameters.
 - Solution: Built-in n8n_describe_nodes catalog, automatic pre-mutation backups,
   and robust error diagnostics via stdio.
+- Discovery Terms: `n8n mcp server`, `ai agent n8n workflow management`, `claude n8n automation`
 
 [PERSONA-2] DevOps & Multi-Instance Workflow Architects
 - Context: Platform teams managing multiple n8n environments (e.g. dev, staging,
@@ -42,12 +44,14 @@ Unlike raw API wrappers, n8n-manager-mcp provides:
   instances.
 - Solution: Multi-server management (n8n_add_server, n8n_list_servers, n8n_ping_server),
   atomic server config storage, and seamless export/import pipelines.
+- Discovery Terms: `n8n multi-server mcp`, `sync n8n workflows staging prod`, `n8n workflow export import mcp`
 
 [PERSONA-3] Compliance, SecOps & Enterprise Risk Officers
 - Context: Security teams overseeing developer tools and autonomous agent actions.
 - Pain Point: Accidental deletion of production workflows or unauthorized modifications.
 - Solution: Process-level read-only ceiling (N8N_MANAGER_READ_ONLY=1), append-only
   audit trail (~/.n8n-manager-mcp/audit.log), and path traversal guards.
+- Discovery Terms: `safe n8n mcp server`, `read-only n8n automation`, `audit log n8n ai integration`
 
 [PERSONA-4] Open-Source Ecosystem & MCP Integrators
 - Context: Developers building and cataloging MCP servers for Glama, Smithery,
@@ -56,8 +60,51 @@ Unlike raw API wrappers, n8n-manager-mcp provides:
   contract tests.
 - Solution: Validated server.json, glama.json, smithery.yaml, bilingual documentation,
   and automated contract test suites in Vitest.
+- Discovery Terms: `modelcontextprotocol n8n`, `glama n8n-manager-mcp`, `smithery n8n workflow`
 
-3. GOVERNANCE & RUNTIME INVARIANTS
+3. HIGH-INTENT KEYWORD & DISCOVERY MATRIX
+------------------------------------------------------------------------------
+Primary Intent Categories & Dual-Language Keywords:
+
+Category 1: Agent Workflow Automation (AI / LLM Focus)
+- English: n8n MCP server, manage n8n with Claude Code, Cursor n8n workflow builder,
+  autonomous agent workflow management, LLM n8n integration, local-first workflow MCP.
+- German: n8n MCP Server, n8n Workflows mit KI verwalten, Claude Code n8n Automatisierung,
+  Cursor n8n Workflow Assistent, lokaler Workflow MCP Server.
+
+Category 2: DevOps & Multi-Server Operations
+- English: n8n multi-server management, export import n8n workflows MCP, sync n8n staging production,
+  n8n instance migration, automated n8n backup restore tool.
+- German: n8n Multi-Server Verwaltung, n8n Workflows exportieren importieren MCP, n8n Instanzen synchronisieren,
+  automatisches n8n Backup und Wiederherstellung.
+
+Category 3: Security, Auditing & Governance
+- English: read-only n8n MCP, safe n8n AI integration, n8n forensic audit logging,
+  pre-mutation workflow snapshot, zero-telemetry workflow automation, MIT licensed n8n MCP.
+- German: Nur-Lese n8n MCP, sichere n8n KI-Integration, forensisches n8n Audit-Log,
+  Pre-Mutation Workflow Snapshot, telemetriefreie n8n Automatisierung.
+
+Category 4: Registry & Catalog Discoverability
+- English: io.github.ellmos-ai/n8n-manager-mcp, n8n-manager-mcp npm, Glama n8n server,
+  PulseMCP ellmos-ai-n8n-manager, Smithery n8n manager.
+- German: n8n-manager-mcp npm Paket, Glama n8n Verzeichnis, MCP Server Katalog n8n.
+
+4. 5-WAY COMPARATIVE MATRIX (10 DIMENSIONS)
+------------------------------------------------------------------------------
+| Dimension | n8n-manager-mcp | Direct n8n REST API | Standard Agent Shell | Manual n8n Web UI | Generic Cloud SaaS |
+|---|---|---|---|---|---|
+| Primary Interface | Native MCP Stdio (JSON-RPC) | HTTP REST (Curl/Axios) | Ad-hoc CLI / Bash | Web Browser Canvas | Proprietary SaaS Web |
+| Safety Guardrails | Monotonic Read-Only Gate | Blind Execution | Unchecked Script Writes | Accidental Clicks | Remote Role Rules |
+| Mutation Snapshot | Automated Pre-Mutation Backups | None (Overwrites live) | None (Script dependent) | None (Live canvas) | Cloud-dependent |
+| Rollback Facility | 1-Click `n8n_restore_workflow` | Manual JSON reconstruction | Custom script rollback | Manual node rebuilding | Vendor snapshot UI |
+| Forensic Audit Log | Append-Only `audit.log` | Webserver access log | Terminal stdout | Canvas change history | Cloud vendor logs |
+| Node Catalog | Built-in `n8n_describe_nodes` | Online doc search | Parameter guessing | Visual node palette | Documentation portal |
+| Multi-Server Isolation | Atomic `servers.json` + isolation | Hardcoded env tokens | Shell history leaks | Multi-tab logins | Vendor multi-tenant |
+| Local Privacy / Zero-Egress | 100% Local Stdio, Zero-Egress | Direct server connection | Local execution | Browser session data | Remote cloud storage |
+| Workflow Migration | Built-in export/import tools | Manual JSON download/upload | Complex curl pipelines | Download/upload UI | Enterprise paywall |
+| Open-Source License | 100% Permissive MIT / Audited | Sustainable Fair-Code | Ad-hoc / Mixed | Commercial / Fair-Code | Closed Proprietary |
+
+5. GOVERNANCE & RUNTIME INVARIANTS
 ------------------------------------------------------------------------------
 - INV-LOCAL-01: 100% Local-First & Zero-Egress Stdio Protocol
   Transport operates purely over local stdio streams; zero telemetry or telemetry
@@ -90,7 +137,7 @@ Unlike raw API wrappers, n8n-manager-mcp provides:
   Automated multi-node CI (Node 20, 22) with concurrency cancellation and public
   48h security response / 5-day triage commitment.
 
-4. SIBLING ECOSYSTEM PARTNER MATRIX (16 REPOSITORIES)
+6. SIBLING ECOSYSTEM PARTNER MATRIX (16 REPOSITORIES)
 ------------------------------------------------------------------------------
 The ellmos-ai and open-bricks suites provide coordinated local-first tools:
 1. file-bricks/ProFiler: Advanced file and asset management workbench
@@ -110,14 +157,14 @@ The ellmos-ai and open-bricks suites provide coordinated local-first tools:
 15. ellmos-ai/ellmos-core: Enterprise AI agent backend and hybrid RAG
 16. open-bricks/open-bricks: Umbrella portal and catalog across all software products
 
-5. THREE-PHASE DISCOVERABILITY ROADMAP
+7. THREE-PHASE DISCOVERABILITY ROADMAP
 ------------------------------------------------------------------------------
-- Phase 1 (Registries & Manifest Parity):
+- Phase 1 (Registries & Manifest Parity) [STATUS: COMPLETE]:
   Complete npm distribution, Glama, Smithery, and PulseMCP metadata alignment;
   100% manifest consistency between package.json, server.json, and glama.json.
-- Phase 2 (Technical Architecture & Guides):
-  Bilingual READMEs (English & German), interactive Dual-Mermaid diagrams,
-  comprehensive Third-Party Licenses inventory, and machine-readable llms.txt.
-- Phase 3 (Ecosystem Interoperability & Community):
+- Phase 2 (Technical Architecture & Guides) [STATUS: COMPLETE]:
+  Bilingual READMEs (English & German) with 16-point navigation, interactive
+  Dual-Mermaid diagrams, comprehensive Third-Party Licenses inventory, and llms.txt.
+- Phase 3 (Ecosystem Interoperability & Community) [STATUS: ACTIVE]:
   Seamless integration with open-compute, BACH, and agent orchestration tools;
   automated regression testing on every pull request and release tag.

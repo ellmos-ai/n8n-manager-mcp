@@ -7,11 +7,12 @@
 *Teil der [ellmos-ai](https://github.com/ellmos-ai)-Familie und des [open-bricks](https://github.com/open-bricks)-Dachverbunds.*
 
 [![npm](https://img.shields.io/npm/v/n8n-manager-mcp.svg)](https://www.npmjs.com/package/n8n-manager-mcp)
-[![Tests](https://img.shields.io/badge/Tests-183%20passed-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
+[![Tests](https://img.shields.io/badge/Tests-184%20passed-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
 [![MCP Tools](https://img.shields.io/badge/MCP%20Tools-19%20tools-blue.svg)](https://github.com/ellmos-ai/n8n-manager-mcp)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D20-blue.svg)](https://nodejs.org)
 [![Sicherheit](https://img.shields.io/badge/Sicherheit-Backups%20%7C%20Audit%20%7C%20Read--Only-success.svg)](SECURITY.md)
 [![Security](https://img.shields.io/badge/Security-48h%20SLA%20%7C%20Local--First-blue.svg)](SECURITY.md)
+[![Drittanbieter](https://img.shields.io/badge/Drittanbieter-Gepr%C3%BCft%20%7C%20Permissiv-success.svg)](THIRD_PARTY_LICENSES.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![LLM Ready](https://img.shields.io/badge/LLM--Ready-llms.txt-orange.svg)](llms.txt)
 [![Ecosystem: ellmos--ai](https://img.shields.io/badge/Ecosystem-ellmos--ai-blue.svg)](https://github.com/ellmos-ai)
@@ -24,20 +25,24 @@ MCP-Server (Model Context Protocol) zur Verwaltung von n8n-Workflows über KI-As
 
 ## Schnellnavigation
 
-- [Systemarchitektur](#systemarchitektur)
-- [Verzeichnis-Status](#verzeichnis-status)
-- [Kernfähigkeiten & Sicherheitsinvarianten](#kernfähigkeiten--sicherheitsinvarianten)
-- [Funktionen](#funktionen)
-- [Installation](#installation)
-- [Schnellstart](#schnellstart)
-- [Verfügbare Tools (19 Tools)](#verfügbare-tools)
-- [Optional: Anbindung an den n8n-workflow-manager](#optional-anbindung-an-den-n8n-workflow-manager)
-- [Konfiguration & Sicherheitsstandard](#konfiguration)
-- [Entwicklung & Tests](#entwicklung)
-- [Geschwisterprojekte & Ökosystem-Matrix](#ellmos-ai-ökosystem)
-- [Drittanbieter-Lizenzen & Hinweise](#drittanbieter-lizenzen)
-- [Änderungsprotokoll](#änderungsprotokoll)
-- [Haftung & Lizenz](#haftung--liability)
+| Nr | Abschnitt | Kerninhalte |
+| :--- | :--- | :--- |
+| 01 | [📐 Systemarchitektur](#systemarchitektur) | Dual-Mermaid-Diagramme: Komponenten-Flowchart TD & Sequenz-Lebenszyklus |
+| 02 | [🌐 Verzeichnis-Status](#verzeichnis-status) | Offizielle Einträge auf npm, Glama, PulseMCP und Enterprise DNA |
+| 03 | [🎯 Zielgruppen & Auffindbarkeit](#zielgruppen--auffindbarkeit) | Persona-Mapping für Agenten-Entwickler, DevOps, SecOps und Integratoren |
+| 04 | [⚖️ Vergleichsmatrix & Alternativen](#vergleichsmatrix--alternativen) | 10-Dimensionen-Vergleich vs direkte REST-API, Shell-CLI, Web-UI und Cloud-SaaS |
+| 05 | [🛡️ Kernfähigkeiten & Sicherheitsinvarianten](#kernfähigkeiten--sicherheitsinvarianten) | 10 formale Invarianten (`INV-LOCAL-01` bis `INV-SLA-10`), Read-Only-Gates, Audit-Logs |
+| 06 | [✨ Funktionen](#funktionen) | Direkte REST-Anbindung, Multi-Server-Routing, Backup-Snapshots, Node-Katalog |
+| 07 | [⚙️ Installation](#installation) | Ein-Befehl-Einrichtung für Claude Code, Claude Desktop, Cursor und Windsurf |
+| 08 | [🚀 Schnellstart](#schnellstart) | Schrittweise Workflow-Erstellung, Ausführungsinspektion und Server-Wechsel |
+| 09 | [🛠️ Verfügbare Tools (19 Tools)](#verfügbare-tools) | Vollständige MCP-Tool-Referenz für CRUD, Ausführungen, Backups und Nodes |
+| 10 | [🔗 Optional: Anbindung an den n8n-workflow-manager](#optional-anbindung-an-den-n8n-workflow-manager) | Entscheidungsdokumentation und Versionsverlauf über gekoppeltes Manager-Modul |
+| 11 | [🔒 Konfiguration](#konfiguration) | Umgebungsvariablen, lokales Backup-Wurzelverzeichnis und monotone Schranken |
+| 12 | [🧪 Entwicklung & Tests](#entwicklung) | Multi-OS Vitest Testsuite, Smoke-Runner und Offline-Node-Katalog-Tests |
+| 13 | [🧱 ellmos-ai Ökosystem](#ellmos-ai-ökosystem) | Geschwister-MCP-Server, BACH Agenten-OS und open-bricks Desktop-Suiten |
+| 14 | [📜 Drittanbieter-Lizenzen & Transparenz](#drittanbieter-lizenzen--transparenz) | 100% permissive Open-Source-Abhängigkeiten (MIT, BSD, Apache-2.0) |
+| 15 | [📝 Änderungsprotokoll](#änderungsprotokoll) | Vollständige Release-Notizen, Sicherheitshärtungen und Discoverability-Historie |
+| 16 | [⚖️ Haftung & Lizenz](#haftung--liability) | Schenkungsklausel nach §§ 516 ff. BGB und MIT-Haftungsausschluss |
 
 ## Systemarchitektur
 
@@ -99,6 +104,30 @@ sequenceDiagram
 - MCP-Namespace-Status: Dieses Repo enthält `server.json` und `mcpName`-Metadaten für `io.github.ellmos-ai/n8n-manager-mcp`; einzelne Ökosystem-Verzeichnisse zeigen bis zur Index-Aktualisierung noch den älteren Namen `io.github.lukisch/n8n-manager-mcp`.
 - Suchkontext: am besten auffindbar über `n8n MCP server`, `n8n workflow management MCP`, `AI assistant n8n workflows` und `ellmos-ai n8n-manager-mcp`.
 
+## Zielgruppen & Auffindbarkeit
+
+| Zielgruppe / Persona | Kernbedürfnisse | Gelöste Probleme | Zentrale Suchbegriffe |
+| :--- | :--- | :--- | :--- |
+| **Autonome KI-Agenten & Schwärme** | Zerstörungsfreie Workflow-Steuerung, Pre-Mutation-Snapshots, deterministische Belege | LLM-Halluzinationen beschädigen aktive Workflows; kein Offline-Node-Graph einsehbar | `n8n mcp server`, `ai agent n8n workflow management`, `claude code n8n automation` |
+| **DevOps & Multi-Environment-Architekten** | Sicheres Multi-Server-Routing, Export/Import-Synchronisation über Stages | Manuelle JSON-Export-Reibung; Staging-zu-Produktions-Drift; unversionierte Workflow-Kopien | `n8n multi-server mcp`, `sync n8n workflows staging prod`, `n8n workflow export import mcp` |
+| **SecOps, Compliance & Risikoteams** | Monotone Read-Only-Sperren, lokale Audit-Trails, Zero-External-Egress | Unregulierte Agenten-Mutationen; ungesicherte API-Aufrufe; Verlust forensischer Historie | `safe n8n mcp server`, `read-only n8n automation`, `audit log n8n ai integration` |
+| **Ökosystem-Entwickler & Tool-Integratoren** | Standardisierte MCP-Schemas, validierte Manifeste, robuste TypeScript-SDK-Anbindung | Schema-Diskrepanzen in MCP-Verzeichnissen; fehlende Regressions- und Vertragstests | `modelcontextprotocol n8n`, `glama n8n-manager-mcp`, `smithery n8n workflow` |
+
+## Vergleichsmatrix & Alternativen
+
+| Dimension | `n8n-manager-mcp` | Direkte n8n REST API | Standard Agent Shell | Manuelle n8n Web-UI | Generische Cloud-SaaS |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Primäre Schnittstelle** | Natives MCP Stdio (JSON-RPC) | Reines HTTP REST (Curl/Axios) | Ad-hoc CLI / Bash-Skripte | Interaktive Browser-Canvas | Proprietäres Webportal |
+| **Sicherheits-Leitplanken** | Monotones Read-Only-Gate (`N8N_MANAGER_READ_ONLY=1`) | Keine (Ungeprüfte API-Aufrufe) | Shell-Exit-Code-Heuristik | Menschliche Bestätigungsdialoge | Remote Rollenregeln (RBAC) |
+| **Mutations-Backups** | Automatische Pre-Mutation-Snapshots (`INV-BACK-03`) | Keine (Überschreibt Live-System) | Keine (Skriptabhängig) | Keine (Direkte Canvas-Änderung) | Anbieterabhängige Snapshots |
+| **Rollback-Fähigkeit** | 1-Klick `n8n_restore_workflow` von lokaler Platte | Manuelle JSON-Rekonstruktion | Eigene Rollback-Skripte nötig | Manuelles Neuerstellen von Nodes | Anbieter-Rollback (Kostenpflichtig) |
+| **Forensisches Audit-Log** | Strukturiertes Append-Only `audit.log` (`INV-AUDIT-04`) | Standard-Webserver-Access-Logs | Flüchtige Terminal-Ausgabe | Nur grafische Ausführungshistorie | Cloud-Hersteller-Logaufbewahrung |
+| **Node-Introspektion** | Integrierter Offline-Katalog (`n8n_describe_nodes`) | Manuelle Onlinedokumentation | Raten & Parameter-Ausprobieren | Visuelle Node-Palette | Online-Entwicklerportal |
+| **Multi-Server-Isolation** | Isolierte Profile (`servers.json`) | Manuelles Token-Wechseln | Shell-History-Token-Lecks | Multi-Tab-Login-Durcheinander | Cloud-Workspace-Umschaltung |
+| **Privatsphäre & Zero-Egress**| 100% lokaler Stdio-Transport, Zero Telemetrie | Direkter HTTP-Client-Verkehr | Lokale Shell-Ausführung | Browser-Tracking & Analytik | Remote Drittanbieter-Hosting |
+| **Workflow-Migration** | Integrierte Tools `n8n_export_workflow` & `import` | Eigene Python/Curl-Pipelines | Komplexe bash/jq-Skripte | Manueller Download/Upload-Dialog | Cloud-Enterprise-Bezahlschranke |
+| **Lizenz & Auditsicherheit** | 100% Permissiv MIT (Geprüft, 48h SLA) | Fair-Code (n8n Quellcode verfügbar) | Gemischte / Ad-hoc Lizenzen | Kommerziell / Fair-Code | Proprietäre geschlossene Cloud |
+
 ## Kernfähigkeiten & Sicherheitsinvarianten
 
 | Invarianten-ID | Fähigkeit / Invariante | Technische Garantie | Anwendervorteil |
@@ -118,18 +147,18 @@ sequenceDiagram
 
 - **19 Tools** für vollständige n8n-Workflow-Verwaltung
 - Workflows auflisten, erstellen, aktualisieren, löschen und aktivieren/deaktivieren
-- Sicherheitsfunktionen: Read-only-Modus, Backup vor Löschen/Aktualisieren, lokale Wiederherstellung und Audit-Log
+- Sicherheitskontrollen: Read-Only-Modus, automatische Backups vor Mutationen, lokale Wiederherstellung und Audit-Log
 - Multi-Server-Unterstützung (Verbindung zu mehreren n8n-Instanzen)
-- Export/Import von Workflows zwischen Servern
-- Ausführungshistorie und Status einsehen
+- Export und Import von Workflows zwischen Servern
+- Ausführungshistorie und Ausführungsstatus einsehen
 - Integrierter Node-Katalog mit Beschreibungen
-- Keine Python-Abhängigkeiten — direkte Verbindung zur n8n REST API
+- Keine Python-Abhängigkeit -- verbindet sich direkt mit der n8n-REST-API
 
 ## Installation
 
 ### Claude Desktop
 
-In `claude_desktop_config.json` einfügen:
+In `claude_desktop_config.json` eintragen:
 
 ```json
 {
@@ -156,26 +185,26 @@ npm install -g n8n-manager-mcp
 
 ## Schnellstart
 
-Nach der Installation können folgende Befehle im KI-Assistenten verwendet werden:
+Nach der Installation in Claude eingeben:
 
 1. **n8n-Server hinzufügen:**
-   > „Füge meinen n8n-Server unter http://localhost:5678 mit API-Key abc123 hinzu"
+   > "Füge meinen n8n-Server unter http://localhost:5678 mit dem API-Key abc123 hinzu"
 
-2. **Workflows auflisten:**
-   > „Zeige mir alle Workflows auf meinem n8n-Server"
+2. **Workflows anzeigen:**
+   > "Zeige alle Workflows auf meinem n8n-Server"
 
 3. **Workflow erstellen:**
-   > „Erstelle einen n8n-Workflow, der bei einem Webhook auslöst, Daten von einer API abruft und eine Slack-Nachricht sendet"
+   > "Erstelle einen n8n-Workflow, der bei einem Webhook auslöst, Daten von einer API abruft und eine Slack-Nachricht sendet"
 
 4. **Ausführungen prüfen:**
-   > „Zeige mir die letzten 10 Workflow-Ausführungen"
+   > "Zeige die letzten 10 Workflow-Ausführungen"
 
 ## Verfügbare Tools
 
 | Tool | Beschreibung |
 |------|-------------|
 | `n8n_list_workflows` | Alle Workflows eines Servers auflisten |
-| `n8n_get_workflow` | Workflow-Details abrufen (Nodes, Verbindungen) |
+| `n8n_get_workflow` | Workflow-Details (Nodes, Verbindungen) abrufen |
 | `n8n_create_workflow` | Neuen Workflow aus Nodes + Verbindungen erstellen |
 | `n8n_update_workflow` | Bestehenden Workflow aktualisieren |
 | `n8n_delete_workflow` | Workflow löschen |
@@ -183,158 +212,130 @@ Nach der Installation können folgende Befehle im KI-Assistenten verwendet werde
 | `n8n_list_executions` | Letzte Ausführungen mit Status auflisten |
 | `n8n_export_workflow` | Workflow als importierbares JSON exportieren |
 | `n8n_import_workflow` | Workflow-JSON auf einen Server importieren |
-| `n8n_safety_status` | Lokale Sicherheitseinstellungen, Backup-Ordner und Audit-Log-Pfad anzeigen |
-| `n8n_set_safety_mode` | Read-only-Modus, Backup vor Änderungen und Audit-Logging umschalten |
+| `n8n_safety_status` | Lokale Sicherheitseinstellungen, Backup-Verzeichnis und Audit-Log-Pfad anzeigen |
+| `n8n_set_safety_mode` | Read-Only-Modus, Backup-vor-Mutation und Audit-Logging umschalten |
 | `n8n_list_backups` | Lokale Workflow-Backups auflisten |
-| `n8n_restore_workflow` | Workflow aus einem lokalen Backup wiederherstellen |
-| `n8n_add_server` | n8n-Serververbindung hinzufügen/aktualisieren |
+| `n8n_restore_workflow` | Workflow aus lokalem Backup wiederherstellen |
+| `n8n_add_server` | n8n-Server-Verbindung hinzufügen/aktualisieren |
 | `n8n_list_servers` | Konfigurierte Server auflisten |
-| `n8n_ping_server` | Serververbindung testen |
+| `n8n_ping_server` | Server-Verbindung testen |
 | `n8n_remove_server` | Server entfernen |
 | `n8n_describe_nodes` | Verfügbare n8n-Node-Typen durchsuchen |
-| `n8n_manager_history` | Versionshistorie, protokollierte Entscheidungen und Sync-Historie aus einem optionalen n8n-workflow-manager lesen (opt-in, nur lesend) |
+| `n8n_manager_history` | Versionshistorie, erfasste Entscheidungen und Sync-Historie aus einem laufenden n8n-workflow-manager lesen (Opt-in, read-only) |
 
 ## Optional: Anbindung an den n8n-workflow-manager
 
-n8n selbst hält nicht fest, *warum* ein Workflow geändert wurde. Das Schwesterprojekt
+n8n selbst speichert nicht, *warum* ein Workflow geändert wurde. Das Geschwisterprojekt
 [n8n-workflow-manager](https://github.com/ellmos-ai/n8n-workflow-manager) tut genau das:
-Es speichert Versionen, eine verpflichtende Entscheidung je Änderung und eine
-Sync-Historie in einer lokalen Datenbank. `n8n_manager_history` macht diesen Bestand
+Es verwaltet Versionen, eine verpflichtende Entscheidung pro Mutation und eine
+Sync-Historie in einer lokalen Datenbank. `n8n_manager_history` macht diesen Datensatz
 aus diesem MCP-Server lesbar.
 
-Die Anbindung ist **opt-in und nur lesend**:
+Die Anbindung ist **opt-in und read-only**:
 
-- Ohne `N8N_MCP_MANAGER_URL` ändert sich nichts — jedes Tool spricht wie bisher direkt mit n8n.
-- Ist sie gesetzt (etwa `http://127.0.0.1:8100`), liest `n8n_manager_history` aus dem laufenden
-  Manager. Ohne `workflow_id` listet das Tool dessen Workflows, mit `workflow_id` zeigt es die
-  vollständige Historie.
-- Die IDs sind **Manager-IDs, keine n8n-Instanz-IDs**. Der Manager speichert diese Zuordnung,
-  stellt aber keine Route zum Auflösen bereit — dieser Server rät deshalb keine Übersetzung.
-- Ist der Manager konfiguriert, aber nicht erreichbar, **scheitert das Tool mit klarer Meldung**,
-  statt still aus der n8n-Instanz zu antworten: Dort gibt es keine Entscheidungshistorie, eine
-  ersatzweise Antwort wäre also eine andere Antwort.
-- `n8n_safety_status` meldet den **gemessenen** Zustand der Anbindung (konfiguriert, erreichbar,
-  Manager-Version) — nicht bloß die gesetzte Umgebungsvariable.
+- Ohne `N8N_MCP_MANAGER_URL` bleibt alles wie gewohnt — jedes Tool spricht direkt mit n8n.
+- Ist die Variable gesetzt (z. B. `http://127.0.0.1:8100`), liest `n8n_manager_history`
+  aus dem laufenden Manager. Ohne `workflow_id` listet das Tool die Workflows des Managers,
+  mit ID liefert es die vollständige Historie.
+- IDs sind **Manager-IDs, keine n8n-Instanz-IDs**. Der Manager speichert diese Zuordnung,
+  bietet aber keine Route zur Auflösung — dieser Server rät daher keine Übersetzung.
+- Ist der Manager konfiguriert, aber nicht erreichbar, schlägt das Tool **mit einer
+  expliziten Fehlermeldung fehl**, statt still auf die n8n-Instanz zurückzufallen — dort
+  gibt es keine Entscheidungshistorie, ein Ersatz wäre eine andere Antwort.
+- `n8n_safety_status` meldet den *gemessenen* Zustand der Anbindung (konfiguriert,
+  erreichbar, Manager-Version), nicht nur die Umgebungsvariable.
 
-Einrichtung: `pip install n8n-workflow-manager`, dann `n8n-manager serve` (bindet an
-`127.0.0.1:8100`). Die Manager-API ist bewusst unauthentifiziert und nur über Loopback
-erreichbar; eine Nicht-Loopback-URL wird in `n8n_safety_status` ausdrücklich angemerkt.
+Einrichtung: `pip install n8n-workflow-manager`, dann `n8n-manager serve` (bindet `127.0.0.1:8100`).
+Die Manager-API ist absichtlich unauthentifiziert und nur auf dem Loopback erreichbar;
+eine Nicht-Loopback-URL wird in `n8n_safety_status` als Warnung markiert.
 
-Numerische Leitplanken sind Teil der MCP-Schemas: Listenlimits für Workflows,
-Ausführungen und Backups sind endliche positive Ganzzahlen von **1 bis 1000**
-(die bisherigen Defaults bleiben 100, 20 und 20), und die Workflow-Verbindungs-
-indizes `from_output`/`to_input` sind endliche nichtnegative Ganzzahlen von
-**0 bis 1000**. Ungültige Werte werden vor API-, Dateisystem- oder
-Workflow-Array-Zugriffen abgewiesen.
+Numerische Schranken sind Teil der MCP-Schemas: Limits für Workflows, Executions und
+Backups sind endliche positive Ganzzahlen von **1 bis 1000** (die bisherigen Defaults
+bleiben 100, 20 und 20), und Indizes für Workflow-Verbindungen `from_output`/`to_input`
+sind endliche nicht-negative Ganzzahlen von **0 bis 1000**. Ungültige Werte werden
+abgelehnt, bevor n8n-API-, Dateisystem- oder Workflow-Array-Zugriffe erfolgen.
 
 ## Konfiguration
 
-Serververbindungen und Sicherheitseinstellungen werden in `~/.n8n-manager-mcp/servers.json` gespeichert.
+Server-Verbindungen und Sicherheitseinstellungen werden in `~/.n8n-manager-mcp/servers.json` gespeichert.
 
-Sicherheitsstandard:
+Sicherheits-Standards:
 
-- `backup_before_mutations: true` speichert Workflow-JSON vor Aktualisieren, Löschen, Aktivieren/Deaktivieren und überschreibender Wiederherstellung.
-- `audit_log: true` schreibt Ergebnisse von Änderungen nach `~/.n8n-manager-mcp/audit.log`.
-- `read_only: false` kann mit `n8n_set_safety_mode` oder `N8N_MANAGER_READ_ONLY=1` aktiviert werden.
-  Die Umgebungsvariable ist eine verbindliche Obergrenze: Solange sie aktiv ist,
-  können weder gespeicherte Einstellungen noch `n8n_set_safety_mode` den Lesemodus ausschalten.
-- Backups liegen unter `~/.n8n-manager-mcp/backups/` und können mit den Backup-Tools aufgelistet oder wiederhergestellt werden. Server-/Workflow-Namen werden auf sichere einzelne Pfadsegmente reduziert; reservierte Namen, Separatoren, Traversal sowie Symlink-/Reparse-Ausbrüche verlassen dieses Root nicht, und die Liste zeigt nur reguläre `.json`-Backups.
-- `n8n_add_server` validiert Serververbindungen vor dem Speichern: URLs müssen `http`- oder `https`-Basis-URLs ohne eingebettete Zugangsdaten, Query-Strings oder Fragmente sein; API-Keys dürfen keine Whitespaces enthalten.
-- Die Default-Semantik von `n8n_add_server` ist explizit: Der erste Server wird Default; ein Update ohne `is_default` bewahrt das bisherige Flag; `true` macht den Server zum Default; `false` entfernt sein Flag absichtlich, danach fällt die Default-Suche auf den ersten konfigurierten Server zurück.
+- `backup_before_mutations: true` sichert das Workflow-JSON vor Update-, Lösch-, Aktivierungs- und Überschreib-Restore-Operationen.
+- `audit_log: true` protokolliert Mutationsergebnisse in `~/.n8n-manager-mcp/audit.log`.
+- `read_only: false` kann mit `n8n_set_safety_mode` oder über `N8N_MANAGER_READ_ONLY=1` aktiviert werden.
+  Die Umgebungsvariable ist eine Monotonie-Schranke: Solange sie gesetzt ist,
+  können persistierte Einstellungen und `n8n_set_safety_mode` den Read-Only-Modus nicht deaktivieren.
+- Backups liegen unter `~/.n8n-manager-mcp/backups/` und können über die Backup-Tools eingesehen und wiederhergestellt werden. Server- und Workflownamen werden auf sichere Einzelpfade desinfiziert; reservierte Namen, Trennzeichen, Traversal-Sequenzen und Symlink-/Reparse-Ausbrüche können diesen Pfad nicht verlassen, und Auflistungen liefern ausschließlich reguläre `.json`-Dateien.
+- `n8n_add_server` validiert Serververbindungen vor dem Speichern: URLs müssen `http`- oder `https`-Basis-URLs ohne eingebettete Zugangsdaten, Query-Strings oder Fragmente sein, und API-Keys dürfen keine Leerzeichen enthalten.
+- `n8n_add_server` besitzt explizite Default-Semantik: Der erste Server wird Standard; ein Update ohne `is_default` behält den bisherigen Zustand; `true` befördert den Server; `false` entfernt das Flag gezielt, woraufhin die Default-Auflösung auf den ersten konfigurierten Server zurückgreift.
 
 ## Entwicklung
 
 ```bash
 npm install
-npm run build    # Einmaliger Build
+npm run build    # Einmalig bauen
 npm run dev      # Watch-Modus
 npm start        # Server starten
-npm test         # Tests ausführen (vitest)
-npm run smoke    # Gebauten MCP-Server starten und Tool-Discovery prüfen
+npm test         # Test-Suite ausführen (vitest)
+npm run smoke    # Gebauten MCP-Server starten und Werkzeugerkennung prüfen
 ```
 
 ### Tests
 
-Die Test-Suite deckt die Kernlogik aller 19 Tools, Server-Eingabevalidierung, i18n-Sprachpakete, Repository-Hygiene und Fehlerbehandlung ab. Die Manager-Anbindung wird gegen einen lokalen Stub-HTTP-Server geprüft — einschließlich ihrer Weigerung, ersatzweise direkt n8n abzufragen.
+Die Testsuite deckt URL-Erstellung, Server-Eingabevalidierung, Server-Verwaltung, Sicherheitseinstellungen, Backup-Pfade, Workflow-JSON-Aufbau, Export/Import-Validierung, Sprachpakete, Repository-Hygiene und Fehlerbehandlung ab. Die Manager-Anbindung wird gegen einen lokalen Stub-HTTP-Server getestet, inklusive der Verweigerung eines stillen Fallbacks auf direkte n8n-Abfragen.
 
 ```bash
 npm test              # Alle Tests ausführen
-npx vitest run        # Gleiche Funktion
+npx vitest run        # Dasselbe
 npx vitest --watch    # Watch-Modus
-npm run smoke         # Manueller stdio-MCP-Smoke-Test (vorher npm run build)
+npm run smoke         # Manueller stdio MCP-Smoke-Test (erfordert vorher npm run build)
 ```
 
-Der aktuelle Verifikationsbeleg umfasst lokale Tests unter Windows und Ubuntu Linux in GitHub Actions; GitHub Actions führt Build, Tests und npm-Paketprüfung auf Node.js 20, 22 und 24 aus. Der commitbezogene lokale Beleg steht in `CHANGELOG.md`. Der Smoke-Runner startet `dist/index.js` über den MCP-SDK-Client, prüft alle 19 Tool-Registrierungen und ruft das sichere Katalog-Tool `n8n_describe_nodes` ohne n8n-Zugangsdaten auf.
+Der Verifikationsstand umfasst Windows lokal und Ubuntu Linux in GitHub Actions; GitHub Actions führt Build, Test und npm-Paketprüfungen auf Node.js 20, 22 und 24 aus. Der commitspezifische lokale Beleg wird in `CHANGELOG.md` gepflegt. Der Smoke-Runner startet `dist/index.js` über den MCP-SDK-Client, prüft alle 19 Werkzeug-Registrierungen und ruft das sichere Katalog-Werkzeug `n8n_describe_nodes` ohne n8n-Zugangsdaten auf.
 
-## Verwandte Projekte
+## Geschwisterprojekte & Ökosystem-Matrix
 
-- **[n8n-workflow-manager](https://github.com/ellmos-ai/n8n-workflow-manager)** — die **Zustands- und Verlaufsschicht für Menschen** (Web-UI + REST API, Python): Versionshistorie und Entscheidungs-Log pro Workflow, visueller Graph-Viewer, Multi-Server-Sync. Als **Paar** mit diesem MCP-Server gedacht — der MCP ist die **KI-Aktionsschicht** (erstellen/aktualisieren/löschen/aktivieren), der Manager ist der Ort zum Prüfen, Dokumentieren und Zurückrollen. **Gedächtnis & Kontext (Roadmap):** ein MCP-Server allein kann nicht *garantieren*, dass ein Agent vor einer destruktiven Änderung den vorhandenen Kontext prüft — diese Durchsetzung gehört in den Manager (client-unabhängig), konversationeller Kontext optional aus einem pull-basierten Verlaufsindex wie [ctx](https://github.com/ctxrs/ctx) (Apache-2.0). Geplant: ein gemeinsamer Verlaufs-/Entscheidungsspeicher + ein *Verlauf-vor-Änderung-prüfen*-Guard.
-- [n8n](https://n8n.io/) — Die Workflow-Automatisierungsplattform
+Unsere Partnerorganisation **[open-bricks](https://github.com/open-bricks)** und die Schwester-Suiten bündeln KI-native Desktop-Anwendungen und Entwickler-Tools:
 
-## Lizenz
-
-MIT
-
----
-
-## ellmos-ai-Ökosystem
-
-Dieser MCP-Server ist Teil des **[ellmos-ai](https://github.com/ellmos-ai)**-Ökosystems — KI-Infrastruktur, MCP-Server und intelligente Werkzeuge.
-
-### MCP-Server-Familie
-
-| Server | Tools | Fokus | npm |
-|--------|-------|-------|-----|
-| [FileCommander](https://github.com/ellmos-ai/ellmos-filecommander-mcp) | 46 | Dateisystem, Prozessverwaltung, interaktive Sitzungen, Cloud-Lock-sichere Operationen | [`ellmos-filecommander-mcp`](https://www.npmjs.com/package/ellmos-filecommander-mcp) |
-| [CodeCommander](https://github.com/ellmos-ai/ellmos-codecommander-mcp) | 22 | Code-Analyse, JSON-Reparatur, Imports, Diffs, Regex | [`ellmos-codecommander-mcp`](https://www.npmjs.com/package/ellmos-codecommander-mcp) |
-| [Clatcher](https://github.com/ellmos-ai/ellmos-clatcher-mcp) | 12 | Dateireparatur, Formatkonvertierung, Batch-Operationen | [`ellmos-clatcher-mcp`](https://www.npmjs.com/package/ellmos-clatcher-mcp) |
-| **[n8n Manager](https://github.com/ellmos-ai/n8n-manager-mcp)** | **19** | **n8n-Workflow-Verwaltung über KI-Assistenten** | **[`n8n-manager-mcp`](https://www.npmjs.com/package/n8n-manager-mcp)** |
-| [ControlCenter](https://github.com/ellmos-ai/ellmos-controlcenter-mcp) | 20 | MCP-Stack-Discovery, Profilverwaltung, Control Plane | [`ellmos-controlcenter-mcp`](https://www.npmjs.com/package/ellmos-controlcenter-mcp) |
-| [Homebase](https://github.com/ellmos-ai/ellmos-homebase-mcp) | 45 | Local-first LLM-Gedächtnis, Wissen, Zustand, Routing, Schwarm-Orchestrierung | [`ellmos-homebase-mcp`](https://www.npmjs.com/package/ellmos-homebase-mcp) (alpha) |
-| [ServerCommander](https://github.com/ellmos-ai/ellmos-servercommander-mcp) | 8 | Server-Operationen: Health-Checks, Log-Analyse, Deploy-Dry-Runs, Mail-Diagnose | [`ellmos-servercommander-mcp`](https://www.npmjs.com/package/ellmos-servercommander-mcp) (alpha) |
-| [Blender Use](https://github.com/ellmos-ai/ellmos-blender-use-mcp) | 3 | Headless Blender-Asset-QA und FBX-Reimport-Verifikation | [`ellmos-blender-use-mcp`](https://www.npmjs.com/package/ellmos-blender-use-mcp) (alpha) |
-| [Open Compute](https://github.com/ellmos-ai/open-compute-mcp) | 10 | Modell-agnostischer Computer-Use: Capture, safety-gated Aktionen, Windows-UIA | [`open-compute-mcp`](https://www.npmjs.com/package/open-compute-mcp) (alpha) |
-
-### KI-Infrastruktur
-
-| Projekt | Beschreibung |
-|---------|-------------|
-| [BACH](https://github.com/ellmos-ai/bach) | Local-first textbasiertes OS für LLM-Agenten — 113+ Handler, 550+ Tools, SQLite-Memory |
-| [open-compute](https://github.com/ellmos-ai/open-compute) | Modell-agnostischer Computer-Use-Kern hinter Open Compute MCP |
-| [clutch](https://github.com/ellmos-ai/clutch) | Provider-neutrale LLM-Orchestrierung mit Auto-Routing und Budget-Tracking |
-| [rinnsal](https://github.com/ellmos-ai/rinnsal) | Leichte Agent-Memory-, Connector- und Automatisierungsinfrastruktur |
-| [ellmos-stack](https://github.com/ellmos-ai/ellmos-stack) | Self-hosted AI Research Stack (Ollama + n8n + Rinnsal + KnowledgeDigest) |
-| [MarbleRun](https://github.com/ellmos-ai/MarbleRun) | Autonomes Agent-Chain-Framework für Claude Code |
-| [gardener](https://github.com/ellmos-ai/gardener) | Minimalistischer datenbankgetriebener LLM-OS-Prototyp (4 Funktionen, 1 Tabelle) |
-| [ellmos-tests](https://github.com/ellmos-ai/ellmos-tests) | Testframework für LLM-Betriebssysteme (7 Dimensionen) |
-
-### Desktop-Software & Geschwisterwerkzeuge
-
-Unsere Partnerorganisation **[open-bricks](https://github.com/open-bricks)** und Partnersuiten bündeln KI-native Desktop-Anwendungen und Entwicklerwerkzeuge:
-
-| Repository | Org / Suite | Fokus & Kernfunktionalität |
+| Repository | Org / Suite | Fokus & Funktionalität |
 | :--- | :--- | :--- |
-| **[ProFiler](https://github.com/file-bricks/ProFiler)** | `file-bricks` | Erweiterte Datei- und Asset-Management-Werkbank mit Duplikaterkennung |
-| **[ExplorerPro](https://github.com/file-bricks/ExplorerPro)** | `file-bricks` | Moderner Mehr-Reiter-Dateimanager mit flexibler Stapelverarbeitung |
-| **[WinStorePackager](https://github.com/file-bricks/WinStorePackager)** | `file-bricks` | MSIX-Paketierung und Microsoft Store Release-Vorbereitung |
-| **[DokuZen](https://github.com/doc-bricks/DokuZen)** | `doc-bricks` | Offline-Markdown-Editor, Live-Vorschau und Dokument-Strukturierung |
-| **[PDFtoPDFocr](https://github.com/doc-bricks/PDFtoPDFocr)** | `doc-bricks` | Lokale OCR-Pipeline zur Umwandlung gescannter PDFs in durchsuchbare Dokumente |
-| **[USR_PDFunlock](https://github.com/doc-bricks/USR_PDFunlock)** | `doc-bricks` | Geburtstags- und Datums-Passwortwiederherstellung für PDF-Archive |
+| **[ProFiler](https://github.com/file-bricks/ProFiler)** | `file-bricks` | Erweiterte Datei- und Asset-Verwaltung mit Duplikaterkennung |
+| **[ExplorerPro](https://github.com/file-bricks/ExplorerPro)** | `file-bricks` | Tab-basierter Dateimanager mit Filterung und Batch-Verarbeitung |
+| **[WinStorePackager](https://github.com/file-bricks/WinStorePackager)** | `file-bricks` | MSIX-Paketierung und Windows Store Release-Vorbereitung |
+| **[DokuZen](https://github.com/doc-bricks/DokuZen)** | `doc-bricks` | Offline-Markdown-Editor und Dokumenten-Strukturierung |
+| **[PDFtoPDFocr](https://github.com/doc-bricks/PDFtoPDFocr)** | `doc-bricks` | Offline-OCR-Pipeline zur Umwandlung gescannter PDFs |
+| **[USR_PDFunlock](https://github.com/doc-bricks/USR_PDFunlock)** | `doc-bricks` | Datums-Passwort-Wiederherstellung für geschützte PDF-Archive |
 | **[UniversalInvoiceMail](https://github.com/doc-bricks/UniversalInvoiceMail)** | `doc-bricks` | Automatisierte Rechnungsextraktion und E-Mail-Verarbeitung |
-| **[CleanMarkdown](https://github.com/doc-bricks/CleanMarkdown)** | `doc-bricks` | Verlustfreie Formatierungs- und Typographie-Bereinigung für Markdown |
-| **[safe-start-for-codex](https://github.com/dev-bricks/safe-start-for-codex)** | `dev-bricks` | Schneller und robuster Agent-Bootstrap mit Umgebungsvalidierung |
-| **[automation-master](https://github.com/dev-bricks/automation-master)** | `dev-bricks` | Zentrale Multi-Host-Automationsorchestrierung und Aufgabenüberwachung |
-| **[DevCenter](https://github.com/dev-bricks/DevCenter)** | `dev-bricks` | Zentrales Entwickler-Dashboard für lokale Software-Ökosysteme |
-| **[CodeBox](https://github.com/dev-bricks/CodeBox)** | `dev-bricks` | Isolierte mehrsprachige Werkzeug- und Codeausführungsumgebung |
-| **[githubbot](https://github.com/dev-bricks/githubbot)** | `dev-bricks` | Automatisierte Multi-Org-Repository-Wartungs- und Discoverability-Engine |
+| **[CleanMarkdown](https://github.com/doc-bricks/CleanMarkdown)** | `doc-bricks` | Verlustfreie Formatierungs- und Typografie-Bereinigung für Markdown |
+| **[safe-start-for-codex](https://github.com/dev-bricks/safe-start-for-codex)** | `dev-bricks` | Schneller Agent-Bootstrap und Umgebungstest-Runner |
+| **[automation-master](https://github.com/dev-bricks/automation-master)** | `dev-bricks` | Zentraler Multi-Host-Automations-Orchestrator |
+| **[DevCenter](https://github.com/dev-bricks/DevCenter)** | `dev-bricks` | Zentrales Entwickler-Dashboard für lokale Tool-Chains |
+| **[CodeBox](https://github.com/dev-bricks/CodeBox)** | `dev-bricks` | Isolierte Multi-Language Tool-Ausführungsumgebung |
+| **[githubbot](https://github.com/dev-bricks/githubbot)** | `dev-bricks` | Automatisierte Multi-Org Repository-Wartung und Auffindbarkeit |
 | **[swarm-ai](https://github.com/ellmos-ai/swarm-ai)** | `ellmos-ai` | Verteiltes Multi-Agenten-Schwarm-Framework mit Stigmergie-Koordination |
 | **[ellmos-core](https://github.com/ellmos-ai/ellmos-core)** | `ellmos-ai` | Enterprise KI-Agenten-Backend, hybrides RAG und mandantenfähige Sicherheit |
 | **[open-bricks](https://github.com/open-bricks)** | `open-bricks` | Dachportal und Katalog für alle lokalen KI-Softwareprodukte |
 
-## Drittanbieter-Lizenzen
+<a id="drittanbieter-lizenzen"></a>
+<a id="drittanbieter-lizenzen--transparenz"></a>
+## Drittanbieter-Lizenzen & Transparenz
 
 Dieses Projekt steht unter der [MIT-Lizenz](LICENSE).
-Eine vollständige Aufstellung aller direkten Laufzeit-, Entwicklungs- und transitiven Open-Source-Abhängigkeiten sowie deren jeweilige permissive Lizenzen (MIT, Apache-2.0, BSD-2-Clause, BSD-3-Clause) ist in [`THIRD_PARTY_LICENSES.md`](THIRD_PARTY_LICENSES.md) dokumentiert.
+Zur Gewährleistung vollständiger Lieferkettensicherheit in Enterprise- und autonomen Agentenumgebungen werden alle Abhängigkeiten kontinuierlich auditiert:
+
+| Abhängigkeit | Typ | Version | Lizenz | Verifikationsstatus |
+| :--- | :--- | :--- | :--- | :--- |
+| [`@modelcontextprotocol/sdk`](https://github.com/modelcontextprotocol/typescript-sdk) | Laufzeit (Direkt) | `^1.29.0` | MIT | Permissiv / Auditiert |
+| [`zod`](https://github.com/colinhacks/zod) | Laufzeit (Direkt) | `^3.23.8` | MIT | Permissiv / Auditiert |
+| [`update-notifier`](https://github.com/yeoman/update-notifier) | Laufzeit (Direkt) | `^7.3.1` | BSD-2-Clause | Permissiv / Auditiert |
+| `typescript` | Entwicklung / Compiler | `^5.3.3` | Apache-2.0 | Permissiv / Auditiert |
+| `vitest` | Entwicklung / Test-Runner | `^3.2.6` | MIT | Permissiv / Auditiert |
+| `@types/node` | Entwicklung / Typdefinitionen | `^20.11.0` | MIT | Permissiv / Auditiert |
+
+- **Keine Copyleft- oder AGPL-Bindung:** Enthält keinerlei virale Lizenzen oder ungeprüfte kommerzielle Module.
+- **Zero-External-Telemetry:** Sendet keine Analyse-Pings, Beacons oder Telemetrie an externe Server.
+- **Vollständiges Lizenzinventar:** Ausführliche Hinweise, Original-Lizenztexte und transitive Abhängigkeitsbäume finden sich in [`THIRD_PARTY_LICENSES.md`](THIRD_PARTY_LICENSES.md).
 
 ## Marketing- & Zielgruppen-Log
 

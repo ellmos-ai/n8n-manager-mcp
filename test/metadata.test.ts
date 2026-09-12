@@ -15,7 +15,7 @@ describe("metadata and manifest parity", () => {
     const glamaJson = JSON.parse(fs.readFileSync(path.join(repoRoot, "glama.json"), "utf-8")) as { version: string };
     const srcIndex = fs.readFileSync(path.join(repoRoot, "src", "index.ts"), "utf-8");
 
-    expect(pkg.version).toBe("0.1.18");
+    expect(pkg.version).toBe("0.1.19");
     expect(serverJson.version).toBe(pkg.version);
     expect(serverJson.packages?.[0]?.version).toBe(pkg.version);
     expect(glamaJson.version).toBe(pkg.version);
@@ -106,6 +106,10 @@ describe("metadata and manifest parity", () => {
     expect(readmeDe).toContain("## Schnellnavigation");
     expect(readme).toContain("#system-architecture");
     expect(readmeDe).toContain("#systemarchitektur");
+    expect(readme).toContain("#target-personas--discoverability");
+    expect(readmeDe).toContain("#zielgruppen--auffindbarkeit");
+    expect(readme).toContain("#comparative-matrix--alternatives");
+    expect(readmeDe).toContain("#vergleichsmatrix--alternativen");
     expect(readme).toContain("#core-capabilities--safety-invariants");
     expect(readmeDe).toContain("#kernfähigkeiten--sicherheitsinvarianten");
     expect(readme).toContain("#available-tools");
@@ -114,6 +118,8 @@ describe("metadata and manifest parity", () => {
     expect(readmeDe).toContain("#ellmos-ai-ökosystem");
     expect(readme).toContain("#third-party-licenses");
     expect(readmeDe).toContain("#drittanbieter-lizenzen");
+    expect(readme).toContain("#third-party-licenses--transparency");
+    expect(readmeDe).toContain("#drittanbieter-lizenzen--transparenz");
     expect(readme).toContain("#changelog");
     expect(readmeDe).toContain("#änderungsprotokoll");
   });
@@ -215,7 +221,7 @@ describe("metadata and manifest parity", () => {
   it("verifies llms.txt timestamp, security reference, and tool inventory", () => {
     const llmsTxt = fs.readFileSync(path.join(repoRoot, "llms.txt"), "utf-8");
 
-    expect(llmsTxt).toContain("Last-checked: 2026-09-10");
+    expect(llmsTxt).toContain("Last-checked: 2026-09-12");
     expect(llmsTxt).toContain("SECURITY.md");
     expect(llmsTxt).toContain("THIRD_PARTY_LICENSES.md");
     expect(llmsTxt).toContain("MARKETING-LOG.txt");
@@ -227,8 +233,8 @@ describe("metadata and manifest parity", () => {
     const readme = fs.readFileSync(path.join(repoRoot, "README.md"), "utf-8");
     const readmeDe = fs.readFileSync(path.join(repoRoot, "README_de.md"), "utf-8");
 
-    expect(readme).toContain("183%20passed");
-    expect(readmeDe).toContain("183%20passed");
+    expect(readme).toContain("184%20passed");
+    expect(readmeDe).toContain("184%20passed");
     expect(readme).toContain("README_de.md");
     expect(readmeDe).toContain("README.md");
     expect(readme).toContain("https://github.com/open-bricks");
@@ -291,5 +297,38 @@ describe("metadata and manifest parity", () => {
     expect(marketing).toContain("[PERSONA-3]");
     expect(marketing).toContain("[PERSONA-4]");
     expect(marketing).toContain("THREE-PHASE DISCOVERABILITY ROADMAP");
+    expect(marketing).toContain("3. HIGH-INTENT KEYWORD & DISCOVERY MATRIX");
+    expect(marketing).toContain("4. 5-WAY COMPARATIVE MATRIX");
+  });
+
+  it("verifies target personas and comparative matrix tables across READMEs", () => {
+    const readme = fs.readFileSync(path.join(repoRoot, "README.md"), "utf-8");
+    const readmeDe = fs.readFileSync(path.join(repoRoot, "README_de.md"), "utf-8");
+
+    expect(readme).toContain("## Target Personas & Discoverability");
+    expect(readmeDe).toContain("## Zielgruppen & Auffindbarkeit");
+    expect(readme).toContain("Autonomous AI Agents & Swarms");
+    expect(readmeDe).toContain("Autonome KI-Agenten & Schwärme");
+    expect(readme).toContain("DevOps & Multi-Environment Engineers");
+    expect(readmeDe).toContain("DevOps & Multi-Environment-Architekten");
+    expect(readme).toContain("SecOps, Compliance & Risk Teams");
+    expect(readmeDe).toContain("SecOps, Compliance & Risikoteams");
+    expect(readme).toContain("Ecosystem Builders & Tool Integrators");
+    expect(readmeDe).toContain("Ökosystem-Entwickler & Tool-Integratoren");
+
+    expect(readme).toContain("## Comparative Matrix & Alternatives");
+    expect(readmeDe).toContain("## Vergleichsmatrix & Alternativen");
+    expect(readme).toContain("Direct n8n REST API");
+    expect(readmeDe).toContain("Direkte n8n REST API");
+    expect(readme).toContain("Standard Agent Shell");
+    expect(readmeDe).toContain("Standard Agent Shell");
+    expect(readme).toContain("Manual n8n Web UI");
+    expect(readmeDe).toContain("Manuelle n8n Web-UI");
+    expect(readme).toContain("Generic Cloud SaaS");
+    expect(readmeDe).toContain("Generische Cloud-SaaS");
+    expect(readme).toContain("100% Local Stdio Transport, Zero Telemetry");
+    expect(readmeDe).toContain("100% lokaler Stdio-Transport, Zero Telemetrie");
+    expect(readme).toContain("## Third-Party Licenses & Transparency");
+    expect(readmeDe).toContain("## Drittanbieter-Lizenzen & Transparenz");
   });
 });

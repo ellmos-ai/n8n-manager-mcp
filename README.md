@@ -1,17 +1,18 @@
-<img src="assets/n8n_logo.jpg" alt="n8n Manager MCP Server banner" width="700">
+<img src="assets/n8n_logo.jpg" alt="n8n Manager MCP Server Banner" width="700">
 
 # n8n Manager MCP Server
 
 **🇩🇪 [Deutsche Version](README_de.md)**
 
-*Part of the [ellmos-ai](https://github.com/ellmos-ai) family and [open-bricks](https://github.com/open-bricks) umbrella.*
+*Part of the [ellmos-ai](https://github.com/ellmos-ai) family and the [open-bricks](https://github.com/open-bricks) umbrella.*
 
 [![npm](https://img.shields.io/npm/v/n8n-manager-mcp.svg)](https://www.npmjs.com/package/n8n-manager-mcp)
-[![Tests](https://img.shields.io/badge/Tests-183%20passed-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
+[![Tests](https://img.shields.io/badge/Tests-184%20passed-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
 [![MCP Tools](https://img.shields.io/badge/MCP%20Tools-19%20tools-blue.svg)](https://github.com/ellmos-ai/n8n-manager-mcp)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D20-blue.svg)](https://nodejs.org)
 [![Safety](https://img.shields.io/badge/Safety-Backups%20%7C%20Audit%20%7C%20Read--Only-success.svg)](SECURITY.md)
 [![Security](https://img.shields.io/badge/Security-48h%20SLA%20%7C%20Local--First-blue.svg)](SECURITY.md)
+[![Third-Party](https://img.shields.io/badge/Third--Party-Audited%20%7C%20Permissive-success.svg)](THIRD_PARTY_LICENSES.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![LLM Ready](https://img.shields.io/badge/LLM--Ready-llms.txt-orange.svg)](llms.txt)
 [![Ecosystem: ellmos--ai](https://img.shields.io/badge/Ecosystem-ellmos--ai-blue.svg)](https://github.com/ellmos-ai)
@@ -24,20 +25,24 @@ MCP (Model Context Protocol) server for managing n8n workflows via AI assistants
 
 ## Quick Navigation
 
-- [Overview & Architecture](#system-architecture)
-- [Directory Status](#directory-status)
-- [Core Capabilities & Safety Invariants](#core-capabilities--safety-invariants)
-- [Features](#features)
-- [Installation](#installation)
-- [Quick Start](#quick-start)
-- [Available Tools (19 Tools)](#available-tools)
-- [Optional: n8n-workflow-manager Seam](#optional-n8n-workflow-manager-seam)
-- [Configuration & Safety Defaults](#configuration)
-- [Development & Testing](#development)
-- [Sibling Projects & Ecosystem Matrix](#ellmos-ai-ecosystem)
-- [Third-Party Licenses & Notices](#third-party-licenses)
-- [Changelog](#changelog)
-- [Liability & License](#haftung--liability)
+| Nr | Section | Highlights |
+| :--- | :--- | :--- |
+| 01 | [📐 System Architecture](#system-architecture) | Dual-Mermaid diagrams: Component Flowchart TD & Sequence Lifecycle |
+| 02 | [🌐 Directory Status & Registries](#directory-status) | Official listings on npm, Glama, PulseMCP, and Enterprise DNA |
+| 03 | [🎯 Target Personas & Discoverability](#target-personas--discoverability) | Persona mapping for Agent Engineers, DevOps, SecOps, and Integrators |
+| 04 | [⚖️ Comparative Matrix & Alternatives](#comparative-matrix--alternatives) | 10-dimension evaluation vs raw REST API, shell CLI, browser UI, and cloud SaaS |
+| 05 | [🛡️ Core Capabilities & Safety Invariants](#core-capabilities--safety-invariants) | 10 formal invariants (`INV-LOCAL-01` to `INV-SLA-10`), read-only gates, audit logs |
+| 06 | [✨ Key Features](#features) | Direct REST integration, multi-server routing, backup snapshots, node catalog |
+| 07 | [⚙️ Client Installation](#installation) | One-command setup for Claude Code, Claude Desktop, Cursor, and Windsurf |
+| 08 | [🚀 Quick Start](#quick-start) | Step-by-step workflow creation, execution inspection, and server switching |
+| 09 | [🛠️ Available Tools (19 Tools)](#available-tools) | Complete MCP tool reference across CRUD, executions, backups, and nodes |
+| 10 | [🔗 Optional: n8n-workflow-manager Seam](#optional-n8n-workflow-manager-seam) | Decision tracking and change history integration with paired manager service |
+| 11 | [🔒 Configuration & Safety Defaults](#configuration) | Environment variables, local backup root, and strict monotonic constraints |
+| 12 | [🧪 Development & Testing](#development) | Multi-OS Vitest test suite, smoke runner, and offline node catalog tests |
+| 13 | [🧱 ellmos-ai Ecosystem](#ellmos-ai-ecosystem) | Sibling MCP servers, BACH agent OS, and open-bricks desktop software suites |
+| 14 | [📜 Third-Party Licenses & Transparency](#third-party-licenses--transparency) | 100% permissive open-source dependencies (MIT, BSD, Apache-2.0) |
+| 15 | [📝 Changelog](#changelog) | Complete release notes, security hardenings, and discoverability history |
+| 16 | [⚖️ Liability / Haftung](#haftung--liability) | Statutory open-source donation notice under §§ 516 ff. BGB and MIT disclaimer |
 
 ## System Architecture
 
@@ -98,6 +103,30 @@ sequenceDiagram
 - [PulseMCP listing](https://www.pulsemcp.com/servers/ellmos-ai-n8n-manager): indexed as `ellmos-ai-n8n-manager`
 - MCP namespace status: this repo contains `server.json` and `mcpName` metadata for `io.github.ellmos-ai/n8n-manager-mcp`; some ecosystem directories still expose the legacy `io.github.lukisch/n8n-manager-mcp` name until their indexes refresh.
 - Search context: best matched by `n8n MCP server`, `n8n workflow management MCP`, `AI assistant n8n workflows`, and `ellmos-ai n8n-manager-mcp`.
+
+## Target Personas & Discoverability
+
+| Persona | Core Needs | Pain Points Solved | Target Discovery Terms |
+| :--- | :--- | :--- | :--- |
+| **Autonomous AI Agents & Swarms** | Non-destructive workflow manipulation, pre-mutation snapshots, deterministic receipts | LLM hallucination breaking active production workflows; inability to inspect node connections offline | `n8n mcp server`, `ai agent n8n workflow management`, `claude code n8n automation` |
+| **DevOps & Multi-Environment Engineers** | Safe multi-server routing, export/import synchronization across stages | Manual JSON export friction; staging-to-production drift; unversioned workflow copies | `n8n multi-server mcp`, `sync n8n workflows staging prod`, `n8n workflow export import mcp` |
+| **SecOps, Compliance & Risk Teams** | Monotonic read-only locks, local audit trail, zero external data leakage | Unregulated agent mutations; unvetted API calls; loss of forensic mutation history | `safe n8n mcp server`, `read-only n8n automation`, `audit log n8n ai integration` |
+| **Ecosystem Builders & Tool Integrators** | Standardized MCP schemas, validated manifests, reliable TypeScript SDK seam | Schema mismatch across MCP directories; missing regression and contract test suites | `modelcontextprotocol n8n`, `glama n8n-manager-mcp`, `smithery n8n workflow` |
+
+## Comparative Matrix & Alternatives
+
+| Dimension | `n8n-manager-mcp` | Direct n8n REST API | Standard Agent Shell | Manual n8n Web UI | Generic Cloud SaaS |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Primary Interface** | Native MCP Stdio (JSON-RPC) | Raw HTTP REST (Curl/Axios) | Ad-hoc CLI / Bash Scripts | Interactive Web Canvas | Proprietary Web Portal |
+| **Safety Guardrails** | Monotonic Read-Only Gate (`N8N_MANAGER_READ_ONLY=1`) | None (Unchecked API execution) | Shell exit code heuristics | Human confirmation modals | Remote vendor RBAC |
+| **Mutation Backups** | Automated Pre-Mutation JSON Snapshots (`INV-BACK-03`) | None (Overwrites live instance) | None (Script dependent) | None (Live canvas modifications) | Vendor-dependent snapshots |
+| **Rollback Facility** | 1-Click `n8n_restore_workflow` from Local Disk | Manual JSON reconstruction via POST | Manual script rollback logic | Manual node rebuilding on canvas | Vendor rollback UI (Paywalled) |
+| **Forensic Audit Log** | Append-Only Structured `audit.log` (`INV-AUDIT-04`) | Generic webserver access logs | Ephemeral terminal stdout | Canvas execution logs only | Cloud vendor log retention |
+| **Node Introspection** | Built-in Offline Catalog (`n8n_describe_nodes`) | Manual online documentation | Guesswork & parameter trials | Visual palette browsing | Online API documentation |
+| **Multi-Server Isolation** | Isolated Stored Profiles (`servers.json`) | Manual token switching in scripts | Shell history token exposure | Multi-tab credential clutter | Cloud workspace switching |
+| **Privacy & Zero-Egress** | 100% Local Stdio Transport, Zero Telemetry | Direct HTTP client traffic | Local shell execution | Browser telemetry & analytics | Remote third-party hosting |
+| **Workflow Migration** | Built-in `n8n_export_workflow` & `n8n_import_workflow` | Custom Python/Curl ETL scripts | Complex bash/jq pipelines | Download / Upload JSON dialog | Cloud enterprise paywall |
+| **License & Audited Security**| 100% Permissive MIT (Audited, 48h Security SLA) | Fair-Code (n8n source available) | Mixed / Ad-hoc licenses | Commercial / Fair-Code | Closed Proprietary SaaS |
 
 ## Core Capabilities & Safety Invariants
 
@@ -328,10 +357,25 @@ Our partner organization **[open-bricks](https://github.com/open-bricks)** and s
 | **[ellmos-core](https://github.com/ellmos-ai/ellmos-core)** | `ellmos-ai` | Enterprise AI agent backend, hybrid RAG, and multi-tenant security |
 | **[open-bricks](https://github.com/open-bricks)** | `open-bricks` | Umbrella portal and catalog across all local-first AI software products |
 
-## Third-Party Licenses
+<a id="third-party-licenses"></a>
+<a id="third-party-licenses--transparency"></a>
+## Third-Party Licenses & Transparency
 
 This project is licensed under the [MIT License](LICENSE).
-For a comprehensive inventory of all direct runtime, development, and transitive open-source dependencies along with their respective permissive licenses (MIT, Apache-2.0, BSD-2-Clause, BSD-3-Clause), see [`THIRD_PARTY_LICENSES.md`](THIRD_PARTY_LICENSES.md).
+To guarantee complete supply chain integrity and compliance in enterprise and autonomous agent environments, all dependencies are continuously audited:
+
+| Dependency | Type | Version | License | Verification Status |
+| :--- | :--- | :--- | :--- | :--- |
+| [`@modelcontextprotocol/sdk`](https://github.com/modelcontextprotocol/typescript-sdk) | Runtime (Direct) | `^1.29.0` | MIT | Permissive / Audited |
+| [`zod`](https://github.com/colinhacks/zod) | Runtime (Direct) | `^3.23.8` | MIT | Permissive / Audited |
+| [`update-notifier`](https://github.com/yeoman/update-notifier) | Runtime (Direct) | `^7.3.1` | BSD-2-Clause | Permissive / Audited |
+| `typescript` | Dev / Compiler | `^5.3.3` | Apache-2.0 | Permissive / Audited |
+| `vitest` | Dev / Test Runner | `^3.2.6` | MIT | Permissive / Audited |
+| `@types/node` | Dev / Type Definitions | `^20.11.0` | MIT | Permissive / Audited |
+
+- **Zero Copyleft / AGPL:** Contains no viral copyleft or unreviewed commercial dependencies.
+- **Zero External Telemetry:** Emits no network beacons, analytics payloads, or external phone-home pings.
+- **Detailed Open-Source Inventory:** Complete attribution notices, license texts, and transitive dependency analyses are available in [`THIRD_PARTY_LICENSES.md`](THIRD_PARTY_LICENSES.md).
 
 ## Marketing & Personas Log
 
