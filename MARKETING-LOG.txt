@@ -8,8 +8,8 @@
 # NPM Package:  n8n-manager-mcp
 # Author:       Lukas Geiger
 # License:      MIT
-# Version:      0.1.19
-# Last Updated: 2026-09-12
+# Version:      0.1.20
+# Last Updated: 2026-09-14
 # ==============================================================================
 
 1. PRODUCT POSITIONING & VALUE PROPOSITION
@@ -168,3 +168,17 @@ The ellmos-ai and open-bricks suites provide coordinated local-first tools:
 - Phase 3 (Ecosystem Interoperability & Community) [STATUS: ACTIVE]:
   Seamless integration with open-compute, BACH, and agent orchestration tools;
   automated regression testing on every pull request and release tag.
+
+8. TECHNICAL HYGIENE & CI HARDENING AUDIT (2026-09-14)
+------------------------------------------------------------------------------
+- CI Timeout Guardrails: Hardened tests.yml (15m), stale.yml (10m + concurrency
+  cancellation), welcome.yml (5m), auto-assign.yml (5m), and label-sync.yml (5m)
+  against hung runners and unbounded action minutes consumption.
+- Multi-Host Cloud-Sync & Lock Defense: Hardened .gitignore against multi-host
+  conflict copies (* (kopie)*, * (copy)*, *-WORKSTATION-LG*, *-ASUS-GEI*),
+  canonical lock primitives (LOCK, LOCK.*, LOCK*.txt, LOCK.permissions.json, uv.lock,
+  with package-lock.json trackable exemption), and cache directories (.coverage.*,
+  .tox/, .turbo/, .nyc_output/, .hypothesis/).
+- Contract Testing: Vitest contract test suite extended to 186 automated tests
+  (100% pass) verifying multi-host gitignore defense, manifest version consistency,
+  workflow timeout constraints, and documentation integrity.

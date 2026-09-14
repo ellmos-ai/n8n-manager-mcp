@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.20] - 2026-09-14
+
+### CI Timeout Guardrails, Multi-Host Gitignore Defense, Manifest Parity & Contract Test Expansion (2026-09-14)
+- **CI Workflow Timeout & Concurrency Guardrails:** Added `timeout-minutes: 15` to primary test job (`.github/workflows/tests.yml`), added `timeout-minutes: 10` and concurrency cancellation (`concurrency: group: ${{ github.workflow }}-${{ github.ref }}, cancel-in-progress: true`) to stale issues/PRs automation (`.github/workflows/stale.yml`), and added `timeout-minutes: 5` to auxiliary workflows (`welcome.yml`, `auto-assign.yml`, `label-sync.yml`) to prevent hung runners and unbounded action minutes consumption.
+- **Multi-Host Cloud-Sync & Lock Defense:** Hardened `.gitignore` against multi-host conflict files (`* (kopie)*`, `* (copy)*`, `* (Kopie)*`, `* (Copy)*`, `*conflicted copy*`, `*-WORKSTATION*`, `*-WORKSTATION-LG*`, `*-ASUS-GEI*`, `*-LAPTOP*`, `*-Mac Studio*`), canonical lock primitives (`LOCK`, `LOCK.*`, `LOCK*.txt`, `LOCK.permissions.json`, `uv.lock`, keeping `!package-lock.json` unignored), and build/cache artifacts (`*.orig`, `.coverage.*`, `.tox/`, `.turbo/`, `.nyc_output/`, `.hypothesis/`).
+- **Manifest & Version Parity:** Bumped version to `0.1.20` across `package.json`, `package-lock.json`, `server.json` (root and packages array), `glama.json`, and `src/index.ts` (module header docstring and McpServer initialization).
+- **Metadata, Badge & LLM Context Synchronization:** Synchronized `llms.txt` verification timestamp and `Last-checked` to `2026-09-14`, updated Shields.io test badges to `186 passed` (100% green) across both `README.md` and `README_de.md`.
+- **Contract Test Suite Expansion:** Extended `test/repository-hygiene.test.ts` to assert that multi-host conflict patterns and canonical locks are gitignored while keeping public manifests trackable; extended `test/metadata.test.ts` to assert version `0.1.20`, workflow timeouts and concurrency across all workflows, gitignore defense rules, and `llms.txt` timestamp (now 186 Vitest tests passing).
+
 ## [0.1.19] - 2026-09-12
 
 ### Discoverability, 16-Point Navigation, Comparative Matrix & Transparency (2026-09-12)

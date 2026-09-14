@@ -58,12 +58,53 @@ describe("repository hygiene", () => {
     }
   });
 
+  it("ignores multi-host cloud-sync conflicts, canonical locks, and build/test caches", () => {
+    const ignored = [
+      "LOCK",
+      "LOCK.txt",
+      "LOCK.user.test",
+      "LOCK.permissions.json",
+      "uv.lock",
+      "backup (kopie).json",
+      "backup (copy).json",
+      "backup (Kopie).json",
+      "backup (Copy).json",
+      "test conflicted copy.txt",
+      "test-WORKSTATION.txt",
+      "test-WORKSTATION-LG.txt",
+      "test-ASUS-GEI.txt",
+      "test-LAPTOP.txt",
+      "test-Mac Studio.txt",
+      "file.sync-conflict-20260914.txt",
+      "test.conflict",
+      "patch.orig",
+      ".coverage",
+      ".coverage.test",
+      ".tox/env",
+      ".turbo/cache",
+      ".nyc_output/coverage.json",
+      ".hypothesis/examples",
+    ];
+
+    for (const candidate of ignored) {
+      expect(isIgnored(candidate), `${candidate} should be ignored`).toBe(true);
+    }
+  });
+
   it("keeps public package metadata and examples trackable", () => {
     const trackable = [
+      "package.json",
+      "package-lock.json",
       "server.json",
+      "glama.json",
+      "smithery.yaml",
+      "llms.txt",
       "README.md",
       "README_de.md",
       "CHANGELOG.md",
+      "SECURITY.md",
+      "THIRD_PARTY_LICENSES.md",
+      "MARKETING-LOG.txt",
       ".env.example",
       ".env.sample",
     ];

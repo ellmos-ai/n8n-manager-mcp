@@ -15,7 +15,7 @@ describe("metadata and manifest parity", () => {
     const glamaJson = JSON.parse(fs.readFileSync(path.join(repoRoot, "glama.json"), "utf-8")) as { version: string };
     const srcIndex = fs.readFileSync(path.join(repoRoot, "src", "index.ts"), "utf-8");
 
-    expect(pkg.version).toBe("0.1.19");
+    expect(pkg.version).toBe("0.1.20");
     expect(serverJson.version).toBe(pkg.version);
     expect(serverJson.packages?.[0]?.version).toBe(pkg.version);
     expect(glamaJson.version).toBe(pkg.version);
@@ -69,6 +69,7 @@ describe("metadata and manifest parity", () => {
     expect(ciWorkflow).toContain("uses: actions/checkout@v4");
     expect(ciWorkflow).toContain("uses: actions/setup-node@v4");
     expect(ciWorkflow).toContain("node-version: [20, 22]");
+    expect(ciWorkflow).toContain("timeout-minutes: 15");
     expect(ciWorkflow).toContain("run: npm ci");
     expect(ciWorkflow).toContain("run: npm run build");
     expect(ciWorkflow).toContain("run: npm test");
@@ -76,6 +77,22 @@ describe("metadata and manifest parity", () => {
     expect(ciWorkflow).toContain("run: npm pack --dry-run --json");
     expect(ciWorkflow).toContain("concurrency:");
     expect(ciWorkflow).toContain("cancel-in-progress: true");
+  });
+
+  it("validates timeout guardrails and concurrency across all auxiliary workflows", () => {
+    const staleWorkflow = fs.readFileSync(path.join(repoRoot, ".github", "workflows", "stale.yml"), "utf-8");
+    expect(staleWorkflow).toContain("timeout-minutes: 10");
+    expect(staleWorkflow).toContain("concurrency:");
+    expect(staleWorkflow).toContain("cancel-in-progress: true");
+
+    const welcomeWorkflow = fs.readFileSync(path.join(repoRoot, ".github", "workflows", "welcome.yml"), "utf-8");
+    expect(welcomeWorkflow).toContain("timeout-minutes: 5");
+
+    const autoAssignWorkflow = fs.readFileSync(path.join(repoRoot, ".github", "workflows", "auto-assign.yml"), "utf-8");
+    expect(autoAssignWorkflow).toContain("timeout-minutes: 5");
+
+    const labelSyncWorkflow = fs.readFileSync(path.join(repoRoot, ".github", "workflows", "label-sync.yml"), "utf-8");
+    expect(labelSyncWorkflow).toContain("timeout-minutes: 5");
   });
 
   it("verifies bilingual security policy, SLAs, supported versions, and direct contact points", () => {
@@ -177,18 +194,28 @@ describe("metadata and manifest parity", () => {
     expect(gitignore).toContain("*-CONFLIT-*");
     expect(gitignore).toContain("*-conflict-*");
     expect(gitignore).toContain("*.sync-temp-*");
+    expect(gitignore).toContain("* (kopie)*");
+    expect(gitignore).toContain("*-WORKSTATION-LG*");
+    expect(gitignore).toContain("*-ASUS-GEI*");
+    expect(gitignore).toMatch(/^LOCK$/m);
     expect(gitignore).toContain("LOCK.*");
     expect(gitignore).toContain("*.lock");
     expect(gitignore).toContain("LOCK*.txt");
+    expect(gitignore).toContain("LOCK.permissions.json");
+    expect(gitignore).toContain("uv.lock");
     expect(gitignore).toContain("!package-lock.json");
     expect(gitignore).toContain(".coverage");
+    expect(gitignore).toContain(".coverage.*");
     expect(gitignore).toContain("coverage/");
     expect(gitignore).toContain(".pytest_cache/");
     expect(gitignore).toContain(".ruff_cache/");
     expect(gitignore).toContain(".wheel-smoke/");
     expect(gitignore).toContain("wheelhouse/");
+    expect(gitignore).toContain(".tox/");
+    expect(gitignore).toContain(".turbo/");
     expect(gitignore).toContain("*.tmp");
     expect(gitignore).toContain("*.bak");
+    expect(gitignore).toContain("*.orig");
   });
 
   it("verifies repository hygiene preserves package-lock.json while ignoring multi-agent locks and sync conflict copies", () => {
@@ -221,7 +248,7 @@ describe("metadata and manifest parity", () => {
   it("verifies llms.txt timestamp, security reference, and tool inventory", () => {
     const llmsTxt = fs.readFileSync(path.join(repoRoot, "llms.txt"), "utf-8");
 
-    expect(llmsTxt).toContain("Last-checked: 2026-09-12");
+    expect(llmsTxt).toContain("Last-checked: 2026-09-14");
     expect(llmsTxt).toContain("SECURITY.md");
     expect(llmsTxt).toContain("THIRD_PARTY_LICENSES.md");
     expect(llmsTxt).toContain("MARKETING-LOG.txt");
@@ -233,8 +260,8 @@ describe("metadata and manifest parity", () => {
     const readme = fs.readFileSync(path.join(repoRoot, "README.md"), "utf-8");
     const readmeDe = fs.readFileSync(path.join(repoRoot, "README_de.md"), "utf-8");
 
-    expect(readme).toContain("184%20passed");
-    expect(readmeDe).toContain("184%20passed");
+    expect(readme).toContain("186%20passed");
+    expect(readmeDe).toContain("186%20passed");
     expect(readme).toContain("README_de.md");
     expect(readmeDe).toContain("README.md");
     expect(readme).toContain("https://github.com/open-bricks");
