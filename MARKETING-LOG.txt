@@ -182,3 +182,34 @@ The ellmos-ai and open-bricks suites provide coordinated local-first tools:
 - Contract Testing: Vitest contract test suite extended to 186 automated tests
   (100% pass) verifying multi-host gitignore defense, manifest version consistency,
   workflow timeout constraints, and documentation integrity.
+
+9. PATH B DISCOVERABILITY, 18-POINT NAVIGATION & METADATA RE-AUDIT (2026-09-18)
+------------------------------------------------------------------------------
+- Discoverability & Registry Health:
+  * Traffic & Visibility Baseline: 214 clones across 67 unique cloners; 28 views across
+    13 unique viewers; 0 open issues, 1 open PR (#5 fast-uri bump).
+  * GitHub Topics Optimization: Reached maximum allowable GitHub topics (20 topics)
+    by registering 'zero-egress' and 'open-bricks' tags alongside mcp, mcp-server,
+    n8n, workflows, automation, devops, etc.
+- 18-Point Bilingual Navigation Parity:
+  * Restructured README.md and README_de.md with complete 18-point quick navigation
+    table from #1-architecture to #18-liability--statutory-notice.
+  * Preserved full backward compatibility with legacy anchor IDs (#system-architecture,
+    #core-capabilities--safety-invariants, #third-party-licenses, #haftung--liability).
+  * Promoted Dual Mermaid Diagrams to a dedicated Section 2 with independent Component
+    Architecture flowchart TD and Safe Mutation Lifecycle sequence diagram.
+- Target Personas & High-Intent Search Matrix:
+  * Canonical Persona Tags: Explicitly mapped [PERSONA-01] / [PERSONA-1] (Autonomous Agents),
+    [PERSONA-02] / [PERSONA-2] (DevOps / Multi-Environment), [PERSONA-03] / [PERSONA-3] (SecOps /
+    Compliance), and [PERSONA-04] / [PERSONA-4] (Ecosystem Builders & Tool Integrators).
+  * SEO Query Table: Added bilingual High-Intent search queries covering Claude Code n8n
+    integration, zero-egress workflow backup, multi-server staging, and local MCP servers.
+- Supply Chain & Third-Party Invariants Audit:
+  * Updated THIRD_PARTY_LICENSES.md with Section 5 Formal Governance Matrix validating
+    all 10 invariants (INV-LOCAL-01 through INV-SLA-10) and RunAsInvoker non-elevation.
+  * Verified 100% permissive dependencies (MIT, BSD-2-Clause, BSD-3-Clause, Apache-2.0)
+    with zero copyleft or AGPL exposure.
+- Verification & Contract Test Expansion:
+  * Expanded Vitest contract test suite to 189 passing tests across 8 test suites.
+  * Automated contract assertions for 18-point anchors, canonical persona IDs, and third-party
+    invariant mapping.

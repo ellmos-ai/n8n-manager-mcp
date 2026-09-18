@@ -7,7 +7,7 @@
 *Teil der [ellmos-ai](https://github.com/ellmos-ai)-Familie und des [open-bricks](https://github.com/open-bricks)-Dachverbunds.*
 
 [![npm](https://img.shields.io/npm/v/n8n-manager-mcp.svg)](https://www.npmjs.com/package/n8n-manager-mcp)
-[![Tests](https://img.shields.io/badge/Tests-186%20passed-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
+[![Tests](https://img.shields.io/badge/Tests-189%20passed-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
 [![MCP Tools](https://img.shields.io/badge/MCP%20Tools-19%20tools-blue.svg)](https://github.com/ellmos-ai/n8n-manager-mcp)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D20-blue.svg)](https://nodejs.org)
 [![Sicherheit](https://img.shields.io/badge/Sicherheit-Backups%20%7C%20Audit%20%7C%20Read--Only-success.svg)](SECURITY.md)
@@ -27,24 +27,47 @@ MCP-Server (Model Context Protocol) zur Verwaltung von n8n-Workflows über KI-As
 
 | Nr | Abschnitt | Kerninhalte |
 | :--- | :--- | :--- |
-| 01 | [📐 Systemarchitektur](#systemarchitektur) | Dual-Mermaid-Diagramme: Komponenten-Flowchart TD & Sequenz-Lebenszyklus |
-| 02 | [🌐 Verzeichnis-Status](#verzeichnis-status) | Offizielle Einträge auf npm, Glama, PulseMCP und Enterprise DNA |
-| 03 | [🎯 Zielgruppen & Auffindbarkeit](#zielgruppen--auffindbarkeit) | Persona-Mapping für Agenten-Entwickler, DevOps, SecOps und Integratoren |
-| 04 | [⚖️ Vergleichsmatrix & Alternativen](#vergleichsmatrix--alternativen) | 10-Dimensionen-Vergleich vs direkte REST-API, Shell-CLI, Web-UI und Cloud-SaaS |
-| 05 | [🛡️ Kernfähigkeiten & Sicherheitsinvarianten](#kernfähigkeiten--sicherheitsinvarianten) | 10 formale Invarianten (`INV-LOCAL-01` bis `INV-SLA-10`), Read-Only-Gates, Audit-Logs |
-| 06 | [✨ Funktionen](#funktionen) | Direkte REST-Anbindung, Multi-Server-Routing, Backup-Snapshots, Node-Katalog |
-| 07 | [⚙️ Installation](#installation) | Ein-Befehl-Einrichtung für Claude Code, Claude Desktop, Cursor und Windsurf |
-| 08 | [🚀 Schnellstart](#schnellstart) | Schrittweise Workflow-Erstellung, Ausführungsinspektion und Server-Wechsel |
-| 09 | [🛠️ Verfügbare Tools (19 Tools)](#verfügbare-tools) | Vollständige MCP-Tool-Referenz für CRUD, Ausführungen, Backups und Nodes |
-| 10 | [🔗 Optional: Anbindung an den n8n-workflow-manager](#optional-anbindung-an-den-n8n-workflow-manager) | Entscheidungsdokumentation und Versionsverlauf über gekoppeltes Manager-Modul |
-| 11 | [🔒 Konfiguration](#konfiguration) | Umgebungsvariablen, lokales Backup-Wurzelverzeichnis und monotone Schranken |
-| 12 | [🧪 Entwicklung & Tests](#entwicklung) | Multi-OS Vitest Testsuite, Smoke-Runner und Offline-Node-Katalog-Tests |
-| 13 | [🧱 ellmos-ai Ökosystem](#ellmos-ai-ökosystem) | Geschwister-MCP-Server, BACH Agenten-OS und open-bricks Desktop-Suiten |
-| 14 | [📜 Drittanbieter-Lizenzen & Transparenz](#drittanbieter-lizenzen--transparenz) | 100% permissive Open-Source-Abhängigkeiten (MIT, BSD, Apache-2.0) |
-| 15 | [📝 Änderungsprotokoll](#änderungsprotokoll) | Vollständige Release-Notizen, Sicherheitshärtungen und Discoverability-Historie |
-| 16 | [⚖️ Haftung & Lizenz](#haftung--liability) | Schenkungsklausel nach §§ 516 ff. BGB und MIT-Haftungsausschluss |
+| 01 | [📐 Systemarchitektur & Topologie](#systemarchitektur) | Lokaler Stdio-Transport, Multi-Server-Routing und Sicherheits-Middleware |
+| 02 | [📊 Duale Mermaid-Diagramme](#duale-mermaid-diagramme) | Komponenten-Flowchart TD & Sicherer Mutations-Lebenszyklus im Sequenzdiagramm |
+| 03 | [🌐 Verzeichnis-Status & Registries](#verzeichnis-status) | Offizielle Einträge auf npm, Glama, PulseMCP und Enterprise DNA |
+| 04 | [🎯 Zielgruppen & Auffindbarkeit](#zielgruppen--auffindbarkeit) | Persona-Mapping `[PERSONA-01]` bis `[PERSONA-04]` und High-Intent-Suchbegriffe |
+| 05 | [⚖️ Vergleichsmatrix & Alternativen](#vergleichsmatrix--alternativen) | 10-Dimensionen-Vergleich vs direkte REST-API, Shell-CLI, Web-UI und Cloud-SaaS |
+| 06 | [🛡️ Kernfähigkeiten & Sicherheitsinvarianten](#kernfähigkeiten--sicherheitsinvarianten) | 10 formale Invarianten (`INV-LOCAL-01` bis `INV-SLA-10`), Read-Only-Gates, Audit-Logs |
+| 07 | [✨ Funktionen](#funktionen) | Direkte REST-Anbindung, Multi-Server-Routing, Backup-Snapshots, Node-Katalog |
+| 08 | [⚙️ Installation](#installation) | Ein-Befehl-Einrichtung für Claude Code, Claude Desktop, Cursor und Windsurf |
+| 09 | [🚀 Schnellstart](#schnellstart) | Schrittweise Workflow-Erstellung, Ausführungsinspektion und Server-Wechsel |
+| 10 | [🛠️ Verfügbare Tools (19 Tools)](#verfügbare-tools) | Vollständige MCP-Tool-Referenz für CRUD, Ausführungen, Backups und Nodes |
+| 11 | [🔗 Optional: Anbindung an den n8n-workflow-manager](#optional-anbindung-an-den-n8n-workflow-manager) | Entscheidungsdokumentation und Versionsverlauf über gekoppeltes Manager-Modul |
+| 12 | [🔒 Konfiguration & Sicherheits-Standards](#konfiguration) | Umgebungsvariablen, lokales Backup-Wurzelverzeichnis und monotone Schranken |
+| 13 | [🧪 Entwicklung & Tests](#entwicklung) | Multi-OS Vitest Testsuite, Smoke-Runner und Offline-Node-Katalog-Tests |
+| 14 | [🧱 ellmos-ai Ökosystem](#ellmos-ai-ökosystem) | Geschwister-MCP-Server, BACH Agenten-OS und open-bricks Desktop-Suiten |
+| 15 | [📜 Drittanbieter-Lizenzen & Transparenz](#drittanbieter-lizenzen--transparenz) | 100% permissive Open-Source-Abhängigkeiten (MIT, BSD, Apache-2.0) |
+| 16 | [📈 Marketing- & Zielgruppen-Log](#marketing--personas-protokoll) | Umfassendes Positionierungs-Log, Keyword-Matrix und 3-Phasen-Roadmap |
+| 17 | [📝 Änderungsprotokoll](#änderungsprotokoll) | Vollständige Release-Notizen, Sicherheitshärtungen und Discoverability-Historie |
+| 18 | [⚖️ Haftung & Gesetzlicher Hinweis (§ 521 BGB)](#haftung--liability) | Schenkungsklausel nach §§ 516 ff. BGB und MIT-Haftungsausschluss |
 
+---
+
+<a id="1-architektur"></a>
+<a id="1-architecture"></a>
+<a id="systemarchitektur"></a>
+<a id="system-architecture"></a>
 ## Systemarchitektur
+
+Der n8n Manager MCP Server fungiert als **lokale, über Standard-Ein-/Ausgabe (stdio) angebundene Brücke** zwischen modernen KI-Entwicklungsumgebungen (Claude Code, Claude Desktop, Cursor, Windsurf) und lokalen oder cloudbasierten n8n-Instanzen.
+
+- **Prozessmodell:** Läuft vollständig im unprivilegierten Benutzerkontext (`RunAsInvoker`) als dedizierter Node.js-Kindprozess über Standard-Ein-/Ausgabe (`stdio`) mit JSON-RPC 2.0.
+- **Fail-Closed Sicherheits-Middleware:** Jede zustandsverändernde Aktion durchläuft vor dem API-Kontakt eine monotone Schranke (`N8N_MANAGER_READ_ONLY=1`).
+- **Multi-Instanzen-Router:** Ermöglicht die flexible Adressierung getrennter Umgebungen (Entwicklung, Staging, Produktion) mit isolierten API-Keys und atomarer Speicherung (`servers.json`).
+- **Integrierter Node-Katalog:** Bietet Offline-Introspektion von Node-Typen und Schemas (`n8n_describe_nodes`) ohne Netzwerklatenz.
+
+---
+
+<a id="2-duale-mermaid-diagramme"></a>
+<a id="2-dual-mermaid-diagrams"></a>
+<a id="duale-mermaid-diagramme"></a>
+<a id="dual-mermaid-diagrams"></a>
+## Duale Mermaid-Diagramme
 
 ### Komponenten-Architektur
 
@@ -95,6 +118,12 @@ sequenceDiagram
     end
 ```
 
+---
+
+<a id="3-verzeichnis-status"></a>
+<a id="3-directory-status"></a>
+<a id="verzeichnis-status"></a>
+<a id="directory-status"></a>
 ## Verzeichnis-Status
 
 - [npm-Paket](https://www.npmjs.com/package/n8n-manager-mcp): veröffentlicht als `n8n-manager-mcp`
@@ -104,15 +133,38 @@ sequenceDiagram
 - MCP-Namespace-Status: Dieses Repo enthält `server.json` und `mcpName`-Metadaten für `io.github.ellmos-ai/n8n-manager-mcp`; einzelne Ökosystem-Verzeichnisse zeigen bis zur Index-Aktualisierung noch den älteren Namen `io.github.lukisch/n8n-manager-mcp`.
 - Suchkontext: am besten auffindbar über `n8n MCP server`, `n8n workflow management MCP`, `AI assistant n8n workflows` und `ellmos-ai n8n-manager-mcp`.
 
+---
+
+<a id="4-zielgruppen--auffindbarkeit"></a>
+<a id="4-target-personas--discoverability"></a>
+<a id="zielgruppen--auffindbarkeit"></a>
+<a id="target-personas--discoverability"></a>
 ## Zielgruppen & Auffindbarkeit
 
 | Zielgruppe / Persona | Kernbedürfnisse | Gelöste Probleme | Zentrale Suchbegriffe |
 | :--- | :--- | :--- | :--- |
-| **Autonome KI-Agenten & Schwärme** | Zerstörungsfreie Workflow-Steuerung, Pre-Mutation-Snapshots, deterministische Belege | LLM-Halluzinationen beschädigen aktive Workflows; kein Offline-Node-Graph einsehbar | `n8n mcp server`, `ai agent n8n workflow management`, `claude code n8n automation` |
-| **DevOps & Multi-Environment-Architekten** | Sicheres Multi-Server-Routing, Export/Import-Synchronisation über Stages | Manuelle JSON-Export-Reibung; Staging-zu-Produktions-Drift; unversionierte Workflow-Kopien | `n8n multi-server mcp`, `sync n8n workflows staging prod`, `n8n workflow export import mcp` |
-| **SecOps, Compliance & Risikoteams** | Monotone Read-Only-Sperren, lokale Audit-Trails, Zero-External-Egress | Unregulierte Agenten-Mutationen; ungesicherte API-Aufrufe; Verlust forensischer Historie | `safe n8n mcp server`, `read-only n8n automation`, `audit log n8n ai integration` |
-| **Ökosystem-Entwickler & Tool-Integratoren** | Standardisierte MCP-Schemas, validierte Manifeste, robuste TypeScript-SDK-Anbindung | Schema-Diskrepanzen in MCP-Verzeichnissen; fehlende Regressions- und Vertragstests | `modelcontextprotocol n8n`, `glama n8n-manager-mcp`, `smithery n8n workflow` |
+| **[PERSONA-01] Autonome KI-Agenten & Schwärme** | Zerstörungsfreie Workflow-Steuerung, Pre-Mutation-Snapshots, deterministische Belege | LLM-Halluzinationen beschädigen aktive Workflows; kein Offline-Node-Graph einsehbar | `n8n mcp server`, `ai agent n8n workflow management`, `claude code n8n automation` |
+| **[PERSONA-02] DevOps & Multi-Environment-Architekten** | Sicheres Multi-Server-Routing, Export/Import-Synchronisation über Stages | Manuelle JSON-Export-Reibung; Staging-zu-Produktions-Drift; unversionierte Workflow-Kopien | `n8n multi-server mcp`, `sync n8n workflows staging prod`, `n8n workflow export import mcp` |
+| **[PERSONA-03] SecOps, Compliance & Risikoteams** | Monotone Read-Only-Sperren, lokale Audit-Trails, Zero-External-Egress | Unregulierte Agenten-Mutationen; ungesicherte API-Aufrufe; Verlust forensischer Historie | `safe n8n mcp server`, `read-only n8n automation`, `audit log n8n ai integration` |
+| **[PERSONA-04] Ökosystem-Entwickler & Tool-Integratoren** | Standardisierte MCP-Schemas, validierte Manifeste, robuste TypeScript-SDK-Anbindung | Schema-Diskrepanzen in MCP-Verzeichnissen; fehlende Regressions- und Vertragstests | `modelcontextprotocol n8n`, `glama n8n-manager-mcp`, `smithery n8n workflow` |
 
+### Suchbegriffe mit hoher Absicht (High-Intent SEO)
+
+- `n8n mcp server ki assistenten`
+- `claude code n8n workflow steuerung`
+- `lokaler n8n mcp stdio transport`
+- `sichere n8n workflow mutation mit backup`
+- `n8n multi-server synchronisation mcp`
+- `n8n offline node katalog ai agents`
+- `zero-egress n8n automatisierung datenschutz`
+- `modelcontextprotocol n8n typescript integration`
+
+---
+
+<a id="5-vergleichsmatrix--alternativen"></a>
+<a id="5-comparative-matrix--alternatives"></a>
+<a id="vergleichsmatrix--alternativen"></a>
+<a id="comparative-matrix--alternatives"></a>
 ## Vergleichsmatrix & Alternativen
 
 | Dimension | `n8n-manager-mcp` | Direkte n8n REST API | Standard Agent Shell | Manuelle n8n Web-UI | Generische Cloud-SaaS |
@@ -128,6 +180,12 @@ sequenceDiagram
 | **Workflow-Migration** | Integrierte Tools `n8n_export_workflow` & `import` | Eigene Python/Curl-Pipelines | Komplexe bash/jq-Skripte | Manueller Download/Upload-Dialog | Cloud-Enterprise-Bezahlschranke |
 | **Lizenz & Auditsicherheit** | 100% Permissiv MIT (Geprüft, 48h SLA) | Fair-Code (n8n Quellcode verfügbar) | Gemischte / Ad-hoc Lizenzen | Kommerziell / Fair-Code | Proprietäre geschlossene Cloud |
 
+---
+
+<a id="6-kernfaehigkeiten--sicherheitsinvarianten"></a>
+<a id="6-core-capabilities--safety-invariants"></a>
+<a id="kernfähigkeiten--sicherheitsinvarianten"></a>
+<a id="core-capabilities--safety-invariants"></a>
 ## Kernfähigkeiten & Sicherheitsinvarianten
 
 | Invarianten-ID | Fähigkeit / Invariante | Technische Garantie | Anwendervorteil |
@@ -143,6 +201,10 @@ sequenceDiagram
 | `INV-NODE-09` | **Integrierter Node-Katalog & Introspektion** | Umfassender Offline-Katalog für Trigger-, Action-, Logic-, Transform- und KI-Nodes | LLMs generieren valide Node-Verbindungen ohne zeitraubende API-Netzwerk-Trial-and-Error-Aufrufe |
 | `INV-SLA-10` | **Multi-Node CI & 48h Sicherheits-SLA** | Automatisierte GitHub Actions CI auf Node.js 20, 22 mit Concurrency-Abbruch; 48h Antwort- / 5-Tage-Triage-Zusage | Garantiert dauerhafte Plattformstabilität, verifizierte Sicherheits-Reaktionszeit und regressionsfreie Verteilbarkeit |
 
+<a id="7-funktionen"></a>
+<a id="7-features"></a>
+<a id="funktionen"></a>
+<a id="features"></a>
 ## Funktionen
 
 - **19 Tools** für vollständige n8n-Workflow-Verwaltung
@@ -154,6 +216,10 @@ sequenceDiagram
 - Integrierter Node-Katalog mit Beschreibungen
 - Keine Python-Abhängigkeit -- verbindet sich direkt mit der n8n-REST-API
 
+---
+
+<a id="8-installation"></a>
+<a id="installation"></a>
 ## Installation
 
 ### Claude Desktop
@@ -183,6 +249,12 @@ claude mcp add --scope user n8n-manager npx -y n8n-manager-mcp
 npm install -g n8n-manager-mcp
 ```
 
+---
+
+<a id="9-schnellstart"></a>
+<a id="9-quick-start"></a>
+<a id="schnellstart"></a>
+<a id="quick-start"></a>
 ## Schnellstart
 
 Nach der Installation in Claude eingeben:
@@ -199,6 +271,12 @@ Nach der Installation in Claude eingeben:
 4. **Ausführungen prüfen:**
    > "Zeige die letzten 10 Workflow-Ausführungen"
 
+---
+
+<a id="10-verfuegbare-tools"></a>
+<a id="10-available-tools"></a>
+<a id="verfügbare-tools"></a>
+<a id="available-tools"></a>
 ## Verfügbare Tools
 
 | Tool | Beschreibung |
@@ -223,6 +301,12 @@ Nach der Installation in Claude eingeben:
 | `n8n_describe_nodes` | Verfügbare n8n-Node-Typen durchsuchen |
 | `n8n_manager_history` | Versionshistorie, erfasste Entscheidungen und Sync-Historie aus einem laufenden n8n-workflow-manager lesen (Opt-in, read-only) |
 
+---
+
+<a id="11-optional-anbindung-an-den-n8n-workflow-manager"></a>
+<a id="11-optional-n8n-workflow-manager-seam"></a>
+<a id="optional-anbindung-an-den-n8n-workflow-manager"></a>
+<a id="optional-n8n-workflow-manager-seam"></a>
 ## Optional: Anbindung an den n8n-workflow-manager
 
 n8n selbst speichert nicht, *warum* ein Workflow geändert wurde. Das Geschwisterprojekt
@@ -255,6 +339,12 @@ bleiben 100, 20 und 20), und Indizes für Workflow-Verbindungen `from_output`/`t
 sind endliche nicht-negative Ganzzahlen von **0 bis 1000**. Ungültige Werte werden
 abgelehnt, bevor n8n-API-, Dateisystem- oder Workflow-Array-Zugriffe erfolgen.
 
+---
+
+<a id="12-konfiguration"></a>
+<a id="12-configuration"></a>
+<a id="konfiguration"></a>
+<a id="configuration"></a>
 ## Konfiguration
 
 Server-Verbindungen und Sicherheitseinstellungen werden in `~/.n8n-manager-mcp/servers.json` gespeichert.
@@ -270,6 +360,12 @@ Sicherheits-Standards:
 - `n8n_add_server` validiert Serververbindungen vor dem Speichern: URLs müssen `http`- oder `https`-Basis-URLs ohne eingebettete Zugangsdaten, Query-Strings oder Fragmente sein, und API-Keys dürfen keine Leerzeichen enthalten.
 - `n8n_add_server` besitzt explizite Default-Semantik: Der erste Server wird Standard; ein Update ohne `is_default` behält den bisherigen Zustand; `true` befördert den Server; `false` entfernt das Flag gezielt, woraufhin die Default-Auflösung auf den ersten konfigurierten Server zurückgreift.
 
+---
+
+<a id="13-entwicklung"></a>
+<a id="13-development"></a>
+<a id="entwicklung"></a>
+<a id="development"></a>
 ## Entwicklung
 
 ```bash
@@ -294,7 +390,14 @@ npm run smoke         # Manueller stdio MCP-Smoke-Test (erfordert vorher npm run
 
 Der Verifikationsstand umfasst Windows lokal und Ubuntu Linux in GitHub Actions; GitHub Actions führt Build, Test und npm-Paketprüfungen auf Node.js 20, 22 und 24 aus. Der commitspezifische lokale Beleg wird in `CHANGELOG.md` gepflegt. Der Smoke-Runner startet `dist/index.js` über den MCP-SDK-Client, prüft alle 19 Werkzeug-Registrierungen und ruft das sichere Katalog-Werkzeug `n8n_describe_nodes` ohne n8n-Zugangsdaten auf.
 
-## Geschwisterprojekte & Ökosystem-Matrix
+---
+
+<a id="14-ellmos-ai-oekosystem"></a>
+<a id="14-ellmos-ai-ecosystem"></a>
+<a id="ellmos-ai-oekosystem"></a>
+<a id="ellmos-ai-ökosystem"></a>
+<a id="ellmos-ai-ecosystem"></a>
+## ellmos-ai Ökosystem
 
 Unsere Partnerorganisation **[open-bricks](https://github.com/open-bricks)** und die Schwester-Suiten bündeln KI-native Desktop-Anwendungen und Entwickler-Tools:
 
@@ -317,8 +420,14 @@ Unsere Partnerorganisation **[open-bricks](https://github.com/open-bricks)** und
 | **[ellmos-core](https://github.com/ellmos-ai/ellmos-core)** | `ellmos-ai` | Enterprise KI-Agenten-Backend, hybrides RAG und mandantenfähige Sicherheit |
 | **[open-bricks](https://github.com/open-bricks)** | `open-bricks` | Dachportal und Katalog für alle lokalen KI-Softwareprodukte |
 
+---
+
+<a id="15-drittanbieter-lizenzen--transparenz"></a>
+<a id="15-third-party-licenses--transparency"></a>
 <a id="drittanbieter-lizenzen"></a>
 <a id="drittanbieter-lizenzen--transparenz"></a>
+<a id="third-party-licenses"></a>
+<a id="third-party-licenses--transparency"></a>
 ## Drittanbieter-Lizenzen & Transparenz
 
 Dieses Projekt steht unter der [MIT-Lizenz](LICENSE).
@@ -337,14 +446,34 @@ Zur Gewährleistung vollständiger Lieferkettensicherheit in Enterprise- und aut
 - **Zero-External-Telemetry:** Sendet keine Analyse-Pings, Beacons oder Telemetrie an externe Server.
 - **Vollständiges Lizenzinventar:** Ausführliche Hinweise, Original-Lizenztexte und transitive Abhängigkeitsbäume finden sich in [`THIRD_PARTY_LICENSES.md`](THIRD_PARTY_LICENSES.md).
 
+---
+
+<a id="16-marketing--personas-protokoll"></a>
+<a id="16-marketing--personas-log"></a>
+<a id="marketing--personas-protokoll"></a>
+<a id="marketing--personas-log"></a>
 ## Marketing- & Zielgruppen-Log
 
 Produktpositionierung, Zielgruppen-Personas, Governance-Invarianten-Zuordnung sowie die 3-Phasen-Discoverability-Roadmap sind im [`MARKETING-LOG.txt`](MARKETING-LOG.txt) hinterlegt.
 
+---
+
+<a id="17-aenderungsprotokoll"></a>
+<a id="17-changelog"></a>
+<a id="änderungsprotokoll"></a>
+<a id="changelog"></a>
 ## Änderungsprotokoll
 
 Vollständige Versionshistorie, Release-Notizen und Migrationsschritte sind im [`CHANGELOG.md`](CHANGELOG.md) aufgeführt.
 
+---
+
+<a id="18-sicherheitsrichtlinie--gesetzlicher-hinweis"></a>
+<a id="18-security-policy--statutory-notice"></a>
+<a id="18-haftung--gesetzlicher-hinweis"></a>
+<a id="18-liability--statutory-notice"></a>
+<a id="haftung--liability"></a>
+<a id="haftung"></a>
 ## Haftung / Liability
 
 Dieses Projekt ist eine **unentgeltliche Open-Source-Schenkung** im Sinne der §§ 516 ff. BGB. Die Haftung des Urhebers ist gemäß **§ 521 BGB** auf **Vorsatz und grobe Fahrlässigkeit** beschränkt. Ergänzend gilt der Haftungsausschluss der MIT-Lizenz.

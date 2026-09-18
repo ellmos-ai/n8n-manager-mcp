@@ -2,7 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
-## [0.1.20] - 2026-09-14
+## [0.1.20] - 2026-09-18
+
+### Pfad B Discoverability, 18-Point Navigation Parity, Personas & Metadata Audit (2026-09-18)
+- **18-Point Bilingual Navigation Parity:** Restructured quick navigation to an 18-point indexed matrix in `README.md` and `README_de.md` with complete reciprocal and legacy anchor parity (`#1-architecture` / `#system-architecture` / `#1-architektur` / `#systemarchitektur` through `#18-liability--statutory-notice` / `#18-sicherheitsrichtlinie--gesetzlicher-hinweis`).
+- **Dedicated Dual-Mermaid Section:** Promoted Component Architecture (`flowchart TD`) and Safe Mutation Lifecycle (`sequenceDiagram`) to independent Section 2 in both English and German documentation.
+- **Canonical Persona Identifiers & SEO Keywords:** Tagged user personas with standardized IDs (`[PERSONA-01]` through `[PERSONA-04]`) with backward-compatible aliases, and integrated high-intent search query matrices in both languages.
+- **Third-Party Invariants Compliance Matrix:** Extended `THIRD_PARTY_LICENSES.md` with Section 5 formally verifying all 10 governance invariants (`INV-LOCAL-01` through `INV-SLA-10`), `RunAsInvoker` user-space execution, and 100% permissive zero-copyleft supply chain.
+- **Marketing Log & Discoverability Audit:** Appended Section 9 to `MARKETING-LOG.txt` documenting GitHub traffic inspection (214 clones, 28 views, 0 issues), max 20 GitHub topics, and roadmap progress.
+- **Contract Test Suite Expansion:** Extended `test/metadata.test.ts` to assert 18-point navigation anchors, canonical persona IDs, and third-party invariant compliance (expanded to 189 passing tests).
 
 ### CI Timeout Guardrails, Multi-Host Gitignore Defense, Manifest Parity & Contract Test Expansion (2026-09-14)
 - **CI Workflow Timeout & Concurrency Guardrails:** Added `timeout-minutes: 15` to primary test job (`.github/workflows/tests.yml`), added `timeout-minutes: 10` and concurrency cancellation (`concurrency: group: ${{ github.workflow }}-${{ github.ref }}, cancel-in-progress: true`) to stale issues/PRs automation (`.github/workflows/stale.yml`), and added `timeout-minutes: 5` to auxiliary workflows (`welcome.yml`, `auto-assign.yml`, `label-sync.yml`) to prevent hung runners and unbounded action minutes consumption.

@@ -248,7 +248,7 @@ describe("metadata and manifest parity", () => {
   it("verifies llms.txt timestamp, security reference, and tool inventory", () => {
     const llmsTxt = fs.readFileSync(path.join(repoRoot, "llms.txt"), "utf-8");
 
-    expect(llmsTxt).toContain("Last-checked: 2026-09-14");
+    expect(llmsTxt).toContain("Last-checked: 2026-09-18");
     expect(llmsTxt).toContain("SECURITY.md");
     expect(llmsTxt).toContain("THIRD_PARTY_LICENSES.md");
     expect(llmsTxt).toContain("MARKETING-LOG.txt");
@@ -260,8 +260,8 @@ describe("metadata and manifest parity", () => {
     const readme = fs.readFileSync(path.join(repoRoot, "README.md"), "utf-8");
     const readmeDe = fs.readFileSync(path.join(repoRoot, "README_de.md"), "utf-8");
 
-    expect(readme).toContain("186%20passed");
-    expect(readmeDe).toContain("186%20passed");
+    expect(readme).toContain("189%20passed");
+    expect(readmeDe).toContain("189%20passed");
     expect(readme).toContain("README_de.md");
     expect(readmeDe).toContain("README.md");
     expect(readme).toContain("https://github.com/open-bricks");
@@ -357,5 +357,94 @@ describe("metadata and manifest parity", () => {
     expect(readmeDe).toContain("100% lokaler Stdio-Transport, Zero Telemetrie");
     expect(readme).toContain("## Third-Party Licenses & Transparency");
     expect(readmeDe).toContain("## Drittanbieter-Lizenzen & Transparenz");
+  });
+
+  it("verifies 18-point quick navigation anchors across READMEs", () => {
+    const readme = fs.readFileSync(path.join(repoRoot, "README.md"), "utf-8");
+    const readmeDe = fs.readFileSync(path.join(repoRoot, "README_de.md"), "utf-8");
+
+    const expectedAnchorsEn = [
+      "1-architecture",
+      "2-dual-mermaid-diagrams",
+      "3-directory-status",
+      "4-target-personas--discoverability",
+      "5-comparative-matrix--alternatives",
+      "6-core-capabilities--safety-invariants",
+      "7-features",
+      "8-installation",
+      "9-quick-start",
+      "10-available-tools",
+      "11-optional-n8n-workflow-manager-seam",
+      "12-configuration",
+      "13-development",
+      "14-ellmos-ai-ecosystem",
+      "15-third-party-licenses--transparency",
+      "16-marketing--personas-log",
+      "17-changelog",
+      "18-liability--statutory-notice",
+    ];
+
+    const expectedAnchorsDe = [
+      "1-architektur",
+      "2-duale-mermaid-diagramme",
+      "3-verzeichnis-status",
+      "4-zielgruppen--auffindbarkeit",
+      "5-vergleichsmatrix--alternativen",
+      "6-kernfaehigkeiten--sicherheitsinvarianten",
+      "7-funktionen",
+      "8-installation",
+      "9-schnellstart",
+      "10-verfuegbare-tools",
+      "11-optional-anbindung-an-den-n8n-workflow-manager",
+      "12-konfiguration",
+      "13-entwicklung",
+      "14-ellmos-ai-oekosystem",
+      "15-drittanbieter-lizenzen--transparenz",
+      "16-marketing--personas-protokoll",
+      "17-aenderungsprotokoll",
+      "18-sicherheitsrichtlinie--gesetzlicher-hinweis",
+    ];
+
+    for (const anchor of expectedAnchorsEn) {
+      expect(readme, `README.md missing anchor ${anchor}`).toContain(`id="${anchor}"`);
+    }
+    for (const anchor of expectedAnchorsDe) {
+      expect(readmeDe, `README_de.md missing anchor ${anchor}`).toContain(`id="${anchor}"`);
+    }
+  });
+
+  it("verifies canonical persona tags [PERSONA-01] through [PERSONA-04] across READMEs and MARKETING-LOG", () => {
+    const readme = fs.readFileSync(path.join(repoRoot, "README.md"), "utf-8");
+    const readmeDe = fs.readFileSync(path.join(repoRoot, "README_de.md"), "utf-8");
+    const marketing = fs.readFileSync(path.join(repoRoot, "MARKETING-LOG.txt"), "utf-8");
+
+    const personas = ["[PERSONA-01]", "[PERSONA-02]", "[PERSONA-03]", "[PERSONA-04]"];
+    for (const p of personas) {
+      expect(readme, `README.md missing ${p}`).toContain(p);
+      expect(readmeDe, `README_de.md missing ${p}`).toContain(p);
+      expect(marketing, `MARKETING-LOG.txt missing ${p}`).toContain(p);
+    }
+  });
+
+  it("verifies formal governance invariants INV-LOCAL-01 through INV-SLA-10 in THIRD_PARTY_LICENSES.md", () => {
+    const licenses = fs.readFileSync(path.join(repoRoot, "THIRD_PARTY_LICENSES.md"), "utf-8");
+
+    expect(licenses).toContain("Architectural & Governance Invariants Compliance Matrix");
+    expect(licenses).toContain("RunAsInvoker");
+    const invariants = [
+      "INV-LOCAL-01",
+      "INV-READ-02",
+      "INV-BACK-03",
+      "INV-AUDIT-04",
+      "INV-SRV-05",
+      "INV-TRAV-06",
+      "INV-PRIV-07",
+      "INV-SEAM-08",
+      "INV-NODE-09",
+      "INV-SLA-10",
+    ];
+    for (const inv of invariants) {
+      expect(licenses, `THIRD_PARTY_LICENSES.md missing invariant ${inv}`).toContain(inv);
+    }
   });
 });
