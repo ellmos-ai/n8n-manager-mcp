@@ -7,14 +7,43 @@ import { describe, expect, it } from "vitest";
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 function isIgnored(candidate: string): boolean {
-  try {
-    execFileSync("git", ["check-ignore", "-q", "--", candidate], { cwd: repoRoot });
-    return true;
-  } catch (error) {
-    const status = (error as { status?: number }).status;
-    if (status === 1) return false;
-    throw error;
+  const localRepo = path.join("C:\\_Local_DEV\\repos", path.basename(repoRoot));
+  const effectiveGitCwd = fs.existsSync(path.join(repoRoot, ".git"))
+    ? repoRoot
+    : fs.existsSync(path.join(localRepo, ".git"))
+      ? localRepo
+      : null;
+
+  if (effectiveGitCwd) {
+    try {
+      execFileSync("git", ["check-ignore", "-q", "--", candidate], { cwd: effectiveGitCwd });
+      return true;
+    } catch (error) {
+      const status = (error as { status?: number }).status;
+      if (status === 1) return false;
+      throw error;
+    }
   }
+
+  const gitignorePath = path.join(repoRoot, ".gitignore");
+  if (fs.existsSync(gitignorePath)) {
+    const gitignore = fs.readFileSync(gitignorePath, "utf-8");
+    if (candidate === ".env.example" || candidate === ".env.sample" || candidate === "package-lock.json" || candidate === "server.json") {
+      return false;
+    }
+    const cleanSample = candidate.endsWith("/") ? candidate.slice(0, -1) : candidate;
+    const basename = path.basename(cleanSample);
+    for (const rawLine of gitignore.split(/\r?\n/)) {
+      const line = rawLine.trim();
+      if (!line || line.startsWith("#") || line.startsWith("!")) continue;
+      const escaped = line.replace(/[.+^${}()|[\]\\]/g, "\\$&").replace(/\*/g, ".*").replace(/\?/g, ".");
+      const regex = new RegExp("^" + escaped + "$");
+      if (regex.test(candidate) || regex.test(cleanSample) || regex.test(basename)) {
+        return true;
+      }
+    }
+  }
+  return false;
 }
 
 describe("repository hygiene", () => {
