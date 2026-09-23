@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.21] - 2026-09-23
+
+### AI Security & Dependency Audit, Supply-Chain Hardening & 30-Day Remediation SLA (2026-09-23)
+- **Supply-Chain & Dependency Resolution:** Upgraded `vitest` devDependency and override to `^4.1.11` (closing GHSA-82fw-gwwq-j7x9 / CVE-2026-84373, matching `ellmos-filecommander-mcp` and `ellmos-controlcenter-mcp`), upgraded `hono` override to `^4.13.8`, `qs` override to `^6.16.0`, and `@hono/node-server` to `^2.0.12`. `npm audit` confirms 0 vulnerabilities across 195 packages.
+- **Security Policy & Binding Remediation SLA:** Hardened `SECURITY.md` in both German and English with explicit 30-day remediation SLA commitment for confirmed vulnerabilities (`INV-SLA-10`).
+- **Repository Hygiene & .gitignore Hardening:** Added exclusions for wildcard SSH private keys (`id_rsa*`, `id_ed25519*`, `id_ecdsa*`, `id_dsa*`), certificates & CSRs (`*.cert`, `*.csr`), generic tokens/secrets (`*.token`, `*.secret`), patch rejects (`*.rej`), and sync logs (`CONFLICT_REVIEW_LOG*`).
+- **Third-Party Licenses Inventory:** Updated `THIRD_PARTY_LICENSES.md` audit timestamp to `2026-09-23`, recorded Vitest 4.1.11, Hono 4.13.8, qs 6.16.0, and updated INV-SLA-10 compliance matrix.
+- **Manifest & Version Parity:** Bumped version to `0.1.21` across `package.json`, `package-lock.json`, `server.json` (root and packages array), `glama.json`, and `src/index.ts`.
+- **Contract Tests Expansion:** Updated and verified test suite in `test/metadata.test.ts` and `test/repository-hygiene.test.ts`.
+
 ## [0.1.20] - 2026-09-18
 
 ### Pfad B Discoverability, 18-Point Navigation Parity, Personas & Metadata Audit (2026-09-18)

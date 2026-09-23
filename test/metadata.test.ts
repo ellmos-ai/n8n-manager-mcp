@@ -15,7 +15,7 @@ describe("metadata and manifest parity", () => {
     const glamaJson = JSON.parse(fs.readFileSync(path.join(repoRoot, "glama.json"), "utf-8")) as { version: string };
     const srcIndex = fs.readFileSync(path.join(repoRoot, "src", "index.ts"), "utf-8");
 
-    expect(pkg.version).toBe("0.1.20");
+    expect(pkg.version).toBe("0.1.21");
     expect(serverJson.version).toBe(pkg.version);
     expect(serverJson.packages?.[0]?.version).toBe(pkg.version);
     expect(glamaJson.version).toBe(pkg.version);
@@ -105,6 +105,9 @@ describe("metadata and manifest parity", () => {
     expect(secContent).toContain("`0.1.x`");
     expect(secContent).toContain("48 Stunden");
     expect(secContent).toContain("48 hours");
+    expect(secContent).toContain("30 Tagen");
+    expect(secContent).toContain("30 days");
+    expect(secContent).toContain("Remediation SLA");
     expect(secContent).toContain("security@open-bricks.org");
     expect(secContent).toContain("security@ellmos.ai");
     expect(secContent).toContain("support@lukasgeiger.com");
@@ -216,6 +219,10 @@ describe("metadata and manifest parity", () => {
     expect(gitignore).toContain("*.tmp");
     expect(gitignore).toContain("*.bak");
     expect(gitignore).toContain("*.orig");
+    expect(gitignore).toContain("*.rej");
+    expect(gitignore).toContain("*.token");
+    expect(gitignore).toContain("*.secret");
+    expect(gitignore).toContain("CONFLICT_REVIEW_LOG*");
   });
 
   it("verifies repository hygiene preserves package-lock.json while ignoring multi-agent locks and sync conflict copies", () => {
@@ -248,7 +255,7 @@ describe("metadata and manifest parity", () => {
   it("verifies llms.txt timestamp, security reference, and tool inventory", () => {
     const llmsTxt = fs.readFileSync(path.join(repoRoot, "llms.txt"), "utf-8");
 
-    expect(llmsTxt).toContain("Last-checked: 2026-09-18");
+    expect(llmsTxt).toContain("Last-checked: 2026-09-23");
     expect(llmsTxt).toContain("SECURITY.md");
     expect(llmsTxt).toContain("THIRD_PARTY_LICENSES.md");
     expect(llmsTxt).toContain("MARKETING-LOG.txt");

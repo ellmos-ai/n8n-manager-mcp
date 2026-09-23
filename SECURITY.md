@@ -31,6 +31,7 @@ Falls Private Vulnerability Reporting im Repository noch nicht aktiv ist, kontak
 
 - **Erstreaktion:** Innerhalb von **48 Stunden**
 - **Triage & Bestätigung:** Innerhalb von **5 Werktagen**
+- **Behebungszusage (Remediation SLA):** Verbindliche Behebung und Bereitstellung eines Sicherheitspatches innerhalb von maximal **30 Tagen** nach Bestätigung einer gemeldeten Schwachstelle
 - **Patch-Bereitstellung:** Zeitnah nach Verifikation über GitHub Releases und npm Registry
 
 ### Integrierte Schutz- und Sicherheitsmechanismen
@@ -76,6 +77,7 @@ If Private Vulnerability Reporting is not yet active, please contact the securit
 
 - **Initial Response:** Within **48 hours**
 - **Triage & Confirmation:** Within **5 business days**
+- **Remediation SLA:** Binding resolution and security patch release within a maximum of **30 days** following confirmation of a reported vulnerability
 - **Patch Release:** As fast as possible following verification via GitHub Releases and npm registry
 
 ### Built-in Safety Controls & Invariants

@@ -1,6 +1,6 @@
 # Third-Party Licenses and Open Source Notices
 
-> **Audit Date:** 2026-09-18 | **Compliance:** 100% Permissive (MIT / BSD / Apache-2.0) | **Zero-Copyleft Guaranteed**
+> **Audit Date:** 2026-09-23 | **Compliance:** 100% Permissive (MIT / BSD / Apache-2.0) | **Zero-Copyleft Guaranteed**
 
 This project, **n8n-manager-mcp**, is licensed under the [MIT License](LICENSE).
 Below is an inventory of third-party open-source software, runtime packages, and development dependencies used in or distributed with this project, along with their respective licenses and notices.
@@ -39,7 +39,7 @@ The following tools are used solely for building, testing, linting, and verifyin
 | Package | Version Range | License | Project URL | Purpose |
 | :--- | :--- | :--- | :--- | :--- |
 | [`typescript`](https://github.com/microsoft/TypeScript) | `^5.3.3` | Apache-2.0 | [GitHub](https://github.com/microsoft/TypeScript) | TypeScript compiler (`tsc`) for type checking and compilation to JavaScript |
-| [`vitest`](https://github.com/vitest-dev/vitest) | `^3.2.6` | MIT | [GitHub](https://github.com/vitest-dev/vitest) | Next-generation testing framework for unit and contract test suites |
+| [`vitest`](https://github.com/vitest-dev/vitest) | `^4.1.11` | MIT | [GitHub](https://github.com/vitest-dev/vitest) | Next-generation testing framework for unit and contract test suites |
 | [`@types/node`](https://github.com/DefinitelyTyped/DefinitelyTyped) | `^20.11.0` | MIT | [GitHub](https://github.com/DefinitelyTyped/DefinitelyTyped) | TypeScript definitions for Node.js runtime APIs |
 
 ---
@@ -69,7 +69,7 @@ The third-party stack and MCP server implementation strictly enforce the followi
 | `INV-PRIV-07` | **Non-Elevation & User-Space Security** | Executes exclusively as unprivileged user (`RunAsInvoker`); no root, administrative, or elevated execution context required or requested. | Verified (Pass) |
 | `INV-SEAM-08` | **Opt-In Decision History Seam** | Optional adapter to `n8n-workflow-manager` via `N8N_MCP_MANAGER_URL`; explicit fail-fast without silent fallback to n8n directly. | Verified (Pass) |
 | `INV-NODE-09` | **Offline Node Catalog & Introspection** | Bundled static node catalog in `src/nodes.ts` provides complete schema introspection for AI agents without API network roundtrips. | Verified (Pass) |
-| `INV-SLA-10` | **Multi-Node CI & 48h Security SLA** | GitHub Actions matrix on Node.js 20, 22, and 24 with concurrency cancellation; committed 48h security initial response and 5-day triage SLA. | Verified (Pass) |
+| `INV-SLA-10` | **Multi-Node CI & 48h / 30d Security SLA** | GitHub Actions matrix on Node.js 20, 22, and 24 with concurrency cancellation; committed 48h initial response, 5-day triage, and 30-day remediation SLA. | Verified (Pass) |
 
 ---
 

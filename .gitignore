@@ -28,15 +28,23 @@ tokens.json
 *.token.json
 *recovery*codes*.txt
 id_rsa
+id_rsa*
 id_ed25519
+id_ed25519*
 id_ecdsa
+id_ecdsa*
 id_dsa
+id_dsa*
 *.pem
 *.key
 *.p12
 *.pfx
 *.crt
 *.cer
+*.cert
+*.csr
+*.token
+*.secret
 *.db
 *.sqlite
 *.sqlite3
@@ -74,6 +82,7 @@ uv.lock
 *-CONFLIT-*
 *-conflict-*
 *.sync-temp-*
+CONFLICT_REVIEW_LOG*
 
 # Test, Linter, Build & Coverage Artefakte
 .coverage
@@ -96,3 +105,4 @@ wheelhouse/
 *.swp
 *~
 *.orig
+*.rej
