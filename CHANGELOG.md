@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Pfad A Technical Hygiene, NOTICE Attribution, Multi-Host Sync Hardening & Contract Parity (2026-09-24)
+- **Formal NOTICE Attribution:** Added root `NOTICE` file specifying copyright and attribution for Lukas Geiger, ellmos-ai, and open-bricks under the MIT license, and registered it in `package.json` distribution files array.
+- **Workflow Concurrency Hardening:** Added explicit `concurrency` cancellation (`cancel-in-progress: true`) to `.github/workflows/welcome.yml` to prevent redundant runner execution on rapid contributor activity.
+- **Multi-Host Defense & Lock Protection:** Hardened `.gitignore` with additional multi-host patterns (`*-MacBook*`, `*-ASUS*`, `*-IDEAPAD*`), canonical lock primitives (`.automation-lock`), and test temporary dirs (`.pytest_temp/`).
+- **Third-Party Licenses & Context Parity:** Updated `THIRD_PARTY_LICENSES.md` audit date to `2026-09-24` with direct NOTICE attribution links, updated `llms.txt` verification timestamp to `2026-09-24`, and synchronized `README.md` and `README_de.md` documentation badges and NOTICE links.
+- **Version Freeze Compliance (T-20260920-167562623):** Maintained strict version freeze at `0.1.21` across all manifests and code (`package.json`, `server.json`, `glama.json`, `src/index.ts`).
+- **Contract Test Suite Expansion:** Extended `test/metadata.test.ts` and `test/repository-hygiene.test.ts` with assertions verifying the `NOTICE` file, `welcome.yml` concurrency, extended `.gitignore` host tokens, `package.json` files list, and `llms.txt` audit date.
+
 ## [0.1.21] - 2026-09-23
 
 ### AI Security & Dependency Audit, Supply-Chain Hardening & 30-Day Remediation SLA (2026-09-23)

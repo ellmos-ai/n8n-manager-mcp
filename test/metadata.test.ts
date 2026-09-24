@@ -52,6 +52,7 @@ describe("metadata and manifest parity", () => {
       "SECURITY.md",
       "THIRD_PARTY_LICENSES.md",
       "MARKETING-LOG.txt",
+      "NOTICE",
       "LICENSE",
       ".gitignore",
     ];
@@ -87,6 +88,8 @@ describe("metadata and manifest parity", () => {
 
     const welcomeWorkflow = fs.readFileSync(path.join(repoRoot, ".github", "workflows", "welcome.yml"), "utf-8");
     expect(welcomeWorkflow).toContain("timeout-minutes: 5");
+    expect(welcomeWorkflow).toContain("concurrency:");
+    expect(welcomeWorkflow).toContain("cancel-in-progress: true");
 
     const autoAssignWorkflow = fs.readFileSync(path.join(repoRoot, ".github", "workflows", "auto-assign.yml"), "utf-8");
     expect(autoAssignWorkflow).toContain("timeout-minutes: 5");
@@ -199,18 +202,23 @@ describe("metadata and manifest parity", () => {
     expect(gitignore).toContain("*.sync-temp-*");
     expect(gitignore).toContain("* (kopie)*");
     expect(gitignore).toContain("*-WORKSTATION-LG*");
+    expect(gitignore).toContain("*-ASUS*");
     expect(gitignore).toContain("*-ASUS-GEI*");
+    expect(gitignore).toContain("*-MacBook*");
+    expect(gitignore).toContain("*-IDEAPAD*");
     expect(gitignore).toMatch(/^LOCK$/m);
     expect(gitignore).toContain("LOCK.*");
     expect(gitignore).toContain("*.lock");
     expect(gitignore).toContain("LOCK*.txt");
     expect(gitignore).toContain("LOCK.permissions.json");
+    expect(gitignore).toContain(".automation-lock");
     expect(gitignore).toContain("uv.lock");
     expect(gitignore).toContain("!package-lock.json");
     expect(gitignore).toContain(".coverage");
     expect(gitignore).toContain(".coverage.*");
     expect(gitignore).toContain("coverage/");
     expect(gitignore).toContain(".pytest_cache/");
+    expect(gitignore).toContain(".pytest_temp/");
     expect(gitignore).toContain(".ruff_cache/");
     expect(gitignore).toContain(".wheel-smoke/");
     expect(gitignore).toContain("wheelhouse/");
@@ -247,6 +255,7 @@ describe("metadata and manifest parity", () => {
     expect(pkg.main).toBe("dist/index.js");
     expect(pkg.files).toContain("dist/");
     expect(pkg.files).toContain("SECURITY.md");
+    expect(pkg.files).toContain("NOTICE");
     expect(pkg.files).toContain("llms.txt");
     expect(pkg.files).toContain("THIRD_PARTY_LICENSES.md");
     expect(pkg.files).toContain("MARKETING-LOG.txt");
@@ -255,7 +264,8 @@ describe("metadata and manifest parity", () => {
   it("verifies llms.txt timestamp, security reference, and tool inventory", () => {
     const llmsTxt = fs.readFileSync(path.join(repoRoot, "llms.txt"), "utf-8");
 
-    expect(llmsTxt).toContain("Last-checked: 2026-09-23");
+    expect(llmsTxt).toContain("Last-checked: 2026-09-24");
+    expect(llmsTxt).toContain("NOTICE");
     expect(llmsTxt).toContain("SECURITY.md");
     expect(llmsTxt).toContain("THIRD_PARTY_LICENSES.md");
     expect(llmsTxt).toContain("MARKETING-LOG.txt");
@@ -267,8 +277,8 @@ describe("metadata and manifest parity", () => {
     const readme = fs.readFileSync(path.join(repoRoot, "README.md"), "utf-8");
     const readmeDe = fs.readFileSync(path.join(repoRoot, "README_de.md"), "utf-8");
 
-    expect(readme).toContain("189%20passed");
-    expect(readmeDe).toContain("189%20passed");
+    expect(readme).toContain("191%20passed");
+    expect(readmeDe).toContain("191%20passed");
     expect(readme).toContain("README_de.md");
     expect(readmeDe).toContain("README.md");
     expect(readme).toContain("https://github.com/open-bricks");
@@ -453,5 +463,25 @@ describe("metadata and manifest parity", () => {
     for (const inv of invariants) {
       expect(licenses, `THIRD_PARTY_LICENSES.md missing invariant ${inv}`).toContain(inv);
     }
+  });
+
+  it("verifies root NOTICE file attribution and copyright integrity", () => {
+    const noticePath = path.join(repoRoot, "NOTICE");
+    expect(fs.existsSync(noticePath), "Missing NOTICE file").toBe(true);
+    const notice = fs.readFileSync(noticePath, "utf-8");
+
+    expect(notice).toContain("n8n-manager-mcp");
+    expect(notice).toContain("Lukas Geiger");
+    expect(notice).toContain("<lukas@open-bricks.org>");
+    expect(notice).toContain("ellmos-ai");
+    expect(notice).toContain("open-bricks");
+    expect(notice).toContain("MIT License");
+  });
+
+  it("verifies CHANGELOG.md has an Unreleased section for Pfad A technical hygiene", () => {
+    const changelog = fs.readFileSync(path.join(repoRoot, "CHANGELOG.md"), "utf-8");
+    expect(changelog).toContain("## [Unreleased]");
+    expect(changelog).toContain("Pfad A Technical Hygiene");
+    expect(changelog).toContain("Formal NOTICE Attribution");
   });
 });

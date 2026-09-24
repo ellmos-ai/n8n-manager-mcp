@@ -213,3 +213,23 @@ The ellmos-ai and open-bricks suites provide coordinated local-first tools:
   * Expanded Vitest contract test suite to 189 passing tests across 8 test suites.
   * Automated contract assertions for 18-point anchors, canonical persona IDs, and third-party
     invariant mapping.
+
+10. REVISION HISTORY & TECHNICAL HYGIENE LOG (PFAD A) [2026-09-24]
+-------------------------------------------------------------------------------
+- Formal NOTICE Attribution:
+  * Established root NOTICE file documenting Lukas Geiger, ellmos-ai, and open-bricks
+    attribution under the MIT License.
+  * Added NOTICE to package.json distribution whitelist and llms.txt index.
+- CI/CD Lifecycle Automation & Hardening:
+  * Hardened .github/workflows/welcome.yml with explicit concurrency cancel-in-progress: true.
+- Multi-Host Cloud-Sync & Lock Defense:
+  * Extended .gitignore with additional host token filters (*-MacBook*, *-ASUS*, *-IDEAPAD*),
+    canonical lock guard (.automation-lock), and temporary test directories (.pytest_temp/).
+- Third-Party Licenses & Invariants Re-Audit:
+  * Re-audited THIRD_PARTY_LICENSES.md (Audit Date: 2026-09-24) preserving 100% permissive
+    composition (MIT, BSD-2-Clause, BSD-3-Clause, Apache-2.0) and Level 1 SBOM invariants.
+- Strict Version Freeze Discipline:
+  * Adhered strictly to T-20260920-167562623: preserved release version 0.1.21 untouched.
+- Contract Test Suite Expansion:
+  * Extended Vitest test suites with comprehensive contract verifications for NOTICE file,
+    welcome workflow concurrency, host token defense, and distribution files list.

@@ -1,8 +1,8 @@
 # Third-Party Licenses and Open Source Notices
 
-> **Audit Date:** 2026-09-23 | **Compliance:** 100% Permissive (MIT / BSD / Apache-2.0) | **Zero-Copyleft Guaranteed**
+> **Audit Date:** 2026-09-24 | **Compliance:** 100% Permissive (MIT / BSD / Apache-2.0) | **Zero-Copyleft Guaranteed**
 
-This project, **n8n-manager-mcp**, is licensed under the [MIT License](LICENSE).
+This project, **n8n-manager-mcp**, is licensed under the [MIT License](LICENSE) with attribution documented in [NOTICE](NOTICE).
 Below is an inventory of third-party open-source software, runtime packages, and development dependencies used in or distributed with this project, along with their respective licenses and notices.
 
 ---

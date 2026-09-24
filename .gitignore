@@ -63,6 +63,7 @@ LOCK.*
 *.lock
 LOCK*.txt
 LOCK.permissions.json
+.automation-lock
 uv.lock
 !package-lock.json
 
@@ -74,9 +75,12 @@ uv.lock
 *conflicted copy*
 *-WORKSTATION*
 *-WORKSTATION-LG*
+*-ASUS*
 *-ASUS-GEI*
 *-LAPTOP*
 *-Mac Studio*
+*-MacBook*
+*-IDEAPAD*
 *.sync-conflict-*
 *.conflict
 *-CONFLIT-*
@@ -90,6 +94,7 @@ CONFLICT_REVIEW_LOG*
 coverage/
 *.lcov
 .pytest_cache/
+.pytest_temp/
 .ruff_cache/
 htmlcov/
 .wheel-smoke/

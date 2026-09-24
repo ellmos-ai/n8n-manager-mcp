@@ -7,7 +7,7 @@
 *Teil der [ellmos-ai](https://github.com/ellmos-ai)-Familie und des [open-bricks](https://github.com/open-bricks)-Dachverbunds.*
 
 [![npm](https://img.shields.io/npm/v/n8n-manager-mcp.svg)](https://www.npmjs.com/package/n8n-manager-mcp)
-[![Tests](https://img.shields.io/badge/Tests-189%20passed-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
+[![Tests](https://img.shields.io/badge/Tests-191%20passed-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
 [![MCP Tools](https://img.shields.io/badge/MCP%20Tools-19%20tools-blue.svg)](https://github.com/ellmos-ai/n8n-manager-mcp)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D20-blue.svg)](https://nodejs.org)
 [![Sicherheit](https://img.shields.io/badge/Sicherheit-Backups%20%7C%20Audit%20%7C%20Read--Only-success.svg)](SECURITY.md)
@@ -430,7 +430,7 @@ Unsere Partnerorganisation **[open-bricks](https://github.com/open-bricks)** und
 <a id="third-party-licenses--transparency"></a>
 ## Drittanbieter-Lizenzen & Transparenz
 
-Dieses Projekt steht unter der [MIT-Lizenz](LICENSE).
+Dieses Projekt steht unter der [MIT-Lizenz](LICENSE) mit dokumentierter Attribution in [NOTICE](NOTICE).
 Zur Gewährleistung vollständiger Lieferkettensicherheit in Enterprise- und autonomen Agentenumgebungen werden alle Abhängigkeiten kontinuierlich auditiert:
 
 | Abhängigkeit | Typ | Version | Lizenz | Verifikationsstatus |
@@ -439,7 +439,7 @@ Zur Gewährleistung vollständiger Lieferkettensicherheit in Enterprise- und aut
 | [`zod`](https://github.com/colinhacks/zod) | Laufzeit (Direkt) | `^3.23.8` | MIT | Permissiv / Auditiert |
 | [`update-notifier`](https://github.com/yeoman/update-notifier) | Laufzeit (Direkt) | `^7.3.1` | BSD-2-Clause | Permissiv / Auditiert |
 | `typescript` | Entwicklung / Compiler | `^5.3.3` | Apache-2.0 | Permissiv / Auditiert |
-| `vitest` | Entwicklung / Test-Runner | `^3.2.6` | MIT | Permissiv / Auditiert |
+| `vitest` | Entwicklung / Test-Runner | `^4.1.11` | MIT | Permissiv / Auditiert |
 | `@types/node` | Entwicklung / Typdefinitionen | `^20.11.0` | MIT | Permissiv / Auditiert |
 
 - **Keine Copyleft- oder AGPL-Bindung:** Enthält keinerlei virale Lizenzen oder ungeprüfte kommerzielle Module.

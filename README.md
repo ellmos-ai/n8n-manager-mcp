@@ -7,7 +7,7 @@
 *Part of the [ellmos-ai](https://github.com/ellmos-ai) family and the [open-bricks](https://github.com/open-bricks) umbrella.*
 
 [![npm](https://img.shields.io/npm/v/n8n-manager-mcp.svg)](https://www.npmjs.com/package/n8n-manager-mcp)
-[![Tests](https://img.shields.io/badge/Tests-189%20passed-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
+[![Tests](https://img.shields.io/badge/Tests-191%20passed-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
 [![MCP Tools](https://img.shields.io/badge/MCP%20Tools-19%20tools-blue.svg)](https://github.com/ellmos-ai/n8n-manager-mcp)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D20-blue.svg)](https://nodejs.org)
 [![Safety](https://img.shields.io/badge/Safety-Backups%20%7C%20Audit%20%7C%20Read--Only-success.svg)](SECURITY.md)
@@ -467,7 +467,7 @@ Our partner organization **[open-bricks](https://github.com/open-bricks)** and s
 <a id="drittanbieter-lizenzen--transparenz"></a>
 ## Third-Party Licenses & Transparency
 
-This project is licensed under the [MIT License](LICENSE).
+This project is licensed under the [MIT License](LICENSE) with attribution declared in [NOTICE](NOTICE).
 To guarantee complete supply chain integrity and compliance in enterprise and autonomous agent environments, all dependencies are continuously audited:
 
 | Dependency | Type | Version | License | Verification Status |
@@ -476,7 +476,7 @@ To guarantee complete supply chain integrity and compliance in enterprise and au
 | [`zod`](https://github.com/colinhacks/zod) | Runtime (Direct) | `^3.23.8` | MIT | Permissive / Audited |
 | [`update-notifier`](https://github.com/yeoman/update-notifier) | Runtime (Direct) | `^7.3.1` | BSD-2-Clause | Permissive / Audited |
 | `typescript` | Dev / Compiler | `^5.3.3` | Apache-2.0 | Permissive / Audited |
-| `vitest` | Dev / Test Runner | `^3.2.6` | MIT | Permissive / Audited |
+| `vitest` | Dev / Test Runner | `^4.1.11` | MIT | Permissive / Audited |
 | `@types/node` | Dev / Type Definitions | `^20.11.0` | MIT | Permissive / Audited |
 
 - **Zero Copyleft / AGPL:** Contains no viral copyleft or unreviewed commercial dependencies.
