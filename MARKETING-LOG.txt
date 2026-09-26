@@ -9,7 +9,7 @@
 # Author:       Lukas Geiger
 # License:      MIT
 # Version:      0.1.21
-# Last Updated: 2026-09-23
+# Last Updated: 2026-09-26
 # ==============================================================================
 
 1. PRODUCT POSITIONING & VALUE PROPOSITION
@@ -233,3 +233,35 @@ The ellmos-ai and open-bricks suites provide coordinated local-first tools:
 - Contract Test Suite Expansion:
   * Extended Vitest test suites with comprehensive contract verifications for NOTICE file,
     welcome workflow concurrency, host token defense, and distribution files list.
+
+11. PATH B DISCOVERABILITY, 18-POINT NAVIGATION PARITY & LEVEL 1 SBOM AUDIT (2026-09-26)
+-------------------------------------------------------------------------------
+- 18-Point Bilingual Navigation Parity & Dual Reciprocal Anchors:
+  * Synchronized full 18-point quick navigation structure across English (README.md)
+    and German (README_de.md) with reciprocal <a id="sec-01"></a> through <a id="sec-18"></a>
+    HTML anchor aliases while retaining legacy semantic anchor tags for complete backward compatibility.
+  * Synchronized Shields.io badges across both languages: Attribution-NOTICE, Verified-2026--09--26,
+    Last-Checked-2026--09--26, and 48h SLA response.
+- Target Personas & Keyword Saturation (20/20 Saturation):
+  * Aligned package.json keywords to exactly 20 saturated terms matching the 20 registered
+    GitHub topics (agent-framework, ai-agents, ai-automation, automation, claude-code,
+    llm, llm-agents, local-first, mcp, mcp-registry, mcp-server, model-context-protocol,
+    n8n, n8n-workflows, open-bricks, open-source, typescript, workflow-automation,
+    workflow-management, zero-egress).
+  * Maintained high-intent query coverage for personas [PERSONA-01] through [PERSONA-04].
+- Level 1 SBOM Invariant Cross-Reference Matrix & Statutory Notice (§ 521 BGB):
+  * Re-audited THIRD_PARTY_LICENSES.md to Stand: 2026-09-26 with Level 1 SBOM Invariant
+    Cross-Reference Matrix mapping INV-LOCAL-01 through INV-SLA-10, certifying unprivileged
+    RunAsInvoker execution and 100% permissive zero-copyleft supply chain.
+  * Codified German statutory notice under § 521 BGB (Gefälligkeitsrecht) and binding
+    48h initial security response SLA in Section 18 of both READMEs and SECURITY.md.
+- Machine-Readable Context (llms.txt):
+  * Updated verification date and Last-checked stamp to 2026-09-26 confirming passing
+    Vitest tests, clean build, smoke discovery, and 0 vulnerabilities across 195 packages.
+- Strict Version Freeze Discipline:
+  * In strict compliance with T-20260920-167562623, version 0.1.21 remains frozen
+    across package.json, server.json, glama.json, and src/index.ts.
+- Automated Contract Test Expansion:
+  * Extended test/metadata.test.ts to validate 18-point dual reciprocal anchors (sec-01..sec-18),
+    20 package.json keywords saturation, Level 1 SBOM 2026-09-26 recency, § 521 BGB notices,
+    and MARKETING-LOG.txt integrity.

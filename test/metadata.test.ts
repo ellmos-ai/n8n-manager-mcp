@@ -264,7 +264,7 @@ describe("metadata and manifest parity", () => {
   it("verifies llms.txt timestamp, security reference, and tool inventory", () => {
     const llmsTxt = fs.readFileSync(path.join(repoRoot, "llms.txt"), "utf-8");
 
-    expect(llmsTxt).toContain("Last-checked: 2026-09-24");
+    expect(llmsTxt).toContain("Last-checked: 2026-09-26");
     expect(llmsTxt).toContain("NOTICE");
     expect(llmsTxt).toContain("SECURITY.md");
     expect(llmsTxt).toContain("THIRD_PARTY_LICENSES.md");
@@ -277,8 +277,8 @@ describe("metadata and manifest parity", () => {
     const readme = fs.readFileSync(path.join(repoRoot, "README.md"), "utf-8");
     const readmeDe = fs.readFileSync(path.join(repoRoot, "README_de.md"), "utf-8");
 
-    expect(readme).toContain("191%20passed");
-    expect(readmeDe).toContain("191%20passed");
+    expect(readme).toContain("194%20passed");
+    expect(readmeDe).toContain("194%20passed");
     expect(readme).toContain("README_de.md");
     expect(readmeDe).toContain("README.md");
     expect(readme).toContain("https://github.com/open-bricks");
@@ -443,10 +443,49 @@ describe("metadata and manifest parity", () => {
     }
   });
 
+  it("verifies package.json keywords saturation and discoverability terms", () => {
+    const pkg = JSON.parse(fs.readFileSync(path.join(repoRoot, "package.json"), "utf-8")) as {
+      keywords?: string[];
+    };
+
+    expect(pkg.keywords).toBeDefined();
+    expect(pkg.keywords?.length).toBe(20);
+    expect(pkg.keywords).toContain("local-first");
+    expect(pkg.keywords).toContain("zero-egress");
+    expect(pkg.keywords).toContain("claude-code");
+    expect(pkg.keywords).toContain("mcp-server");
+    expect(pkg.keywords).toContain("n8n-workflows");
+  });
+
+  it("verifies 18-point quick navigation parity and dual reciprocal anchors across English and German READMEs", () => {
+    const readmeEn = fs.readFileSync(path.join(repoRoot, "README.md"), "utf-8");
+    const readmeDe = fs.readFileSync(path.join(repoRoot, "README_de.md"), "utf-8");
+
+    expect(readmeEn).toContain("## Quick Navigation");
+    expect(readmeDe).toContain("## Schnellnavigation");
+
+    for (let i = 1; i <= 18; i++) {
+      const pad = String(i).padStart(2, "0");
+      expect(readmeEn, `README.md missing sec-${pad}`).toContain(`id="sec-${pad}"`);
+      expect(readmeDe, `README_de.md missing sec-${pad}`).toContain(`id="sec-${pad}"`);
+      expect(readmeEn, `README.md missing #sec-${pad}`).toContain(`#sec-${pad}`);
+      expect(readmeDe, `README_de.md missing #sec-${pad}`).toContain(`#sec-${pad}`);
+    }
+
+    expect(readmeEn).toContain('id="statutory-notice--liability"');
+    expect(readmeDe).toContain('id="statutory-notice--liability"');
+    expect(readmeEn).toContain("§ 521 German Civil Code");
+    expect(readmeDe).toContain("§ 521 BGB");
+    expect(readmeEn).toContain("48 hours");
+    expect(readmeDe).toContain("48 Stunden");
+  });
+
   it("verifies formal governance invariants INV-LOCAL-01 through INV-SLA-10 in THIRD_PARTY_LICENSES.md", () => {
     const licenses = fs.readFileSync(path.join(repoRoot, "THIRD_PARTY_LICENSES.md"), "utf-8");
 
     expect(licenses).toContain("Architectural & Governance Invariants Compliance Matrix");
+    expect(licenses).toContain("Level 1 SBOM");
+    expect(licenses).toContain("Stand: 2026-09-26");
     expect(licenses).toContain("RunAsInvoker");
     const invariants = [
       "INV-LOCAL-01",
@@ -478,10 +517,17 @@ describe("metadata and manifest parity", () => {
     expect(notice).toContain("MIT License");
   });
 
-  it("verifies CHANGELOG.md has an Unreleased section for Pfad A technical hygiene", () => {
+  it("verifies CHANGELOG.md contains recent Pfad A and Pfad B release entries", () => {
     const changelog = fs.readFileSync(path.join(repoRoot, "CHANGELOG.md"), "utf-8");
     expect(changelog).toContain("## [Unreleased]");
+    expect(changelog).toContain("Pfad B: 2026-09-26");
     expect(changelog).toContain("Pfad A Technical Hygiene");
     expect(changelog).toContain("Formal NOTICE Attribution");
+  });
+
+  it("verifies MARKETING-LOG.txt contains Pfad B Stand 2026-09-26 audit entry", () => {
+    const marketing = fs.readFileSync(path.join(repoRoot, "MARKETING-LOG.txt"), "utf-8");
+    expect(marketing).toContain("Last Updated: 2026-09-26");
+    expect(marketing).toContain("11. PATH B DISCOVERABILITY, 18-POINT NAVIGATION PARITY & LEVEL 1 SBOM AUDIT (2026-09-26)");
   });
 });

@@ -7,12 +7,15 @@
 *Teil der [ellmos-ai](https://github.com/ellmos-ai)-Familie und des [open-bricks](https://github.com/open-bricks)-Dachverbunds.*
 
 [![npm](https://img.shields.io/npm/v/n8n-manager-mcp.svg)](https://www.npmjs.com/package/n8n-manager-mcp)
-[![Tests](https://img.shields.io/badge/Tests-191%20passed-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
+[![Tests](https://img.shields.io/badge/Tests-194%20passed-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
 [![MCP Tools](https://img.shields.io/badge/MCP%20Tools-19%20tools-blue.svg)](https://github.com/ellmos-ai/n8n-manager-mcp)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D20-blue.svg)](https://nodejs.org)
 [![Sicherheit](https://img.shields.io/badge/Sicherheit-Backups%20%7C%20Audit%20%7C%20Read--Only-success.svg)](SECURITY.md)
 [![Security](https://img.shields.io/badge/Security-48h%20SLA%20%7C%20Local--First-blue.svg)](SECURITY.md)
 [![Drittanbieter](https://img.shields.io/badge/Drittanbieter-Gepr%C3%BCft%20%7C%20Permissiv-success.svg)](THIRD_PARTY_LICENSES.md)
+[![Attribution: NOTICE](https://img.shields.io/badge/Attribution-NOTICE-blue.svg)](NOTICE)
+[![Verified](https://img.shields.io/badge/Verified-2026--09--26-blue.svg)](llms.txt)
+[![Last-Checked](https://img.shields.io/badge/Last--Checked-2026--09--26-success.svg)](llms.txt)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![LLM Ready](https://img.shields.io/badge/LLM--Ready-llms.txt-orange.svg)](llms.txt)
 [![Ecosystem: ellmos--ai](https://img.shields.io/badge/Ecosystem-ellmos--ai-blue.svg)](https://github.com/ellmos-ai)
@@ -27,27 +30,28 @@ MCP-Server (Model Context Protocol) zur Verwaltung von n8n-Workflows über KI-As
 
 | Nr | Abschnitt | Kerninhalte |
 | :--- | :--- | :--- |
-| 01 | [📐 Systemarchitektur & Topologie](#systemarchitektur) | Lokaler Stdio-Transport, Multi-Server-Routing und Sicherheits-Middleware |
-| 02 | [📊 Duale Mermaid-Diagramme](#duale-mermaid-diagramme) | Komponenten-Flowchart TD & Sicherer Mutations-Lebenszyklus im Sequenzdiagramm |
-| 03 | [🌐 Verzeichnis-Status & Registries](#verzeichnis-status) | Offizielle Einträge auf npm, Glama, PulseMCP und Enterprise DNA |
-| 04 | [🎯 Zielgruppen & Auffindbarkeit](#zielgruppen--auffindbarkeit) | Persona-Mapping `[PERSONA-01]` bis `[PERSONA-04]` und High-Intent-Suchbegriffe |
-| 05 | [⚖️ Vergleichsmatrix & Alternativen](#vergleichsmatrix--alternativen) | 10-Dimensionen-Vergleich vs direkte REST-API, Shell-CLI, Web-UI und Cloud-SaaS |
-| 06 | [🛡️ Kernfähigkeiten & Sicherheitsinvarianten](#kernfähigkeiten--sicherheitsinvarianten) | 10 formale Invarianten (`INV-LOCAL-01` bis `INV-SLA-10`), Read-Only-Gates, Audit-Logs |
-| 07 | [✨ Funktionen](#funktionen) | Direkte REST-Anbindung, Multi-Server-Routing, Backup-Snapshots, Node-Katalog |
-| 08 | [⚙️ Installation](#installation) | Ein-Befehl-Einrichtung für Claude Code, Claude Desktop, Cursor und Windsurf |
-| 09 | [🚀 Schnellstart](#schnellstart) | Schrittweise Workflow-Erstellung, Ausführungsinspektion und Server-Wechsel |
-| 10 | [🛠️ Verfügbare Tools (19 Tools)](#verfügbare-tools) | Vollständige MCP-Tool-Referenz für CRUD, Ausführungen, Backups und Nodes |
-| 11 | [🔗 Optional: Anbindung an den n8n-workflow-manager](#optional-anbindung-an-den-n8n-workflow-manager) | Entscheidungsdokumentation und Versionsverlauf über gekoppeltes Manager-Modul |
-| 12 | [🔒 Konfiguration & Sicherheits-Standards](#konfiguration) | Umgebungsvariablen, lokales Backup-Wurzelverzeichnis und monotone Schranken |
-| 13 | [🧪 Entwicklung & Tests](#entwicklung) | Multi-OS Vitest Testsuite, Smoke-Runner und Offline-Node-Katalog-Tests |
-| 14 | [🧱 ellmos-ai Ökosystem](#ellmos-ai-ökosystem) | Geschwister-MCP-Server, BACH Agenten-OS und open-bricks Desktop-Suiten |
-| 15 | [📜 Drittanbieter-Lizenzen & Transparenz](#drittanbieter-lizenzen--transparenz) | 100% permissive Open-Source-Abhängigkeiten (MIT, BSD, Apache-2.0) |
-| 16 | [📈 Marketing- & Zielgruppen-Log](#marketing--personas-protokoll) | Umfassendes Positionierungs-Log, Keyword-Matrix und 3-Phasen-Roadmap |
-| 17 | [📝 Änderungsprotokoll](#änderungsprotokoll) | Vollständige Release-Notizen, Sicherheitshärtungen und Discoverability-Historie |
-| 18 | [⚖️ Haftung & Gesetzlicher Hinweis (§ 521 BGB)](#haftung--liability) | Schenkungsklausel nach §§ 516 ff. BGB und MIT-Haftungsausschluss |
+| 01 | [📐 Systemarchitektur & Topologie](#sec-01) ([#systemarchitektur](#systemarchitektur)) | Lokaler Stdio-Transport, Multi-Server-Routing und Sicherheits-Middleware |
+| 02 | [📊 Duale Mermaid-Diagramme](#sec-02) ([#duale-mermaid-diagramme](#duale-mermaid-diagramme)) | Komponenten-Flowchart TD & Sicherer Mutations-Lebenszyklus im Sequenzdiagramm |
+| 03 | [🌐 Verzeichnis-Status & Registries](#sec-03) ([#verzeichnis-status](#verzeichnis-status)) | Offizielle Einträge auf npm, Glama, PulseMCP und Enterprise DNA |
+| 04 | [🎯 Zielgruppen & Auffindbarkeit](#sec-04) ([#zielgruppen--auffindbarkeit](#zielgruppen--auffindbarkeit)) | Persona-Mapping `[PERSONA-01]` bis `[PERSONA-04]` und High-Intent-Suchbegriffe |
+| 05 | [⚖️ Vergleichsmatrix & Alternativen](#sec-05) ([#vergleichsmatrix--alternativen](#vergleichsmatrix--alternativen)) | 10-Dimensionen-Vergleich vs direkte REST-API, Shell-CLI, Web-UI und Cloud-SaaS |
+| 06 | [🛡️ Kernfähigkeiten & Sicherheitsinvarianten](#sec-06) ([#kernfähigkeiten--sicherheitsinvarianten](#kernfähigkeiten--sicherheitsinvarianten)) | 10 formale Invarianten (`INV-LOCAL-01` bis `INV-SLA-10`), Read-Only-Gates, Audit-Logs |
+| 07 | [✨ Funktionen](#sec-07) ([#funktionen](#funktionen)) | Direkte REST-Anbindung, Multi-Server-Routing, Backup-Snapshots, Node-Katalog |
+| 08 | [⚙️ Installation](#sec-08) ([#installation](#installation)) | Ein-Befehl-Einrichtung für Claude Code, Claude Desktop, Cursor und Windsurf |
+| 09 | [🚀 Schnellstart](#sec-09) ([#schnellstart](#schnellstart)) | Schrittweise Workflow-Erstellung, Ausführungsinspektion und Server-Wechsel |
+| 10 | [🛠️ Verfügbare Tools (19 Tools)](#sec-10) ([#verfügbare-tools](#verfügbare-tools)) | Vollständige MCP-Tool-Referenz für CRUD, Ausführungen, Backups und Nodes |
+| 11 | [🔗 Optional: Anbindung an den n8n-workflow-manager](#sec-11) ([#optional-anbindung-an-den-n8n-workflow-manager](#optional-anbindung-an-den-n8n-workflow-manager)) | Entscheidungsdokumentation und Versionsverlauf über gekoppeltes Manager-Modul |
+| 12 | [🔒 Konfiguration & Sicherheits-Standards](#sec-12) ([#konfiguration](#konfiguration)) | Umgebungsvariablen, lokales Backup-Wurzelverzeichnis und monotone Schranken |
+| 13 | [🧪 Entwicklung & Tests](#sec-13) ([#entwicklung](#entwicklung)) | Multi-OS Vitest Testsuite, Smoke-Runner und Offline-Node-Katalog-Tests |
+| 14 | [🧱 ellmos-ai Ökosystem](#sec-14) ([#ellmos-ai-ökosystem](#ellmos-ai-ökosystem)) | Geschwister-MCP-Server, BACH Agenten-OS und open-bricks Desktop-Suiten |
+| 15 | [📜 Drittanbieter-Lizenzen & Transparenz](#sec-15) ([#drittanbieter-lizenzen--transparenz](#drittanbieter-lizenzen--transparenz)) | 100% permissive Open-Source-Abhängigkeiten (MIT, BSD, Apache-2.0) |
+| 16 | [📈 Marketing- & Zielgruppen-Log](#sec-16) ([#marketing--personas-protokoll](#marketing--personas-protokoll)) | Umfassendes Positionierungs-Log, Keyword-Matrix und 3-Phasen-Roadmap |
+| 17 | [📝 Änderungsprotokoll](#sec-17) ([#änderungsprotokoll](#änderungsprotokoll)) | Vollständige Release-Notizen, Sicherheitshärtungen und Discoverability-Historie |
+| 18 | [⚖️ Haftung & Gesetzlicher Hinweis (§ 521 BGB)](#sec-18) ([#haftung--liability](#haftung--liability)) | Schenkungsklausel nach §§ 516 ff. BGB, MIT-Haftungsausschluss, 48h SLA |
 
 ---
 
+<a id="sec-01"></a>
 <a id="1-architektur"></a>
 <a id="1-architecture"></a>
 <a id="systemarchitektur"></a>
@@ -63,6 +67,7 @@ Der n8n Manager MCP Server fungiert als **lokale, über Standard-Ein-/Ausgabe (s
 
 ---
 
+<a id="sec-02"></a>
 <a id="2-duale-mermaid-diagramme"></a>
 <a id="2-dual-mermaid-diagrams"></a>
 <a id="duale-mermaid-diagramme"></a>
@@ -120,6 +125,7 @@ sequenceDiagram
 
 ---
 
+<a id="sec-03"></a>
 <a id="3-verzeichnis-status"></a>
 <a id="3-directory-status"></a>
 <a id="verzeichnis-status"></a>
@@ -135,6 +141,7 @@ sequenceDiagram
 
 ---
 
+<a id="sec-04"></a>
 <a id="4-zielgruppen--auffindbarkeit"></a>
 <a id="4-target-personas--discoverability"></a>
 <a id="zielgruppen--auffindbarkeit"></a>
@@ -161,6 +168,7 @@ sequenceDiagram
 
 ---
 
+<a id="sec-05"></a>
 <a id="5-vergleichsmatrix--alternativen"></a>
 <a id="5-comparative-matrix--alternatives"></a>
 <a id="vergleichsmatrix--alternativen"></a>
@@ -182,6 +190,7 @@ sequenceDiagram
 
 ---
 
+<a id="sec-06"></a>
 <a id="6-kernfaehigkeiten--sicherheitsinvarianten"></a>
 <a id="6-core-capabilities--safety-invariants"></a>
 <a id="kernfähigkeiten--sicherheitsinvarianten"></a>
@@ -201,6 +210,7 @@ sequenceDiagram
 | `INV-NODE-09` | **Integrierter Node-Katalog & Introspektion** | Umfassender Offline-Katalog für Trigger-, Action-, Logic-, Transform- und KI-Nodes | LLMs generieren valide Node-Verbindungen ohne zeitraubende API-Netzwerk-Trial-and-Error-Aufrufe |
 | `INV-SLA-10` | **Multi-Node CI & 48h Sicherheits-SLA** | Automatisierte GitHub Actions CI auf Node.js 20, 22 mit Concurrency-Abbruch; 48h Antwort- / 5-Tage-Triage-Zusage | Garantiert dauerhafte Plattformstabilität, verifizierte Sicherheits-Reaktionszeit und regressionsfreie Verteilbarkeit |
 
+<a id="sec-07"></a>
 <a id="7-funktionen"></a>
 <a id="7-features"></a>
 <a id="funktionen"></a>
@@ -218,6 +228,7 @@ sequenceDiagram
 
 ---
 
+<a id="sec-08"></a>
 <a id="8-installation"></a>
 <a id="installation"></a>
 ## Installation
@@ -251,6 +262,7 @@ npm install -g n8n-manager-mcp
 
 ---
 
+<a id="sec-09"></a>
 <a id="9-schnellstart"></a>
 <a id="9-quick-start"></a>
 <a id="schnellstart"></a>
@@ -273,6 +285,7 @@ Nach der Installation in Claude eingeben:
 
 ---
 
+<a id="sec-10"></a>
 <a id="10-verfuegbare-tools"></a>
 <a id="10-available-tools"></a>
 <a id="verfügbare-tools"></a>
@@ -303,6 +316,7 @@ Nach der Installation in Claude eingeben:
 
 ---
 
+<a id="sec-11"></a>
 <a id="11-optional-anbindung-an-den-n8n-workflow-manager"></a>
 <a id="11-optional-n8n-workflow-manager-seam"></a>
 <a id="optional-anbindung-an-den-n8n-workflow-manager"></a>
@@ -341,6 +355,7 @@ abgelehnt, bevor n8n-API-, Dateisystem- oder Workflow-Array-Zugriffe erfolgen.
 
 ---
 
+<a id="sec-12"></a>
 <a id="12-konfiguration"></a>
 <a id="12-configuration"></a>
 <a id="konfiguration"></a>
@@ -362,6 +377,7 @@ Sicherheits-Standards:
 
 ---
 
+<a id="sec-13"></a>
 <a id="13-entwicklung"></a>
 <a id="13-development"></a>
 <a id="entwicklung"></a>
@@ -392,6 +408,7 @@ Der Verifikationsstand umfasst Windows lokal und Ubuntu Linux in GitHub Actions;
 
 ---
 
+<a id="sec-14"></a>
 <a id="14-ellmos-ai-oekosystem"></a>
 <a id="14-ellmos-ai-ecosystem"></a>
 <a id="ellmos-ai-oekosystem"></a>
@@ -422,6 +439,7 @@ Unsere Partnerorganisation **[open-bricks](https://github.com/open-bricks)** und
 
 ---
 
+<a id="sec-15"></a>
 <a id="15-drittanbieter-lizenzen--transparenz"></a>
 <a id="15-third-party-licenses--transparency"></a>
 <a id="drittanbieter-lizenzen"></a>
@@ -448,6 +466,7 @@ Zur Gewährleistung vollständiger Lieferkettensicherheit in Enterprise- und aut
 
 ---
 
+<a id="sec-16"></a>
 <a id="16-marketing--personas-protokoll"></a>
 <a id="16-marketing--personas-log"></a>
 <a id="marketing--personas-protokoll"></a>
@@ -458,6 +477,7 @@ Produktpositionierung, Zielgruppen-Personas, Governance-Invarianten-Zuordnung so
 
 ---
 
+<a id="sec-17"></a>
 <a id="17-aenderungsprotokoll"></a>
 <a id="17-changelog"></a>
 <a id="änderungsprotokoll"></a>
@@ -468,16 +488,31 @@ Vollständige Versionshistorie, Release-Notizen und Migrationsschritte sind im [
 
 ---
 
+<a id="sec-18"></a>
 <a id="18-sicherheitsrichtlinie--gesetzlicher-hinweis"></a>
 <a id="18-security-policy--statutory-notice"></a>
 <a id="18-haftung--gesetzlicher-hinweis"></a>
 <a id="18-liability--statutory-notice"></a>
+<a id="statutory-notice--liability"></a>
 <a id="haftung--liability"></a>
 <a id="haftung"></a>
 ## Haftung / Liability
 
-Dieses Projekt ist eine **unentgeltliche Open-Source-Schenkung** im Sinne der §§ 516 ff. BGB. Die Haftung des Urhebers ist gemäß **§ 521 BGB** auf **Vorsatz und grobe Fahrlässigkeit** beschränkt. Ergänzend gilt der Haftungsausschluss der MIT-Lizenz.
+### Gesetzlicher Schenkungshinweis & Haftungsausschluss (§ 521 BGB)
+
+Dieses Projekt ist eine **unentgeltliche Open-Source-Schenkung** im Sinne der §§ 516 ff. BGB. Die Haftung des Urhebers ist gemäß **§ 521 BGB** auf **Vorsatz und grobe Fahrlässigkeit** beschränkt. Ergänzend gilt der Haftungsausschluss der [MIT-Lizenz](LICENSE).
 
 Nutzung auf eigenes Risiko. Keine Wartungszusage, keine Verfügbarkeitsgarantie, keine Gewähr für Fehlerfreiheit oder Eignung für einen bestimmten Zweck.
 
-This project is an unpaid open-source donation under the MIT License. Liability is limited to intent and gross negligence (§ 521 German Civil Code). Use at your own risk. No warranty, no maintenance guarantee, no fitness-for-purpose assumed.
+This project is an unpaid open-source donation under the MIT License. Liability of the author is limited to intent and gross negligence pursuant to **§ 521 of the German Civil Code (BGB)**. Use at your own risk. No warranty, no maintenance guarantee, and no fitness-for-purpose is assumed.
+
+### Sicherheits-Reaktions-SLA & Meldewege
+
+Gemäß unserer verbindlichen Sicherheitsrichtlinie in [SECURITY.md](SECURITY.md) gelten folgende Service Level Agreements:
+- **Erstreaktions-SLA:** Verbindlich innerhalb von **48 Stunden** (`INV-SLA-10`).
+- **Triage-Zusage:** Vollständige Schwachstellenbewertung innerhalb von **5 Werktagen**.
+- **Behebungs-SLA:** Bereitstellung koordinierter Sicherheits-Patches innerhalb von **30 Kalendertagen**.
+- **Direkte Kontaktstellen:**
+  - `security@open-bricks.org`
+  - `security@ellmos.ai`
+  - `lukas@open-bricks.org`

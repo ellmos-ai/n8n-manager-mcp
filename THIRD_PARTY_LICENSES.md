@@ -1,6 +1,6 @@
 # Third-Party Licenses and Open Source Notices
 
-> **Audit Date:** 2026-09-24 | **Compliance:** 100% Permissive (MIT / BSD / Apache-2.0) | **Zero-Copyleft Guaranteed**
+> **Audit Date:** 2026-09-26 | **Stand: 2026-09-26** | **Compliance:** 100% Permissive (MIT / BSD / Apache-2.0) | **Zero-Copyleft Guaranteed**
 
 This project, **n8n-manager-mcp**, is licensed under the [MIT License](LICENSE) with attribution documented in [NOTICE](NOTICE).
 Below is an inventory of third-party open-source software, runtime packages, and development dependencies used in or distributed with this project, along with their respective licenses and notices.
@@ -54,9 +54,9 @@ These licenses:
 
 ---
 
-## 5. Architectural & Governance Invariants Compliance Matrix
+## 5. Architectural & Governance Invariants Compliance Matrix (Level 1 SBOM)
 
-The third-party stack and MCP server implementation strictly enforce the following 10 formal safety and operational invariants:
+The third-party stack, licensing inventory, and MCP server implementation strictly enforce the following 10 formal safety and operational invariants (Level 1 SBOM Invariant Cross-Reference Matrix mapping `INV-LOCAL-01` through `INV-SLA-10` Stand 2026-09-26), cross-referencing root [NOTICE](NOTICE) attribution:
 
 | Invariant ID | Name / Scope | Technical Enforcement Mechanism | Compliance Status |
 | :--- | :--- | :--- | :--- |

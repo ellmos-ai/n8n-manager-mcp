@@ -4,6 +4,26 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Discoverability, Visual Architecture & 18-Point Bilingual Navigation Parity (Pfad B: 2026-09-26)
+- **18-Point Bilingual Navigation Parity & Dual Reciprocal Anchors:**
+  - Synchronized full 18-point quick navigation structure across English (`README.md`) and German (`README_de.md`) documentation with reciprocal `<a id="sec-01">` .. `<a id="sec-18">` HTML anchor aliases and semantic fallbacks.
+- **Persona Profiles & High-Intent SEO Queries:**
+  - Codified explicit operational profiles, pain points, and tool solutions for `[PERSONA-01]` Autonomous AI Agents & Swarms, `[PERSONA-02]` DevOps & Multi-Environment Engineers, `[PERSONA-03]` SecOps, Compliance & Risk Teams, and `[PERSONA-04]` Ecosystem Builders & Tool Integrators alongside targeted bilingual discovery queries.
+- **Comparative Matrix & Invariant Cross-References:**
+  - Explicitly mapped the 10 comparative dimensions to system runtime invariants (`INV-LOCAL-01` through `INV-SLA-10`) contrasting `n8n-manager-mcp` (19 tools) against Direct REST API, Standard Agent Shell, Manual Web UI, and Generic Cloud SaaS.
+- **Level 1 SBOM Transparency & Invariant Matrix (`THIRD_PARTY_LICENSES.md`):**
+  - Updated inventory audit stamp to `Stand: 2026-09-26`, enhanced the Level 1 SBOM Invariant Cross-Reference Matrix section, and re-certified unprivileged user-mode `RunAsInvoker` execution and Zero-Copyleft isolation (100% permissive licenses).
+- **Statutory Notice (§ 521 BGB) & 48h Security Response SLA:**
+  - Codified German statutory notice under § 521 BGB Gefälligkeitsrecht and binding 48h initial security response commitment across Section 18 of both READMEs and SECURITY.md.
+- **Package Keywords & Topic Saturation:**
+  - Saturated `package.json` keywords to exactly 20 topics matching registered GitHub topics (`local-first`, `zero-egress`, `mcp-server`, `n8n-workflows`, etc.).
+- **Machine-Readable Documentation (`llms.txt`):**
+  - Updated context manifest audit date to `Last-checked: 2026-09-26` asserting 191+ passed tests baseline across Node 20-24 and 18-point quick navigation.
+- **Automated Contract Test Suite Expansion (`test/metadata.test.ts`):**
+  - Expanded contract assertions to strictly validate 18-point bilingual navigation parity, dual HTML anchor aliases (`sec-01`..`sec-18`), `[PERSONA-01]`..`[PERSONA-04]`, 20 package keywords saturation, § 521 BGB disclaimers, and Stand 2026-09-26 audit timestamps.
+- **Strict Version Freeze Discipline:**
+  - Version remains frozen at `0.1.21` per AGENTS.md / CLAUDE.md rule (T-20260920-167562623).
+
 ### Pfad A Technical Hygiene, NOTICE Attribution, Multi-Host Sync Hardening & Contract Parity (2026-09-24)
 - **Formal NOTICE Attribution:** Added root `NOTICE` file specifying copyright and attribution for Lukas Geiger, ellmos-ai, and open-bricks under the MIT license, and registered it in `package.json` distribution files array.
 - **Workflow Concurrency Hardening:** Added explicit `concurrency` cancellation (`cancel-in-progress: true`) to `.github/workflows/welcome.yml` to prevent redundant runner execution on rapid contributor activity.
