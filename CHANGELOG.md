@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Discoverability, ASCII 4-View Architecture & Level 1 SBOM Plain-Text Companion (Pfad B: 2026-09-29)
+- **ASCII 4-View Architecture Topology Projection:**
+  - Integrated comprehensive ASCII architecture diagrams in Section 01 of both English (`README.md`) and German (`README_de.md`) documentation (`[VIEW 1: CALLER RUNTIMES & AGENT ECOSYSTEM]`, `[VIEW 2: N8N-MANAGER-MCP CORE ENGINE & SAFETY ARBITRATION]`, `[VIEW 3: RUNTIME PERSISTENCE, BACKUP SNAPSHOTS & LOCAL AUDIT WAL]`, `[VIEW 4: DEFENSE PERIMETER, ZERO-EGRESS & RUNASINVOKER]`; German equivalents `[SICHT 1]` .. `[SICHT 4]`).
+- **Level 1 SBOM Plain-Text Companion (`THIRD_PARTY_LICENSES.txt`):**
+  - Generated dedicated plain-text Level 1 SBOM companion file documenting 100% permissive dependencies (MIT, BSD-2-Clause, BSD-3-Clause, Apache-2.0), `RunAsInvoker` non-elevation certification, Zero-Copyleft & Zero-Egress guarantees, full 10-invariant cross-reference table (`INV-LOCAL-01` .. `INV-SLA-10`), complete license texts, and statutory notice under § 521 BGB with 48h SLA.
+  - Registered `THIRD_PARTY_LICENSES.txt` in `package.json` distribution `files` whitelist and cross-referenced in `NOTICE`, `THIRD_PARTY_LICENSES.md`, `README.md`, `README_de.md`, and `llms.txt`.
+- **Badges & Context Manifest Parity:**
+  - Synchronized Shields.io badges in both READMEs (`Level 1 SBOM: Plain Text`, `Verified-2026--09--29`, `Last-Checked-2026--09--29`).
+  - Synchronized `llms.txt` verification timestamp to 2026-09-29 reflecting 194+ passed Vitest tests baseline.
+- **Strict Version Freeze Discipline:**
+  - Version `0.1.21` remains strictly frozen across all manifests and code per `T-20260920-167562623`.
+- **Automated Contract Test Suite Expansion (`test/metadata.test.ts`):**
+  - Extended test suite with automated contract verifications for ASCII 4-view topology projection, `THIRD_PARTY_LICENSES.txt` Level 1 SBOM existence and invariants, and `package.json` distribution files whitelist integrity.
+
 ### Discoverability, Visual Architecture & 18-Point Bilingual Navigation Parity (Pfad B: 2026-09-26)
 - **18-Point Bilingual Navigation Parity & Dual Reciprocal Anchors:**
   - Synchronized full 18-point quick navigation structure across English (`README.md`) and German (`README_de.md`) documentation with reciprocal `<a id="sec-01">` .. `<a id="sec-18">` HTML anchor aliases and semantic fallbacks.

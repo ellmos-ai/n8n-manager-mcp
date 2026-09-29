@@ -1,0 +1,302 @@
+================================================================================
+THIRD-PARTY SOFTWARE LICENSES & LEVEL 1 SBOM AUDIT TRAIL
+================================================================================
+
+Project:               ellmos-ai/n8n-manager-mcp
+Version:               0.1.21 (frozen per T-20260920-167562623)
+Stand:                 2026-09-29
+Repository License:    MIT License (see LICENSE)
+Attribution Notice:    see NOTICE
+Markdown Companion:    see THIRD_PARTY_LICENSES.md
+Security Policy:       see SECURITY.md (48h response, 5d triage, 30d remediation SLA)
+Governance Standards:  INV-LOCAL-01 through INV-SLA-10
+Execution Mode:        100% Local-First, Zero-Egress by default, Unprivileged User-Mode (RunAsInvoker)
+
+--------------------------------------------------------------------------------
+1. EXECUTIVE COMPLIANCE & ZERO-COPYLEFT GUARANTEE
+--------------------------------------------------------------------------------
+
+n8n-manager-mcp is engineered under strict architectural and governance
+invariants: 100% Local-First, Zero-Egress by default, and unprivileged user-mode
+execution (RunAsInvoker). All workflow listing, inspection, export, backup,
+restore, and node schema introspection operations execute locally via standard
+input/output (stdio) JSON-RPC 2.0 without requiring elevated administrative
+privileges. Outbound HTTP requests only occur when communicating directly with
+the caller-specified n8n instance API endpoint.
+
+All direct runtime, transitive overrides, and development dependencies utilized
+across n8n-manager-mcp are distributed under strictly permissive open-source
+licenses (MIT, BSD-2-Clause, BSD-3-Clause, Apache-2.0).
+
+There are zero viral copyleft (GPL / AGPL) dependencies in core runtime or
+distribution packages (Zero-Copyleft isolation guarantee), ensuring maximum
+safety and portability for enterprise adoption, AI agent tool dispatching, and
+automated CI/CD environments.
+
+RunAsInvoker Non-Elevation Certification:
+n8n-manager-mcp operates strictly in standard unprivileged user space.
+It requires zero administrative elevation, zero sudo/root privileges, and zero
+system daemon registrations.
+
+Zero-Egress Perimeter:
+Local stdio operations, JSON snapshot creation, local audit trail appending,
+and offline node schema lookups emit zero outbound network telemetry. Network
+requests are restricted strictly to direct API interactions with the explicitly
+configured n8n server target.
+
+--------------------------------------------------------------------------------
+2. INVARIANT CROSS-REFERENCE MATRIX (LEVEL 1 SBOM)
+--------------------------------------------------------------------------------
+
+Invariant ID  | Security & Operational Mandate           | Enforcement & License Scope
+--------------+------------------------------------------+------------------------------
+INV-LOCAL-01  | 100% Local-First & Zero-Egress by default| Stdio JSON-RPC 2.0; bound strictly to 127.0.0.1
+INV-READ-02   | Monotonic Read-Only Enforcement          | N8N_MANAGER_READ_ONLY=1 process ceiling
+INV-BACK-03   | Automated Pre-Mutation Snapshots         | ~/.n8n-manager-mcp/backups/ JSON state engine
+INV-AUDIT-04  | Local Forensic Audit Trail               | ~/.n8n-manager-mcp/audit.log append-only log
+INV-SRV-05    | Multi-Server & Credential Isolation      | ~/.n8n-manager-mcp/servers.json isolated store
+INV-TRAV-06   | Input Validation & Path Traversal Guard  | Zod numeric bounds & path traversal filters
+INV-PRIV-07   | Non-Elevation (RunAsInvoker user-space)  | MIT (unprivileged user space execution)
+INV-SEAM-08   | Opt-In Decision History Seam             | N8N_MCP_MANAGER_URL fail-fast adapter
+INV-NODE-09   | Offline Node Catalog & Introspection     | Bundled in-memory schema catalog (no API roundtrip)
+INV-SLA-10    | Multi-Node CI & 48h Security SLA         | Node 20/22/24 matrix & 48h response commitment
+
+--------------------------------------------------------------------------------
+3. DIRECT RUNTIME DEPENDENCIES
+--------------------------------------------------------------------------------
+
+Component:      @modelcontextprotocol/sdk
+Version Range:  ^1.29.0
+Purpose:        Official Model Context Protocol SDK for TypeScript / Node.js
+                (Stdio transport, server abstractions, protocol frames).
+License:        MIT License
+SPDX-ID:        MIT
+Copyright:      (c) 2024-2026 Anthropic, PBC
+Repository:     https://github.com/modelcontextprotocol/typescript-sdk
+
+---
+
+Component:      zod
+Version Range:  ^3.23.8
+Purpose:        TypeScript-first schema declaration and input validation with
+                static type inference and runtime bounds enforcement.
+License:        MIT License
+SPDX-ID:        MIT
+Copyright:      (c) 2020 Colin McDonnell
+Repository:     https://github.com/colinhacks/zod
+
+---
+
+Component:      update-notifier
+Version Range:  ^7.3.1
+Purpose:        CLI update notification for interactive terminal sessions
+                (disabled during stdio MCP operations).
+License:        BSD-2-Clause
+SPDX-ID:        BSD-2-Clause
+Copyright:      (c) Sindre Sorhus
+Repository:     https://github.com/yeoman/update-notifier
+
+--------------------------------------------------------------------------------
+4. CORE TRANSITIVE & OVERRIDES DEPENDENCIES
+--------------------------------------------------------------------------------
+
+Component:      hono
+License:        MIT License
+SPDX-ID:        MIT
+Purpose:        Lightweight web standard framework used for HTTP router primitives.
+Repository:     https://github.com/honojs/hono
+
+---
+
+Component:      @hono/node-server
+License:        MIT License
+SPDX-ID:        MIT
+Purpose:        Node.js adapter for Hono HTTP interfaces.
+Repository:     https://github.com/honojs/node-server
+
+---
+
+Component:      nanoid
+License:        MIT License
+SPDX-ID:        MIT
+Purpose:        Secure, URL-friendly unique string ID generator.
+Repository:     https://github.com/ai/nanoid
+
+---
+
+Component:      fast-uri
+License:        BSD-3-Clause
+SPDX-ID:        BSD-3-Clause
+Purpose:        High-performance RFC 3986 URI parsing and formatting.
+Repository:     https://github.com/fastify/fast-uri
+
+---
+
+Component:      express-rate-limit
+License:        MIT License
+SPDX-ID:        MIT
+Purpose:        Rate limiting middleware for network requests.
+Repository:     https://github.com/express-rate-limit/express-rate-limit
+
+---
+
+Component:      ip-address
+License:        MIT License
+SPDX-ID:        MIT
+Purpose:        IPv4 and IPv6 parsing and validation library.
+Repository:     https://github.com/beaugunderson/ip-address
+
+---
+
+Component:      qs
+License:        BSD-3-Clause
+SPDX-ID:        BSD-3-Clause
+Purpose:        Query string parser with nesting support.
+Repository:     https://github.com/ljharb/qs
+
+---
+
+Component:      postcss
+License:        MIT License
+SPDX-ID:        MIT
+Purpose:        CSS processing pipeline utility.
+Repository:     https://github.com/postcss/postcss
+
+--------------------------------------------------------------------------------
+5. DEVELOPMENT & QUALITY ASSURANCE TOOLING
+--------------------------------------------------------------------------------
+
+Component:      typescript
+Version Range:  ^5.3.3
+Purpose:        TypeScript compiler (tsc) for static type checking and JavaScript compilation.
+License:        Apache License 2.0
+SPDX-ID:        Apache-2.0
+Repository:     https://github.com/microsoft/TypeScript
+
+---
+
+Component:      vitest
+Version Range:  ^4.1.11
+Purpose:        Next-generation testing framework for unit and contract test suites.
+License:        MIT License
+SPDX-ID:        MIT
+Repository:     https://github.com/vitest-dev/vitest
+
+---
+
+Component:      @types/node
+Version Range:  ^20.11.0
+Purpose:        TypeScript definitions for Node.js runtime APIs.
+License:        MIT License
+SPDX-ID:        MIT
+Repository:     https://github.com/DefinitelyTyped/DefinitelyTyped
+
+--------------------------------------------------------------------------------
+6. COMPLETE LICENSE TEXTS
+--------------------------------------------------------------------------------
+
+=== MIT LICENSE ===
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+=== BSD-2-CLAUSE LICENSE ===
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+=== BSD-3-CLAUSE LICENSE ===
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+3. Neither the name of the copyright holder nor the names of its
+   contributors may be used to endorse or promote products derived from
+   this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+=== APACHE LICENSE, VERSION 2.0 ===
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+--------------------------------------------------------------------------------
+7. STATUTORY NOTICE & LIABILITY DISCLAIMER (§ 521 BGB) & SECURITY RESPONSE SLA
+--------------------------------------------------------------------------------
+
+Dieses Projekt ist eine unentgeltliche Open-Source-Schenkung im Sinne der
+§§ 516 ff. BGB. Die Haftung des Urhebers ist gemaess § 521 BGB auf Vorsatz und
+grobe Fahrlaessigkeit beschraenkt. Ergaenzend gilt der Haftungsausschluss der
+MIT-Lizenz. Nutzung auf eigenes Risiko. Keine Wartungszusage, keine
+Verfuegbarkeitsgarantie, keine Gewaehr fuer Fehlerfreiheit oder Eignung fuer
+einen bestimmten Zweck.
+
+This project is an unpaid open-source donation under the MIT License.
+Liability is limited to intent and gross negligence (§ 521 German Civil Code).
+Use at your own risk.
+
+Security Response SLA:
+In accordance with SECURITY.md and INV-SLA-10:
+- Initial Response SLA: guaranteed within 48 hours
+- Triage Commitment: vulnerability assessment within 5 business days
+- Remediation SLA: coordinated security patches within 30 calendar days
+- Contact: security@open-bricks.org, security@ellmos.ai, lukas@open-bricks.org

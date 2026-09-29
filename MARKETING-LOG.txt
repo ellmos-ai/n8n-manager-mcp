@@ -9,7 +9,7 @@
 # Author:       Lukas Geiger
 # License:      MIT
 # Version:      0.1.21
-# Last Updated: 2026-09-26
+# Last Updated: 2026-09-29
 # ==============================================================================
 
 1. PRODUCT POSITIONING & VALUE PROPOSITION
@@ -265,3 +265,37 @@ The ellmos-ai and open-bricks suites provide coordinated local-first tools:
   * Extended test/metadata.test.ts to validate 18-point dual reciprocal anchors (sec-01..sec-18),
     20 package.json keywords saturation, Level 1 SBOM 2026-09-26 recency, § 521 BGB notices,
     and MARKETING-LOG.txt integrity.
+
+12. PATH B DISCOVERABILITY, ASCII 4-VIEW ARCHITECTURE & LEVEL 1 SBOM PLAIN-TEXT AUDIT (2026-09-29)
+-------------------------------------------------------------------------------
+- ASCII 4-View Architecture Topology Projection:
+  * Integrated standardized 4-view ASCII architectural diagrams into Section 01 of both
+    English (README.md) and German (README_de.md) documentation:
+    - [VIEW 1 / SICHT 1: CALLER RUNTIMES & AGENT ECOSYSTEM]
+    - [VIEW 2 / SICHT 2: N8N-MANAGER-MCP CORE ENGINE & SAFETY ARBITRATION]
+    - [VIEW 3 / SICHT 3: RUNTIME PERSISTENCE, BACKUP SNAPSHOTS & LOCAL AUDIT WAL]
+    - [VIEW 4 / SICHT 4: DEFENSE PERIMETER, ZERO-EGRESS & RUNASINVOKER]
+  * Provides terminal-friendly, context-efficient architectural visibility for AI assistants,
+    inspectors, and human developers without requiring external rendering tools.
+- Level 1 SBOM Plain-Text Companion & Supply Chain Transparency:
+  * Created canonical THIRD_PARTY_LICENSES.txt as a plain-text Level 1 SBOM companion file.
+  * Fully documented all runtime (@modelcontextprotocol/sdk, zod, update-notifier),
+    transitive/override (hono, @hono/node-server, nanoid, fast-uri, express-rate-limit,
+    ip-address, qs, postcss), and development dependencies (typescript, vitest, @types/node).
+  * Certified unprivileged RunAsInvoker non-elevation (INV-PRIV-07), Zero-Copyleft isolation
+    (100% permissive licenses: MIT, BSD-2-Clause, BSD-3-Clause, Apache-2.0), and Zero-Egress perimeter.
+  * Formally cross-referenced all 10 governance and runtime invariants INV-LOCAL-01 through INV-SLA-10.
+  * Appended complete license texts and statutory notice under § 521 BGB Gefälligkeitsrecht.
+  * Registered THIRD_PARTY_LICENSES.txt in package.json files array and cross-referenced in
+    NOTICE, THIRD_PARTY_LICENSES.md, README.md, README_de.md, and llms.txt.
+- Shields.io Badges & Manifest Verification:
+  * Synchronized badges across both READMEs: Level 1 SBOM: Plain Text, Verified-2026--09--29,
+    Last-Checked-2026--09--29.
+  * Updated llms.txt context index verification stamp to 2026-09-29 reflecting 194+ passed
+    Vitest tests baseline.
+- Strict Version Freeze Discipline:
+  * Preserved version 0.1.21 strictly frozen across all manifests and source code per
+    T-20260920-167562623.
+- Contract Test Suite Expansion:
+  * Extended test/metadata.test.ts with automated contract tests validating ASCII 4-view topology,
+    THIRD_PARTY_LICENSES.txt existence and invariant coverage, and distribution files whitelist integrity.

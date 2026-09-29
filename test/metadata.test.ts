@@ -51,6 +51,7 @@ describe("metadata and manifest parity", () => {
       "CHANGELOG.md",
       "SECURITY.md",
       "THIRD_PARTY_LICENSES.md",
+      "THIRD_PARTY_LICENSES.txt",
       "MARKETING-LOG.txt",
       "NOTICE",
       "LICENSE",
@@ -258,16 +259,18 @@ describe("metadata and manifest parity", () => {
     expect(pkg.files).toContain("NOTICE");
     expect(pkg.files).toContain("llms.txt");
     expect(pkg.files).toContain("THIRD_PARTY_LICENSES.md");
+    expect(pkg.files).toContain("THIRD_PARTY_LICENSES.txt");
     expect(pkg.files).toContain("MARKETING-LOG.txt");
   });
 
   it("verifies llms.txt timestamp, security reference, and tool inventory", () => {
     const llmsTxt = fs.readFileSync(path.join(repoRoot, "llms.txt"), "utf-8");
 
-    expect(llmsTxt).toContain("Last-checked: 2026-09-26");
+    expect(llmsTxt).toContain("Last-checked: 2026-09-29");
     expect(llmsTxt).toContain("NOTICE");
     expect(llmsTxt).toContain("SECURITY.md");
     expect(llmsTxt).toContain("THIRD_PARTY_LICENSES.md");
+    expect(llmsTxt).toContain("THIRD_PARTY_LICENSES.txt");
     expect(llmsTxt).toContain("MARKETING-LOG.txt");
     expect(llmsTxt).toContain("io.github.ellmos-ai/n8n-manager-mcp");
     expect(llmsTxt).toContain("19 tools covering complete n8n workflow management");
@@ -485,8 +488,9 @@ describe("metadata and manifest parity", () => {
 
     expect(licenses).toContain("Architectural & Governance Invariants Compliance Matrix");
     expect(licenses).toContain("Level 1 SBOM");
-    expect(licenses).toContain("Stand: 2026-09-26");
+    expect(licenses).toMatch(/Stand:\s*2026-09-29/);
     expect(licenses).toContain("RunAsInvoker");
+    expect(licenses).toContain("THIRD_PARTY_LICENSES.txt");
     const invariants = [
       "INV-LOCAL-01",
       "INV-READ-02",
@@ -504,6 +508,40 @@ describe("metadata and manifest parity", () => {
     }
   });
 
+  it("verifies Level 1 SBOM plain-text companion file THIRD_PARTY_LICENSES.txt exists and matches invariants", () => {
+    const txtPath = path.join(repoRoot, "THIRD_PARTY_LICENSES.txt");
+    expect(fs.existsSync(txtPath), "Missing THIRD_PARTY_LICENSES.txt").toBe(true);
+    const txtContent = fs.readFileSync(txtPath, "utf-8");
+
+    expect(txtContent).toContain("THIRD-PARTY SOFTWARE LICENSES & LEVEL 1 SBOM AUDIT TRAIL");
+    expect(txtContent).toContain("Stand:                 2026-09-29");
+    expect(txtContent).toContain("RunAsInvoker");
+    expect(txtContent).toContain("Zero-Copyleft");
+    expect(txtContent).toContain("Zero-Egress");
+    expect(txtContent).toContain("§ 521 BGB");
+    expect(txtContent).toContain("INV-LOCAL-01");
+    expect(txtContent).toContain("INV-SLA-10");
+    expect(txtContent).toContain("=== MIT LICENSE ===");
+    expect(txtContent).toContain("=== BSD-2-CLAUSE LICENSE ===");
+    expect(txtContent).toContain("=== BSD-3-CLAUSE LICENSE ===");
+    expect(txtContent).toContain("=== APACHE LICENSE, VERSION 2.0 ===");
+  });
+
+  it("verifies ASCII 4-view architecture topology projection in English and German READMEs", () => {
+    const readmeEn = fs.readFileSync(path.join(repoRoot, "README.md"), "utf-8");
+    const readmeDe = fs.readFileSync(path.join(repoRoot, "README_de.md"), "utf-8");
+
+    expect(readmeEn).toContain("[VIEW 1: CALLER RUNTIMES & AGENT ECOSYSTEM]");
+    expect(readmeEn).toContain("[VIEW 2: N8N-MANAGER-MCP CORE ENGINE & SAFETY ARBITRATION]");
+    expect(readmeEn).toContain("[VIEW 3: RUNTIME PERSISTENCE, BACKUP SNAPSHOTS & LOCAL AUDIT WAL]");
+    expect(readmeEn).toContain("[VIEW 4: DEFENSE PERIMETER, ZERO-EGRESS & RUNASINVOKER]");
+
+    expect(readmeDe).toContain("[SICHT 1: AUFRUFER-LAUFZEITEN & AGENTEN-ÖKOSYSTEM]");
+    expect(readmeDe).toContain("[SICHT 2: N8N-MANAGER-MCP KERN-ENGINE & SICHERHEITS-ARBITRIERUNG]");
+    expect(readmeDe).toContain("[SICHT 3: LOKALE PERSISTENZ, BACKUP-SNAPSHOTS & AUDIT-WAL]");
+    expect(readmeDe).toContain("[SICHT 4: AIR-GAP SICHERHEITSPERIMETER, ZERO-EGRESS & RUNASINVOKER]");
+  });
+
   it("verifies root NOTICE file attribution and copyright integrity", () => {
     const noticePath = path.join(repoRoot, "NOTICE");
     expect(fs.existsSync(noticePath), "Missing NOTICE file").toBe(true);
@@ -515,19 +553,21 @@ describe("metadata and manifest parity", () => {
     expect(notice).toContain("ellmos-ai");
     expect(notice).toContain("open-bricks");
     expect(notice).toContain("MIT License");
+    expect(notice).toContain("THIRD_PARTY_LICENSES.txt");
   });
 
   it("verifies CHANGELOG.md contains recent Pfad A and Pfad B release entries", () => {
     const changelog = fs.readFileSync(path.join(repoRoot, "CHANGELOG.md"), "utf-8");
     expect(changelog).toContain("## [Unreleased]");
+    expect(changelog).toContain("Pfad B: 2026-09-29");
     expect(changelog).toContain("Pfad B: 2026-09-26");
     expect(changelog).toContain("Pfad A Technical Hygiene");
     expect(changelog).toContain("Formal NOTICE Attribution");
   });
 
-  it("verifies MARKETING-LOG.txt contains Pfad B Stand 2026-09-26 audit entry", () => {
+  it("verifies MARKETING-LOG.txt contains Pfad B Stand 2026-09-29 audit entry", () => {
     const marketing = fs.readFileSync(path.join(repoRoot, "MARKETING-LOG.txt"), "utf-8");
-    expect(marketing).toContain("Last Updated: 2026-09-26");
-    expect(marketing).toContain("11. PATH B DISCOVERABILITY, 18-POINT NAVIGATION PARITY & LEVEL 1 SBOM AUDIT (2026-09-26)");
+    expect(marketing).toContain("Last Updated: 2026-09-29");
+    expect(marketing).toContain("12. PATH B DISCOVERABILITY, ASCII 4-VIEW ARCHITECTURE & LEVEL 1 SBOM PLAIN-TEXT AUDIT (2026-09-29)");
   });
 });

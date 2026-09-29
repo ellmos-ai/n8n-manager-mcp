@@ -13,9 +13,10 @@
 [![Sicherheit](https://img.shields.io/badge/Sicherheit-Backups%20%7C%20Audit%20%7C%20Read--Only-success.svg)](SECURITY.md)
 [![Security](https://img.shields.io/badge/Security-48h%20SLA%20%7C%20Local--First-blue.svg)](SECURITY.md)
 [![Drittanbieter](https://img.shields.io/badge/Drittanbieter-Gepr%C3%BCft%20%7C%20Permissiv-success.svg)](THIRD_PARTY_LICENSES.md)
+[![Level 1 SBOM: Plain Text](https://img.shields.io/badge/Level%201%20SBOM-Plain%20Text-success.svg)](THIRD_PARTY_LICENSES.txt)
 [![Attribution: NOTICE](https://img.shields.io/badge/Attribution-NOTICE-blue.svg)](NOTICE)
-[![Verified](https://img.shields.io/badge/Verified-2026--09--26-blue.svg)](llms.txt)
-[![Last-Checked](https://img.shields.io/badge/Last--Checked-2026--09--26-success.svg)](llms.txt)
+[![Verified](https://img.shields.io/badge/Verified-2026--09--29-blue.svg)](llms.txt)
+[![Last-Checked](https://img.shields.io/badge/Last--Checked-2026--09--29-success.svg)](llms.txt)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![LLM Ready](https://img.shields.io/badge/LLM--Ready-llms.txt-orange.svg)](llms.txt)
 [![Ecosystem: ellmos--ai](https://img.shields.io/badge/Ecosystem-ellmos--ai-blue.svg)](https://github.com/ellmos-ai)
@@ -64,6 +65,46 @@ Der n8n Manager MCP Server fungiert als **lokale, über Standard-Ein-/Ausgabe (s
 - **Fail-Closed Sicherheits-Middleware:** Jede zustandsverändernde Aktion durchläuft vor dem API-Kontakt eine monotone Schranke (`N8N_MANAGER_READ_ONLY=1`).
 - **Multi-Instanzen-Router:** Ermöglicht die flexible Adressierung getrennter Umgebungen (Entwicklung, Staging, Produktion) mit isolierten API-Keys und atomarer Speicherung (`servers.json`).
 - **Integrierter Node-Katalog:** Bietet Offline-Introspektion von Node-Typen und Schemas (`n8n_describe_nodes`) ohne Netzwerklatenz.
+
+### Vier-Sichten-Architektur-Topologie
+
+```text
++========================================================================================================+
+| [SICHT 1: AUFRUFER-LAUFZEITEN & AGENTEN-ÖKOSYSTEM]                                                    |
+| Claude Code CLI      | Claude Desktop      | Cursor IDE / Windsurf | Antigravity / Gemini / Codex     |
+| (JSON-RPC 2.0 Stdio) | (stdio MCP Client)  | (Entwicklungs-IDE)    | (Autonome Orchestrierungs-Agenten)|
++===================================================+====================================================+
+                                                    |
+                                                    v
++========================================================================================================+
+| [SICHT 2: N8N-MANAGER-MCP KERN-ENGINE & SICHERHEITS-ARBITRIERUNG]                                      |
+| +----------------------------------------------------------------------------------------------------+ |
+| | Werkzeug-Dispatcher (19 registrierte MCP-Tools: CRUD, Ausführungsinspektion, Snapshots, Node-Katalog)| |
+| +----------------------------------------------------------------------------------------------------+ |
+| | Fail-Closed-Sicherheitsfilter: N8N_MANAGER_READ_ONLY-Erzwingung (INV-READ-02)                       | |
+| | Eingabevalidierung & Schutz: Zod-Schema-Zahlengrenzen & Pfadtraversierungs-Sperre (INV-TRAV-06)     | |
+| | Multi-Instanzen-Router: Isolierung für Entwicklungs-, Staging- und Produktions-Keys (INV-SRV-05)    | |
+| | Integrierter Offline-Node-Katalog: In-Memory-Knotenschemas & Parameterintrospektion (INV-NODE-09)   | |
+| +----------------------------------------------------------------------------------------------------+ |
++===================================================+====================================================+
+                                                    |
+                                                    v
++========================================================================================================+
+| [SICHT 3: LOKALE PERSISTENZ, BACKUP-SNAPSHOTS & AUDIT-WAL]                                             |
+| +------------------------------------+----------------------------------+----------------------------+ |
+| | Pre-Mutation-Workflow-Snapshots    | Lokales Append-Only-Audit-Log    | Multi-Server-Konfig-Store  | |
+| | ~/.n8n-manager-mcp/backups/        | ~/.n8n-manager-mcp/audit.log     | ~/.n8n-manager-mcp/        | |
+| | ({server}/{id}-{timestamp}.json)   | (Forensisches Zeitstempel-Log)   | (servers.json, Modus 0600) | |
+| +------------------------------------+----------------------------------+----------------------------+ |
++===================================================+====================================================+
+                                                    |
+                                                    v
++========================================================================================================+
+| [SICHT 4: AIR-GAP SICHERHEITSPERIMETER, ZERO-EGRESS & RUNASINVOKER]                                    |
+| Standard-Benutzermodus (RunAsInvoker: Non-Elevation INV-PRIV-07) | Null Telemetrie / Tracking          |
+| Lokale Loopback-Bindung (127.0.0.1 Standard INV-LOCAL-01)       | 48h-SLA-Sicherheitsprotokoll         |
++========================================================================================================+
+```
 
 ---
 
@@ -463,6 +504,7 @@ Zur Gewährleistung vollständiger Lieferkettensicherheit in Enterprise- und aut
 - **Keine Copyleft- oder AGPL-Bindung:** Enthält keinerlei virale Lizenzen oder ungeprüfte kommerzielle Module.
 - **Zero-External-Telemetry:** Sendet keine Analyse-Pings, Beacons oder Telemetrie an externe Server.
 - **Vollständiges Lizenzinventar:** Ausführliche Hinweise, Original-Lizenztexte und transitive Abhängigkeitsbäume finden sich in [`THIRD_PARTY_LICENSES.md`](THIRD_PARTY_LICENSES.md).
+- **Level 1 SBOM Plain-Text Begleiter:** Vollständiger maschinenlesbarer Audit-Trail, Non-Elevation-Nachweis und Lizenzbegleiter verfügbar in [`THIRD_PARTY_LICENSES.txt`](THIRD_PARTY_LICENSES.txt).
 
 ---
 
