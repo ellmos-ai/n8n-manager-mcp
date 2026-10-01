@@ -49,6 +49,7 @@ describe("metadata and manifest parity", () => {
       "README.md",
       "README_de.md",
       "CHANGELOG.md",
+      "CONTRIBUTING.md",
       "SECURITY.md",
       "THIRD_PARTY_LICENSES.md",
       "THIRD_PARTY_LICENSES.txt",
@@ -94,9 +95,13 @@ describe("metadata and manifest parity", () => {
 
     const autoAssignWorkflow = fs.readFileSync(path.join(repoRoot, ".github", "workflows", "auto-assign.yml"), "utf-8");
     expect(autoAssignWorkflow).toContain("timeout-minutes: 5");
+    expect(autoAssignWorkflow).toContain("concurrency:");
+    expect(autoAssignWorkflow).toContain("cancel-in-progress: true");
 
     const labelSyncWorkflow = fs.readFileSync(path.join(repoRoot, ".github", "workflows", "label-sync.yml"), "utf-8");
     expect(labelSyncWorkflow).toContain("timeout-minutes: 5");
+    expect(labelSyncWorkflow).toContain("concurrency:");
+    expect(labelSyncWorkflow).toContain("cancel-in-progress: true");
   });
 
   it("verifies bilingual security policy, SLAs, supported versions, and direct contact points", () => {
@@ -261,12 +266,13 @@ describe("metadata and manifest parity", () => {
     expect(pkg.files).toContain("THIRD_PARTY_LICENSES.md");
     expect(pkg.files).toContain("THIRD_PARTY_LICENSES.txt");
     expect(pkg.files).toContain("MARKETING-LOG.txt");
+    expect(pkg.files).toContain("CONTRIBUTING.md");
   });
 
   it("verifies llms.txt timestamp, security reference, and tool inventory", () => {
     const llmsTxt = fs.readFileSync(path.join(repoRoot, "llms.txt"), "utf-8");
 
-    expect(llmsTxt).toContain("Last-checked: 2026-09-29");
+    expect(llmsTxt).toContain("Last-checked: 2026-10-01");
     expect(llmsTxt).toContain("NOTICE");
     expect(llmsTxt).toContain("SECURITY.md");
     expect(llmsTxt).toContain("THIRD_PARTY_LICENSES.md");
@@ -280,8 +286,8 @@ describe("metadata and manifest parity", () => {
     const readme = fs.readFileSync(path.join(repoRoot, "README.md"), "utf-8");
     const readmeDe = fs.readFileSync(path.join(repoRoot, "README_de.md"), "utf-8");
 
-    expect(readme).toContain("194%20passed");
-    expect(readmeDe).toContain("194%20passed");
+    expect(readme).toContain("198%20passed");
+    expect(readmeDe).toContain("198%20passed");
     expect(readme).toContain("README_de.md");
     expect(readmeDe).toContain("README.md");
     expect(readme).toContain("https://github.com/open-bricks");
@@ -488,7 +494,7 @@ describe("metadata and manifest parity", () => {
 
     expect(licenses).toContain("Architectural & Governance Invariants Compliance Matrix");
     expect(licenses).toContain("Level 1 SBOM");
-    expect(licenses).toMatch(/Stand:\s*2026-09-29/);
+    expect(licenses).toMatch(/Stand:\s*2026-10-01/);
     expect(licenses).toContain("RunAsInvoker");
     expect(licenses).toContain("THIRD_PARTY_LICENSES.txt");
     const invariants = [
@@ -514,7 +520,7 @@ describe("metadata and manifest parity", () => {
     const txtContent = fs.readFileSync(txtPath, "utf-8");
 
     expect(txtContent).toContain("THIRD-PARTY SOFTWARE LICENSES & LEVEL 1 SBOM AUDIT TRAIL");
-    expect(txtContent).toContain("Stand:                 2026-09-29");
+    expect(txtContent).toContain("Stand:                 2026-10-01");
     expect(txtContent).toContain("RunAsInvoker");
     expect(txtContent).toContain("Zero-Copyleft");
     expect(txtContent).toContain("Zero-Egress");
@@ -559,15 +565,50 @@ describe("metadata and manifest parity", () => {
   it("verifies CHANGELOG.md contains recent Pfad A and Pfad B release entries", () => {
     const changelog = fs.readFileSync(path.join(repoRoot, "CHANGELOG.md"), "utf-8");
     expect(changelog).toContain("## [Unreleased]");
+    expect(changelog).toContain("Pfad A: 2026-10-01");
     expect(changelog).toContain("Pfad B: 2026-09-29");
     expect(changelog).toContain("Pfad B: 2026-09-26");
     expect(changelog).toContain("Pfad A Technical Hygiene");
     expect(changelog).toContain("Formal NOTICE Attribution");
   });
 
-  it("verifies MARKETING-LOG.txt contains Pfad B Stand 2026-09-29 audit entry", () => {
+  it("verifies MARKETING-LOG.txt contains Pfad A Stand 2026-10-01 audit entry", () => {
     const marketing = fs.readFileSync(path.join(repoRoot, "MARKETING-LOG.txt"), "utf-8");
-    expect(marketing).toContain("Last Updated: 2026-09-29");
+    expect(marketing).toContain("Last Updated: 2026-10-01");
+    expect(marketing).toContain("13. PATH A TECHNICAL HYGIENE, CI CONCURRENCY HARDENING & LEVEL 1 SBOM RE-AUDIT (2026-10-01)");
     expect(marketing).toContain("12. PATH B DISCOVERABILITY, ASCII 4-VIEW ARCHITECTURE & LEVEL 1 SBOM PLAIN-TEXT AUDIT (2026-09-29)");
+  });
+
+  it("verifies bilingual CONTRIBUTING.md guidelines, invariants, RunAsInvoker, and Plan D workflow", () => {
+    const contribPath = path.join(repoRoot, "CONTRIBUTING.md");
+    expect(fs.existsSync(contribPath), "Missing CONTRIBUTING.md").toBe(true);
+    const contrib = fs.readFileSync(contribPath, "utf-8");
+
+    expect(contrib).toContain("## English");
+    expect(contrib).toContain("## Deutsch");
+    expect(contrib).toContain("INV-LOCAL-01");
+    expect(contrib).toContain("INV-SLA-10");
+    expect(contrib).toContain("RunAsInvoker");
+    expect(contrib).toContain("Plan D");
+    expect(contrib).toContain("C:\\_Local_DEV\\repos\\n8n-manager-mcp");
+    expect(contrib).toContain("T-20260920-167562623");
+    expect(contrib).toContain("48h");
+    expect(contrib).toContain("security@ellmos.ai");
+    expect(contrib).toContain("security@open-bricks.org");
+    expect(contrib).toContain("MIT License");
+  });
+
+  it("verifies documentation cross-references to CONTRIBUTING.md and updated verification date", () => {
+    const readmeEn = fs.readFileSync(path.join(repoRoot, "README.md"), "utf-8");
+    const readmeDe = fs.readFileSync(path.join(repoRoot, "README_de.md"), "utf-8");
+    const llmsTxt = fs.readFileSync(path.join(repoRoot, "llms.txt"), "utf-8");
+
+    expect(readmeEn).toContain("CONTRIBUTING.md");
+    expect(readmeDe).toContain("CONTRIBUTING.md");
+    expect(llmsTxt).toContain("CONTRIBUTING.md");
+    expect(readmeEn).toContain("Verified-2026--10--01");
+    expect(readmeDe).toContain("Verified-2026--10--01");
+    expect(llmsTxt).toContain("Verification (2026-10-01)");
+    expect(llmsTxt).toContain("Last-checked: 2026-10-01");
   });
 });

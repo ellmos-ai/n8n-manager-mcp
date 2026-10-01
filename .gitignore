@@ -53,6 +53,8 @@ id_dsa*
 PLAN.txt
 PLAN_*.txt
 *-protocoll.txt
+TASKPLAN_*.md
+*-TASKPLAN*
 
 # mcp-publisher login artifacts (credentials, never commit)
 .mcpregistry_*
@@ -60,6 +62,12 @@ PLAN_*.txt
 # Interne Multi-Agenten-Koordination (LOCK-System)
 LOCK
 LOCK.*
+LOCK.user.*
+LOCK.until.*
+LOCK.condition.*
+LOCK.dev.*
+LOCK.antigravity.*
+LOCK.bugsearch.*
 *.lock
 LOCK*.txt
 LOCK.permissions.json
@@ -74,13 +82,17 @@ uv.lock
 * (Copy)*
 *conflicted copy*
 *-WORKSTATION*
+*-WORKSTATION.*
 *-WORKSTATION-LG*
+*-WORKSTATION-LG.*
 *-ASUS*
 *-ASUS-GEI*
 *-LAPTOP*
 *-Mac Studio*
 *-MacBook*
 *-IDEAPAD*
+*-IDEAPAD-GEI*
+*-IDEAPAD-GEI.*
 *.sync-conflict-*
 *.conflict
 *-CONFLIT-*
@@ -95,6 +107,7 @@ coverage/
 *.lcov
 .pytest_cache/
 .pytest_temp/
+.pytest_tmp*/
 .ruff_cache/
 htmlcov/
 .wheel-smoke/
@@ -108,6 +121,8 @@ wheelhouse/
 *.tmp
 *.bak
 *.swp
+*.swo
 *~
 *.orig
 *.rej
+ehthumbs.db

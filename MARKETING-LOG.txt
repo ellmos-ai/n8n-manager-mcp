@@ -9,7 +9,7 @@
 # Author:       Lukas Geiger
 # License:      MIT
 # Version:      0.1.21
-# Last Updated: 2026-09-29
+# Last Updated: 2026-10-01
 # ==============================================================================
 
 1. PRODUCT POSITIONING & VALUE PROPOSITION
@@ -299,3 +299,41 @@ The ellmos-ai and open-bricks suites provide coordinated local-first tools:
 - Contract Test Suite Expansion:
   * Extended test/metadata.test.ts with automated contract tests validating ASCII 4-view topology,
     THIRD_PARTY_LICENSES.txt existence and invariant coverage, and distribution files whitelist integrity.
+
+13. PATH A TECHNICAL HYGIENE, CI CONCURRENCY HARDENING & LEVEL 1 SBOM RE-AUDIT (2026-10-01)
+-------------------------------------------------------------------------------
+- Bilingual Contribution & Governance Framework (CONTRIBUTING.md):
+  * Upgraded contribution guidelines to full bilingual parity (## English & ## Deutsch).
+  * Formalized full 10-invariant compliance framework (INV-LOCAL-01 through INV-SLA-10).
+  * Documented unprivileged RunAsInvoker non-elevation mode (INV-PRIV-07) and Plan D
+    canonical development workflow (C:\_Local_DEV\repos\n8n-manager-mcp).
+  * Re-asserted 48h Security Response SLA and responsible disclosure via security@ellmos.ai
+    and security@open-bricks.org.
+  * Added CONTRIBUTING.md to package.json distribution files whitelist and cross-referenced
+    in documentation and llms.txt.
+- CI Workflow Concurrency Protection:
+  * Hardened .github/workflows/auto-assign.yml and .github/workflows/label-sync.yml with
+    concurrency groups and cancel-in-progress: true to prevent runner waste.
+  * All 5 repository workflows now feature deterministic timeouts and concurrency control.
+- Multi-Host Cloud-Sync & Canonical Lock Defense (.gitignore):
+  * Hardened .gitignore against cross-host conflicts with tokens for *-IDEAPAD-GEI*,
+    *-IDEAPAD-GEI.*, *-WORKSTATION.*, *-WORKSTATION-LG.*, canonical locks (LOCK.user.*,
+    LOCK.until.*, LOCK.condition.*, LOCK.dev.*, LOCK.antigravity.*, LOCK.bugsearch.*),
+    planning tasks (TASKPLAN_*.md, *-TASKPLAN*), OS artifacts (ehthumbs.db, *.swo),
+    and test caches (.pytest_tmp*/).
+- Level 1 SBOM Re-Audit & Supply Chain Integrity (Stand 2026-10-01):
+  * Re-audited THIRD_PARTY_LICENSES.md and plain-text companion THIRD_PARTY_LICENSES.txt
+    to Stand: 2026-10-01.
+  * Confirmed 100% permissive dependencies (MIT, BSD-2-Clause, BSD-3-Clause, Apache-2.0),
+    Zero-Copyleft isolation, Zero-Egress perimeter, and RunAsInvoker non-elevation mode.
+- Context Manifest & Badges Synchronization:
+  * Updated llms.txt context index verification timestamp to 2026-10-01 with 196+ passing
+    tests baseline and CONTRIBUTING.md reference.
+  * Synchronized Shields.io badges in README.md and README_de.md to Verified-2026--10--01
+    and Last-Checked-2026--10--01.
+- Strict Version Freeze Discipline:
+  * Maintained strict version freeze at 0.1.21 per T-20260920-167562623 across all manifests.
+- Contract Test Suite Expansion:
+  * Extended test suites in test/metadata.test.ts and test/repository-hygiene.test.ts to
+    strictly enforce bilingual CONTRIBUTING.md presence and invariant coverage, workflow
+    concurrency guards, .gitignore multi-host defenses, and Level 1 SBOM 2026-10-01 recency.

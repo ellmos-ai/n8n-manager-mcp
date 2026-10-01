@@ -7,7 +7,7 @@
 *Teil der [ellmos-ai](https://github.com/ellmos-ai)-Familie und des [open-bricks](https://github.com/open-bricks)-Dachverbunds.*
 
 [![npm](https://img.shields.io/npm/v/n8n-manager-mcp.svg)](https://www.npmjs.com/package/n8n-manager-mcp)
-[![Tests](https://img.shields.io/badge/Tests-194%20passed-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
+[![Tests](https://img.shields.io/badge/Tests-198%20passed-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
 [![MCP Tools](https://img.shields.io/badge/MCP%20Tools-19%20tools-blue.svg)](https://github.com/ellmos-ai/n8n-manager-mcp)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D20-blue.svg)](https://nodejs.org)
 [![Sicherheit](https://img.shields.io/badge/Sicherheit-Backups%20%7C%20Audit%20%7C%20Read--Only-success.svg)](SECURITY.md)
@@ -15,8 +15,8 @@
 [![Drittanbieter](https://img.shields.io/badge/Drittanbieter-Gepr%C3%BCft%20%7C%20Permissiv-success.svg)](THIRD_PARTY_LICENSES.md)
 [![Level 1 SBOM: Plain Text](https://img.shields.io/badge/Level%201%20SBOM-Plain%20Text-success.svg)](THIRD_PARTY_LICENSES.txt)
 [![Attribution: NOTICE](https://img.shields.io/badge/Attribution-NOTICE-blue.svg)](NOTICE)
-[![Verified](https://img.shields.io/badge/Verified-2026--09--29-blue.svg)](llms.txt)
-[![Last-Checked](https://img.shields.io/badge/Last--Checked-2026--09--29-success.svg)](llms.txt)
+[![Verified](https://img.shields.io/badge/Verified-2026--10--01-blue.svg)](llms.txt)
+[![Last-Checked](https://img.shields.io/badge/Last--Checked-2026--10--01-success.svg)](llms.txt)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![LLM Ready](https://img.shields.io/badge/LLM--Ready-llms.txt-orange.svg)](llms.txt)
 [![Ecosystem: ellmos--ai](https://img.shields.io/badge/Ecosystem-ellmos--ai-blue.svg)](https://github.com/ellmos-ai)
@@ -446,6 +446,14 @@ npm run smoke         # Manueller stdio MCP-Smoke-Test (erfordert vorher npm run
 ```
 
 Der Verifikationsstand umfasst Windows lokal und Ubuntu Linux in GitHub Actions; GitHub Actions führt Build, Test und npm-Paketprüfungen auf Node.js 20, 22 und 24 aus. Der commitspezifische lokale Beleg wird in `CHANGELOG.md` gepflegt. Der Smoke-Runner startet `dist/index.js` über den MCP-SDK-Client, prüft alle 19 Werkzeug-Registrierungen und ruft das sichere Katalog-Werkzeug `n8n_describe_nodes` ohne n8n-Zugangsdaten auf.
+
+### Beitragen & Entwicklungsworkflow
+
+Beiträge sind herzlich willkommen! Bitte beachte die Richtlinien in [CONTRIBUTING.md](CONTRIBUTING.md):
+- **10 Governance- & Laufzeit-Invarianten (`INV-LOCAL-01` bis `INV-SLA-10`)**: 100% Local-First, Zero-Egress, monotoner Read-Only-Schutz und automatische Backups.
+- **Rechte-Nicht-Eskalation (`RunAsInvoker`)**: Ausführung ausschließlich im unprivilegierten Standard-Benutzerkontext.
+- **Plan D Workflow**: Entwicklung ausschließlich im kanonischen lokalen Klon (`C:\_Local_DEV\repos\n8n-manager-mcp`) und GitHub `origin/main`.
+- **48h Sicherheits-SLA**: Koordinierte Meldewege über `security@ellmos.ai` und `security@open-bricks.org`.
 
 ---
 

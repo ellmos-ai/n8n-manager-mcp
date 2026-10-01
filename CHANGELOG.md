@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Technical Hygiene, CI Concurrency Hardening, Bilingual Contributing Guidelines & Level 1 SBOM Re-Audit (Pfad A: 2026-10-01)
+- **Bilingual Contributing Guidelines (`CONTRIBUTING.md`):**
+  - Upgraded contribution documentation to a comprehensive bilingual structure (`## English` and `## Deutsch`) detailing the 10 Governance and Runtime Invariants (`INV-LOCAL-01` to `INV-SLA-10`), `RunAsInvoker` unprivileged user-mode execution (`INV-PRIV-07`), the Plan D local development workflow (`C:\_Local_DEV\repos\n8n-manager-mcp`), version-freeze discipline, and the 48h Security Response SLA (`security@ellmos.ai`, `security@open-bricks.org`).
+  - Registered `CONTRIBUTING.md` in `package.json` distribution `files` whitelist and cross-referenced in documentation.
+- **CI Lifecycle Workflow Concurrency Hardening:**
+  - Added dedicated concurrency cancellation groups (`concurrency: { group: "${{ github.workflow }}-${{ github.ref }}", cancel-in-progress: true }`) to `.github/workflows/auto-assign.yml` and `.github/workflows/label-sync.yml` to prevent redundant GitHub Actions runner consumption on concurrent event dispatch.
+- **Multi-Host Defense & Canonical Lock Protection in `.gitignore`:**
+  - Hardened `.gitignore` against cross-device synchronization hazards with tokens for `*-IDEAPAD-GEI*`, `*-IDEAPAD-GEI.*`, `*-WORKSTATION.*`, `*-WORKSTATION-LG.*`, canonical multi-agent locks (`LOCK.user.*`, `LOCK.until.*`, `LOCK.condition.*`, `LOCK.dev.*`, `LOCK.antigravity.*`, `LOCK.bugsearch.*`), planning tasks (`TASKPLAN_*.md`, `*-TASKPLAN*`), OS artifacts (`ehthumbs.db`, `*.swo`), and test caches (`.pytest_tmp*/`).
+- **Level 1 SBOM Stand 2026-10-01 Re-Audit (`THIRD_PARTY_LICENSES.md` & `THIRD_PARTY_LICENSES.txt`):**
+  - Updated SBOM audit currency to Stand 2026-10-01, verifying 100% permissive open-source dependencies (MIT, BSD-2-Clause, BSD-3-Clause, Apache-2.0), Zero-Copyleft isolation, `RunAsInvoker` non-elevation mode, and all 10 governance runtime invariants.
+- **Documentation & Verification Parity:**
+  - Synchronized verification timestamps to 2026-10-01 across `README.md`, `README_de.md`, and `llms.txt`.
+  - Added cross-links to `CONTRIBUTING.md` in both documentation languages and `llms.txt`.
+- **Contract Test Suite Expansion (`test/metadata.test.ts` & `test/repository-hygiene.test.ts`):**
+  - Added automated contract tests for bilingual `CONTRIBUTING.md` guidelines, invariants coverage, workflow concurrency guards, `.gitignore` multi-host defenses, and updated Level 1 SBOM audit dates.
+- **Strict Version Freeze Discipline:**
+  - Version `0.1.21` remains strictly frozen across all manifests and source files per `T-20260920-167562623`.
+
 ### Discoverability, ASCII 4-View Architecture & Level 1 SBOM Plain-Text Companion (Pfad B: 2026-09-29)
 - **ASCII 4-View Architecture Topology Projection:**
   - Integrated comprehensive ASCII architecture diagrams in Section 01 of both English (`README.md`) and German (`README_de.md`) documentation (`[VIEW 1: CALLER RUNTIMES & AGENT ECOSYSTEM]`, `[VIEW 2: N8N-MANAGER-MCP CORE ENGINE & SAFETY ARBITRATION]`, `[VIEW 3: RUNTIME PERSISTENCE, BACKUP SNAPSHOTS & LOCAL AUDIT WAL]`, `[VIEW 4: DEFENSE PERIMETER, ZERO-EGRESS & RUNASINVOKER]`; German equivalents `[SICHT 1]` .. `[SICHT 4]`).

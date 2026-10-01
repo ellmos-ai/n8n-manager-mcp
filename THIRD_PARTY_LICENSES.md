@@ -1,6 +1,6 @@
 # Third-Party Licenses and Open Source Notices
 
-> **Audit Date:** 2026-09-29 | **Stand: 2026-09-29** | **Compliance:** 100% Permissive (MIT / BSD / Apache-2.0) | **Zero-Copyleft Guaranteed**
+> **Audit Date:** 2026-10-01 | **Stand: 2026-10-01** | **Compliance:** 100% Permissive (MIT / BSD / Apache-2.0) | **Zero-Copyleft Guaranteed**
 
 This project, **n8n-manager-mcp**, is licensed under the [MIT License](LICENSE) with attribution documented in [NOTICE](NOTICE).
 A plain-text Level 1 SBOM companion file is available as [`THIRD_PARTY_LICENSES.txt`](THIRD_PARTY_LICENSES.txt).
@@ -57,7 +57,7 @@ These licenses:
 
 ## 5. Architectural & Governance Invariants Compliance Matrix (Level 1 SBOM)
 
-The third-party stack, licensing inventory, and MCP server implementation strictly enforce the following 10 formal safety and operational invariants (Level 1 SBOM Invariant Cross-Reference Matrix mapping `INV-LOCAL-01` through `INV-SLA-10` Stand 2026-09-29, with plain-text Level 1 SBOM companion [`THIRD_PARTY_LICENSES.txt`](THIRD_PARTY_LICENSES.txt)), cross-referencing root [NOTICE](NOTICE) attribution:
+The third-party stack, licensing inventory, and MCP server implementation strictly enforce the following 10 formal safety and operational invariants (Level 1 SBOM Invariant Cross-Reference Matrix mapping `INV-LOCAL-01` through `INV-SLA-10` Stand 2026-10-01, with plain-text Level 1 SBOM companion [`THIRD_PARTY_LICENSES.txt`](THIRD_PARTY_LICENSES.txt)), cross-referencing root [NOTICE](NOTICE) attribution:
 
 | Invariant ID | Name / Scope | Technical Enforcement Mechanism | Compliance Status |
 | :--- | :--- | :--- | :--- |
