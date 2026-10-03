@@ -48,6 +48,7 @@ Part of the ellmos family. Node.js, MIT. Published as `n8n-manager-mcp` on npm. 
 ## Optional
 
 - [GitHub Issues](https://github.com/ellmos-ai/n8n-manager-mcp/issues): Bug reports and feature requests
+- [Zombie Killer Tray](https://github.com/dev-bricks/zombie-killer-tray): Optional Windows tool for checking orphaned MCP processes. n8n Manager is a configured candidate when launched through the supported `node_modules/n8n-manager-mcp/dist/index.js` entrypoint; additional process and apply checks still apply.
 
 ## Audience
 

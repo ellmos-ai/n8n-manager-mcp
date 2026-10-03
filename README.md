@@ -522,6 +522,7 @@ Our partner organization **[open-bricks](https://github.com/open-bricks)** and s
 | **[swarm-ai](https://github.com/ellmos-ai/swarm-ai)** | `ellmos-ai` | Distributed multi-agent swarming framework with stigmergic coordination |
 | **[ellmos-core](https://github.com/ellmos-ai/ellmos-core)** | `ellmos-ai` | Enterprise AI agent backend, hybrid RAG, and multi-tenant security |
 | **[open-bricks](https://github.com/open-bricks)** | `open-bricks` | Umbrella portal and catalog across all local-first AI software products |
+| **[Zombie Killer Tray](https://github.com/dev-bricks/zombie-killer-tray)** | `dev-bricks` | Optional Windows tool for checking orphaned MCP processes. n8n Manager is a configured candidate when launched through the supported `node_modules/n8n-manager-mcp/dist/index.js` entrypoint; all additional process and apply checks still apply |
 
 ---
 
