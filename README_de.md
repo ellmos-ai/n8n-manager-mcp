@@ -485,6 +485,7 @@ Unsere Partnerorganisation **[open-bricks](https://github.com/open-bricks)** und
 | **[swarm-ai](https://github.com/ellmos-ai/swarm-ai)** | `ellmos-ai` | Verteiltes Multi-Agenten-Schwarm-Framework mit Stigmergie-Koordination |
 | **[ellmos-core](https://github.com/ellmos-ai/ellmos-core)** | `ellmos-ai` | Enterprise KI-Agenten-Backend, hybrides RAG und mandantenfähige Sicherheit |
 | **[open-bricks](https://github.com/open-bricks)** | `open-bricks` | Dachportal und Katalog für alle lokalen KI-Softwareprodukte |
+| **[Zombie Killer Tray](https://github.com/dev-bricks/zombie-killer-tray)** | `dev-bricks` | Optionales Windows-Werkzeug zur Prüfung verwaister MCP-Prozesse. n8n Manager ist beim Start über den unterstützten Einstiegspunkt `node_modules/n8n-manager-mcp/dist/index.js` ein konfigurierter Kandidat; alle weiteren Prozess- und Apply-Schutzprüfungen gelten weiterhin |
 
 ---
 
