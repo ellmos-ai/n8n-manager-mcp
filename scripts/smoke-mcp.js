@@ -62,6 +62,7 @@ let targetHits = 0;
 let sourceHits = 0;
 let responseMode = "redirect";
 let expectedKey = sentinel;
+let activatedEchoId = false;
 const targetServer = http.createServer((_request, response) => {
   targetHits++;
   response.writeHead(200, { "content-type": "application/json" });
@@ -79,6 +80,16 @@ const sourceServer = http.createServer((request, response) => {
   if (responseMode === "redirect") {
     response.writeHead(302, { location: targetUrl });
     response.end("redirect blocked");
+  } else if (responseMode === "success-echo") {
+    response.writeHead(200, { "content-type": "application/json" });
+    if (request.method === "POST") {
+      response.end(JSON.stringify({ id: sentinel, name: "created-on-stub" }));
+    } else if (request.method === "PATCH") {
+      activatedEchoId = request.url?.includes(sentinel) ?? false;
+      response.end(JSON.stringify({ id: sentinel, active: true }));
+    } else {
+      response.end(JSON.stringify({ id: "wf", echoed_value: sentinel, [sentinel]: "object-key-echo" }));
+    }
   } else {
     response.writeHead(401);
     response.end(`Übersicht: rejected header ${expectedKey}`);
@@ -189,6 +200,19 @@ try {
       JSON.stringify(createError).includes(sentinel) || audit.includes(sentinel)) {
     throw new Error("an upstream error echoed the API key into a tool result or audit log");
   }
+  responseMode = "success-echo";
+  const workflowSuccess = await client.callTool({
+    name: "n8n_get_workflow", arguments: { workflow_id: "wf" },
+  });
+  const createSuccess = await client.callTool({
+    name: "n8n_create_workflow", arguments: { name: "local-success-probe", nodes: [], activate: true },
+  });
+  const successAudit = fs.readFileSync(path.join(tempHome, ".n8n-manager-mcp", "audit.log"), "utf8");
+  if (!activatedEchoId || JSON.stringify(workflowSuccess).includes(sentinel) ||
+      JSON.stringify(createSuccess).includes(sentinel) || successAudit.includes(sentinel) ||
+      stderr.includes(sentinel)) {
+    throw new Error("a successful response or structured audit leaked an API key");
+  }
   const absentEnv = { ...process.env, HOME: tempHome, USERPROFILE: tempHome, N8N_MANAGER_SERVER_URL: sourceUrl };
   delete absentEnv.N8N_MANAGER_API_KEY;
   const absentTransport = new StdioClientTransport({
@@ -211,6 +235,18 @@ try {
     }
   } finally {
     await absentClient.close().catch(() => {});
+  }
+  const withRemovableKey = JSON.parse(fs.readFileSync(configPath, "utf8"));
+  withRemovableKey.servers.push({
+    name: storedSentinel, url: sourceUrl, apiKey: storedSentinel, isDefault: false,
+  });
+  fs.writeFileSync(configPath, JSON.stringify(withRemovableKey));
+  const removed = await client.callTool({
+    name: "n8n_remove_server", arguments: { server_name: storedSentinel },
+  });
+  if (JSON.stringify(removed).includes(storedSentinel) ||
+      JSON.parse(fs.readFileSync(configPath, "utf8")).servers.some(server => server.name === storedSentinel)) {
+    throw new Error("a removed profile key escaped the outgoing result boundary");
   }
   const listResult = await client.callTool({ name: "n8n_list_servers", arguments: {} });
   if (JSON.stringify(listResult).includes(sentinel) || stderr.includes(sentinel)) {

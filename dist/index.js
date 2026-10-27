@@ -20,7 +20,7 @@ import * as path from "path";
 import { homedir } from "os";
 import { isPathInside, resolveBackupPath, sanitizePathPart } from "./backup-paths.js";
 import { writeJsonFileAtomically } from "./config-store.js";
-import { N8N_API_KEY_ENV, N8N_SERVER_URL_ENV, redactApiKey, selectApiKey } from "./credentials.js";
+import { N8N_API_KEY_ENV, N8N_SERVER_URL_ENV, redactApiKey, redactApiKeys, selectApiKey } from "./credentials.js";
 import { resolveSafety } from "./safety.js";
 import { connectionIndexInputSchema, listBackupsLimitSchema, listExecutionsLimitSchema, listWorkflowsLimitSchema, MAX_CONNECTION_INDEX, MAX_LIST_LIMIT, } from "./input-validation.js";
 import { MANAGER_URL_ENV, ManagerUnavailable, fetchWorkflowHistory, formatHistory, formatWorkflowIndex, listManagerWorkflows, probeManager, resolveManagerUrl, } from "./manager-client.js";
@@ -140,13 +140,9 @@ async function writeAudit(config, entry) {
     if (!getSafety(config).auditLog)
         return;
     await ensureConfigDir();
-    const safeEntry = { ...entry };
-    for (const server of config.servers) {
-        if (safeEntry.message) {
-            safeEntry.message = redactApiKey(safeEntry.message, server.apiKey);
-        }
-    }
-    const line = JSON.stringify({ timestamp: new Date().toISOString(), ...safeEntry }) + "\n";
+    const record = { timestamp: new Date().toISOString(), ...entry };
+    const keys = [process.env[N8N_API_KEY_ENV] ?? "", ...config.servers.map(server => server.apiKey)];
+    const line = JSON.stringify(redactApiKeys(record, keys)) + "\n";
     await fs.appendFile(AUDIT_LOG_FILE, line, "utf-8");
 }
 async function blockIfReadOnly(config, action, srv, workflowId) {
@@ -286,7 +282,39 @@ const server = new McpServer({
     name: "n8n-manager-mcp",
     version: "0.1.21",
 });
-server.tool("n8n_safety_status", "Show n8n Manager safety settings, backup directory, audit log location, and whether the optional n8n-workflow-manager seam is configured and reachable.", {}, async () => {
+/** Read keys without creating a config directory for tools that need none. */
+async function outputBoundaryKeys() {
+    const keys = [];
+    const environmentKey = process.env[N8N_API_KEY_ENV];
+    if (environmentKey)
+        keys.push(environmentKey);
+    try {
+        const stored = JSON.parse(await fs.readFile(CONFIG_FILE, "utf-8"));
+        if (Array.isArray(stored.servers)) {
+            for (const profile of stored.servers) {
+                if (typeof profile?.apiKey === "string" && profile.apiKey)
+                    keys.push(profile.apiKey);
+            }
+        }
+    }
+    catch { /* No saved profiles or unreadable config: the tool handles that separately. */ }
+    return keys;
+}
+/** Redact only the outgoing MCP result; internal response data and IDs stay intact. */
+const registerRawTool = server.tool.bind(server);
+const safeTool = ((...args) => {
+    const callback = args.at(-1);
+    if (typeof callback !== "function")
+        throw new Error("MCP tool callback is missing.");
+    args[args.length - 1] = async (...callbackArgs) => {
+        const before = await outputBoundaryKeys();
+        const result = await callback(...callbackArgs);
+        const after = await outputBoundaryKeys();
+        return redactApiKeys(result, [...before, ...after]);
+    };
+    return registerRawTool(...args);
+});
+safeTool("n8n_safety_status", "Show n8n Manager safety settings, backup directory, audit log location, and whether the optional n8n-workflow-manager seam is configured and reachable.", {}, async () => {
     const config = await loadConfig();
     const safety = getSafety(config);
     const lines = [
@@ -323,7 +351,7 @@ server.tool("n8n_safety_status", "Show n8n Manager safety settings, backup direc
     return { content: [{ type: "text", text: lines.join("\n") }] };
 });
 // ── Tool: n8n_manager_history ────────────────────────────────────────
-server.tool("n8n_manager_history", "Read version history, recorded decisions, and sync history from a running n8n-workflow-manager. Requires the N8N_MCP_MANAGER_URL environment variable; without it, this MCP talks to n8n directly and no such history exists. Read-only.", {
+safeTool("n8n_manager_history", "Read version history, recorded decisions, and sync history from a running n8n-workflow-manager. Requires the N8N_MCP_MANAGER_URL environment variable; without it, this MCP talks to n8n directly and no such history exists. Read-only.", {
     workflow_id: z
         .number()
         .int()
@@ -368,7 +396,7 @@ server.tool("n8n_manager_history", "Read version history, recorded decisions, an
         throw error;
     }
 });
-server.tool("n8n_set_safety_mode", "Configure local safety settings: read-only mode, backup-before-mutation, and audit logging.", {
+safeTool("n8n_set_safety_mode", "Configure local safety settings: read-only mode, backup-before-mutation, and audit logging.", {
     read_only: z.boolean().optional().describe("When true, blocks create/update/delete/activate/import/restore operations."),
     backup_before_mutations: z.boolean().optional().describe("When true, exports workflows before update/delete/activate/restore."),
     audit_log: z.boolean().optional().describe("When true, appends mutation outcomes to ~/.n8n-manager-mcp/audit.log."),
@@ -385,7 +413,7 @@ server.tool("n8n_set_safety_mode", "Configure local safety settings: read-only m
     return { content: [{ type: "text", text: `Safety mode updated: ${JSON.stringify(config.safety, null, 2)}` }] };
 });
 // ── Tool: n8n_list_workflows ─────────────────────────────────────────
-server.tool("n8n_list_workflows", "List all workflows on an n8n server. Returns workflow names, IDs, active status, and node counts.", {
+safeTool("n8n_list_workflows", "List all workflows on an n8n server. Returns workflow names, IDs, active status, and node counts.", {
     server_name: z.string().optional().describe("Server name from config. Uses default if omitted."),
     limit: listWorkflowsLimitSchema.describe(`Max number of workflows to return (integer 1-${MAX_LIST_LIMIT})`),
 }, async ({ server_name, limit }) => {
@@ -408,7 +436,7 @@ server.tool("n8n_list_workflows", "List all workflows on an n8n server. Returns 
     return { content: [{ type: "text", text: lines.join("\n") }] };
 });
 // ── Tool: n8n_get_workflow ───────────────────────────────────────────
-server.tool("n8n_get_workflow", "Get detailed information about a specific n8n workflow including all nodes, connections, and settings.", {
+safeTool("n8n_get_workflow", "Get detailed information about a specific n8n workflow including all nodes, connections, and settings.", {
     workflow_id: z.string().describe("n8n workflow ID"),
     server_name: z.string().optional().describe("Server name. Uses default if omitted."),
 }, async ({ workflow_id, server_name }) => {
@@ -422,7 +450,7 @@ server.tool("n8n_get_workflow", "Get detailed information about a specific n8n w
     return { content: [{ type: "text", text: JSON.stringify(result.data, null, 2) }] };
 });
 // ── Tool: n8n_create_workflow ────────────────────────────────────────
-server.tool("n8n_create_workflow", "Create a new n8n workflow. Provide the full workflow JSON including nodes and connections.", {
+safeTool("n8n_create_workflow", "Create a new n8n workflow. Provide the full workflow JSON including nodes and connections.", {
     name: z.string().describe("Workflow name"),
     nodes: z.array(z.object({
         type: z.string().describe("n8n node type, e.g. 'n8n-nodes-base.webhook'"),
@@ -495,7 +523,7 @@ server.tool("n8n_create_workflow", "Create a new n8n workflow. Provide the full 
     return { content: [{ type: "text", text: `Workflow created: "${created.name || name}" (ID: ${createdId})${activate ? " [ACTIVE]" : ""} on ${srv.name}` }] };
 });
 // ── Tool: n8n_update_workflow ────────────────────────────────────────
-server.tool("n8n_update_workflow", "Update an existing n8n workflow. Send the full updated workflow JSON.", {
+safeTool("n8n_update_workflow", "Update an existing n8n workflow. Send the full updated workflow JSON.", {
     workflow_id: z.string().describe("n8n workflow ID to update"),
     workflow_json: z.string().describe("Full workflow JSON as string"),
     server_name: z.string().optional().describe("Server name. Uses default if omitted."),
@@ -529,7 +557,7 @@ server.tool("n8n_update_workflow", "Update an existing n8n workflow. Send the fu
     return { content: [{ type: "text", text: `Workflow ${workflow_id} updated successfully on ${srv.name}.${backupNote}` }] };
 });
 // ── Tool: n8n_delete_workflow ────────────────────────────────────────
-server.tool("n8n_delete_workflow", "Delete a workflow from an n8n server. By default, a JSON backup is saved before deletion.", {
+safeTool("n8n_delete_workflow", "Delete a workflow from an n8n server. By default, a JSON backup is saved before deletion.", {
     workflow_id: z.string().describe("n8n workflow ID to delete"),
     server_name: z.string().optional().describe("Server name. Uses default if omitted."),
 }, async ({ workflow_id, server_name }) => {
@@ -555,7 +583,7 @@ server.tool("n8n_delete_workflow", "Delete a workflow from an n8n server. By def
     return { content: [{ type: "text", text: `Workflow ${workflow_id} deleted from ${srv.name}.${backupNote}` }] };
 });
 // ── Tool: n8n_activate_workflow ──────────────────────────────────────
-server.tool("n8n_activate_workflow", "Activate or deactivate an n8n workflow.", {
+safeTool("n8n_activate_workflow", "Activate or deactivate an n8n workflow.", {
     workflow_id: z.string().describe("n8n workflow ID"),
     active: z.boolean().describe("true to activate, false to deactivate"),
     server_name: z.string().optional().describe("Server name. Uses default if omitted."),
@@ -582,7 +610,7 @@ server.tool("n8n_activate_workflow", "Activate or deactivate an n8n workflow.", 
     return { content: [{ type: "text", text: `Workflow ${workflow_id} ${active ? "activated" : "deactivated"} on ${srv.name}.${backupNote}` }] };
 });
 // ── Tool: n8n_list_executions ────────────────────────────────────────
-server.tool("n8n_list_executions", "List recent workflow executions on an n8n server. Shows status, timing, and errors.", {
+safeTool("n8n_list_executions", "List recent workflow executions on an n8n server. Shows status, timing, and errors.", {
     workflow_id: z.string().optional().describe("Filter by workflow ID"),
     status: z.enum(["success", "error", "waiting"]).optional().describe("Filter by status"),
     limit: listExecutionsLimitSchema.describe(`Max results (integer 1-${MAX_LIST_LIMIT})`),
@@ -614,7 +642,7 @@ server.tool("n8n_list_executions", "List recent workflow executions on an n8n se
     return { content: [{ type: "text", text: lines.join("\n") }] };
 });
 // ── Tool: n8n_add_server ─────────────────────────────────────────────
-server.tool("n8n_add_server", `Add or update an n8n server connection. For a new profile or key rotation, set ${N8N_API_KEY_ENV} and ${N8N_SERVER_URL_ENV} in the MCP host environment. Existing keys are preserved unless rotate_key is true.`, {
+safeTool("n8n_add_server", `Add or update an n8n server connection. For a new profile or key rotation, set ${N8N_API_KEY_ENV} and ${N8N_SERVER_URL_ENV} in the MCP host environment. Existing keys are preserved unless rotate_key is true.`, {
     name: z.string().describe("Server name (e.g. 'production', 'staging')"),
     url: z.string().describe("n8n server URL (e.g. 'http://localhost:5678')"),
     rotate_key: z.boolean().optional().describe("Explicitly replace the existing stored key from the MCP host environment. Required to change an existing server URL."),
@@ -674,7 +702,7 @@ server.tool("n8n_add_server", `Add or update an n8n server connection. For a new
     return { content: [{ type: "text", text: `Server "${normalized.name}" added (${normalized.url}).${defaultNote}` }] };
 });
 // ── Tool: n8n_list_servers ───────────────────────────────────────────
-server.tool("n8n_list_servers", "List all configured n8n server connections.", {}, async () => {
+safeTool("n8n_list_servers", "List all configured n8n server connections.", {}, async () => {
     const config = await loadConfig();
     if (config.servers.length === 0) {
         return { content: [{ type: "text", text: "No servers configured. Use n8n_add_server to add one." }] };
@@ -688,7 +716,7 @@ server.tool("n8n_list_servers", "List all configured n8n server connections.", {
     return { content: [{ type: "text", text: lines.join("\n") }] };
 });
 // ── Tool: n8n_ping_server ────────────────────────────────────────────
-server.tool("n8n_ping_server", "Test the connection to an n8n server.", {
+safeTool("n8n_ping_server", "Test the connection to an n8n server.", {
     server_name: z.string().optional().describe("Server name. Uses default if omitted."),
 }, async ({ server_name }) => {
     const config = await loadConfig();
@@ -706,7 +734,7 @@ server.tool("n8n_ping_server", "Test the connection to an n8n server.", {
     }
 });
 // ── Tool: n8n_remove_server ──────────────────────────────────────────
-server.tool("n8n_remove_server", "Remove an n8n server from the configuration.", {
+safeTool("n8n_remove_server", "Remove an n8n server from the configuration.", {
     server_name: z.string().describe("Name of the server to remove"),
 }, async ({ server_name }) => {
     const config = await loadConfig();
@@ -723,7 +751,7 @@ server.tool("n8n_remove_server", "Remove an n8n server from the configuration.",
     return { content: [{ type: "text", text: `Server "${server_name}" removed.` }] };
 });
 // ── Tool: n8n_export_workflow ────────────────────────────────────────
-server.tool("n8n_export_workflow", "Export a workflow from an n8n server as JSON. Returns the complete workflow definition that can be imported into another n8n instance.", {
+safeTool("n8n_export_workflow", "Export a workflow from an n8n server as JSON. Returns the complete workflow definition that can be imported into another n8n instance.", {
     workflow_id: z.string().describe("n8n workflow ID to export"),
     server_name: z.string().optional().describe("Server name. Uses default if omitted."),
 }, async ({ workflow_id, server_name }) => {
@@ -739,7 +767,7 @@ server.tool("n8n_export_workflow", "Export a workflow from an n8n server as JSON
     return { content: [{ type: "text", text: JSON.stringify(wf, null, 2) }] };
 });
 // ── Tool: n8n_import_workflow ────────────────────────────────────────
-server.tool("n8n_list_backups", "List local workflow backups created before n8n mutations.", {
+safeTool("n8n_list_backups", "List local workflow backups created before n8n mutations.", {
     server_name: z.string().optional().describe("Optional server name filter."),
     workflow_id: z.string().optional().describe("Optional workflow ID filter."),
     limit: listBackupsLimitSchema.describe(`Maximum backups to show (integer 1-${MAX_LIST_LIMIT}).`),
@@ -751,7 +779,7 @@ server.tool("n8n_list_backups", "List local workflow backups created before n8n 
     const lines = ["Workflow backups:\n", ...files.map(f => `  ${f}`)];
     return { content: [{ type: "text", text: lines.join("\n") }] };
 });
-server.tool("n8n_restore_workflow", "Restore a workflow from a local backup. By default creates a new workflow; pass target_workflow_id to overwrite an existing workflow.", {
+safeTool("n8n_restore_workflow", "Restore a workflow from a local backup. By default creates a new workflow; pass target_workflow_id to overwrite an existing workflow.", {
     backup_path: z.string().describe("Path returned by n8n_list_backups or mutation output."),
     server_name: z.string().optional().describe("Target server name. Uses default if omitted."),
     target_workflow_id: z.string().optional().describe("Existing workflow ID to overwrite. If omitted, creates a new workflow."),
@@ -802,7 +830,7 @@ server.tool("n8n_restore_workflow", "Restore a workflow from a local backup. By 
     const backupNote = preRestoreBackup.path ? ` Pre-restore backup saved: ${preRestoreBackup.path}` : "";
     return { content: [{ type: "text", text: `Workflow restored (${mode}) on ${srv.name}: "${restored.name || workflow.name || restoredId}" (ID: ${restoredId}).${backupNote}` }] };
 });
-server.tool("n8n_import_workflow", "Import a workflow JSON onto an n8n server. Takes a full n8n workflow JSON and creates it on the server.", {
+safeTool("n8n_import_workflow", "Import a workflow JSON onto an n8n server. Takes a full n8n workflow JSON and creates it on the server.", {
     workflow_json: z.string().describe("Complete n8n workflow JSON as string"),
     server_name: z.string().optional().describe("Target server name. Uses default if omitted."),
     activate: z.boolean().optional().default(false).describe("Activate after import"),
@@ -846,7 +874,7 @@ server.tool("n8n_import_workflow", "Import a workflow JSON onto an n8n server. T
     return { content: [{ type: "text", text: `Workflow imported: "${created.name}" (ID: ${createdId})${activate ? " [ACTIVE]" : ""} on ${srv.name}` }] };
 });
 // ── Tool: n8n_describe_nodes ─────────────────────────────────────────
-server.tool("n8n_describe_nodes", "Get information about common n8n node types. Useful for understanding which nodes to use when building workflows.", {
+safeTool("n8n_describe_nodes", "Get information about common n8n node types. Useful for understanding which nodes to use when building workflows.", {
     category: z.enum(["trigger", "action", "logic", "transform", "ai", "all"]).optional().default("all").describe("Filter by category"),
 }, async ({ category }) => {
     const catalog = [

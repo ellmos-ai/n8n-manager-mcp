@@ -11,15 +11,24 @@ export function selectApiKey(
   return existingKey !== undefined && !rotateKey ? existingKey : environmentKey ?? "";
 }
 
-/** An upstream error can echo request headers. Keep the key out of tool and audit output. */
+/** Upstream data can echo request headers, including in object keys. */
 export function redactApiKey(value: unknown, apiKey: string): unknown {
   if (!apiKey) return value;
   if (typeof value === "string") return value.replaceAll(apiKey, "[REDACTED_API_KEY]");
   if (Array.isArray(value)) return value.map(item => redactApiKey(item, apiKey));
   if (value !== null && typeof value === "object") {
     return Object.fromEntries(
-      Object.entries(value).map(([key, item]) => [key, redactApiKey(item, apiKey)]),
+      Object.entries(value).map(([key, item]) => [
+        redactApiKey(key, apiKey) as string,
+        redactApiKey(item, apiKey),
+      ]),
     );
   }
   return value;
+}
+
+/** Longer keys first so overlapping values cannot leave a suffix behind. */
+export function redactApiKeys(value: unknown, apiKeys: Iterable<string>): unknown {
+  const keys = [...new Set(apiKeys)].filter(Boolean).sort((a, b) => b.length - a.length);
+  return keys.reduce<unknown>((result, key) => redactApiKey(result, key), value);
 }

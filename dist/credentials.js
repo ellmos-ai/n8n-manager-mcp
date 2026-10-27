@@ -5,7 +5,7 @@ export const N8N_SERVER_URL_ENV = "N8N_MANAGER_SERVER_URL";
 export function selectApiKey(existingKey, environmentKey, rotateKey) {
     return existingKey !== undefined && !rotateKey ? existingKey : environmentKey ?? "";
 }
-/** An upstream error can echo request headers. Keep the key out of tool and audit output. */
+/** Upstream data can echo request headers, including in object keys. */
 export function redactApiKey(value, apiKey) {
     if (!apiKey)
         return value;
@@ -14,8 +14,16 @@ export function redactApiKey(value, apiKey) {
     if (Array.isArray(value))
         return value.map(item => redactApiKey(item, apiKey));
     if (value !== null && typeof value === "object") {
-        return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, redactApiKey(item, apiKey)]));
+        return Object.fromEntries(Object.entries(value).map(([key, item]) => [
+            redactApiKey(key, apiKey),
+            redactApiKey(item, apiKey),
+        ]));
     }
     return value;
+}
+/** Longer keys first so overlapping values cannot leave a suffix behind. */
+export function redactApiKeys(value, apiKeys) {
+    const keys = [...new Set(apiKeys)].filter(Boolean).sort((a, b) => b.length - a.length);
+    return keys.reduce((result, key) => redactApiKey(result, key), value);
 }
 //# sourceMappingURL=credentials.js.map

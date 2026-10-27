@@ -94,7 +94,7 @@ The n8n Manager MCP Server operates as a **local-first, stdio-connected bridge**
 | +------------------------------------+----------------------------------+----------------------------+ |
 | | Pre-Mutation Workflow Snapshots    | Append-Only Local Audit Trail    | Multi-Server Config Store  | |
 | | ~/.n8n-manager-mcp/backups/        | ~/.n8n-manager-mcp/audit.log     | ~/.n8n-manager-mcp/        | |
-| | ({server}/{id}-{timestamp}.json)   | (Forensic Timestamped Log)       | (servers.json, 0600 mode)  | |
+| | ({server}/{id}-{timestamp}.json)   | (Forensic Timestamped Log)       | (servers.json, POSIX 0600) | |
 | +------------------------------------+----------------------------------+----------------------------+ |
 +===================================================+====================================================+
                                                     |
@@ -407,7 +407,7 @@ Server connections and safety settings are stored in `~/.n8n-manager-mcp/servers
 
 Set `N8N_MANAGER_API_KEY` and `N8N_MANAGER_SERVER_URL` in the **MCP host process environment** before starting the server. Use your client's sensitive user configuration or an OS secret facility when available; check whether your client writes environment values to a plaintext configuration file. `N8N_MANAGER_SERVER_URL` must match the URL passed to `n8n_add_server` (trailing slashes are normalized). Do not include an API key in a chat prompt or tool argument.
 
-`n8n_add_server` reads the key from the host environment, validates it, and saves it with the server profile in local `servers.json`. The file is **plaintext, not encrypted**; new files request mode `0600` on POSIX, while Windows access follows the directory ACL. The MCP tool schema, normal tool response, and server list contain no key value. API calls send the key in the `X-N8N-API-KEY` header to the configured n8n URL; redirects are not followed. Use HTTPS for remote n8n servers. Upstream error echoes are redacted from tool errors and audit messages.
+`n8n_add_server` reads the key from the host environment, validates it, and saves it with the server profile in local `servers.json`. The file is **plaintext, not encrypted**; new files request mode `0600` on POSIX, while Windows access follows the directory ACL. The MCP tool schema, outgoing tool results, and server list contain no configured key value. API calls send the key in the `X-N8N-API-KEY` header to the configured n8n URL; redirects are not followed. Use HTTPS for remote n8n servers. Echoed keys in successful and failed upstream responses are redacted at the MCP output and audit boundaries, including JSON object keys and workflow IDs.
 
 Existing `servers.json` profiles keep working. Updating a profile at the same URL preserves its stored key even when an environment key is present. To rotate a key or change a profile URL, set the new key and matching URL in the host environment, restart the MCP server, then call `n8n_add_server` with `rotate_key: true`. A URL change without rotation is refused. For multiple servers, configure and add each server with its own environment key/URL pair, restarting the MCP process between pairs; already stored keys are not silently replaced. After onboarding, the environment pair can be removed on restart because the key remains in the local profile. Remove any old prompts or client calls that supplied `api_key` as a tool argument.
 
