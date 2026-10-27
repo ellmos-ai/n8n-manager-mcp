@@ -35,4 +35,12 @@ describe("API key source and output boundary", () => {
       nested: { "[REDACTED_API_KEY]": "[REDACTED_API_KEY]" },
     });
   });
+
+  it("keeps serialized JSON valid while redacting a quoted and backslashed key", () => {
+    const specialKey = String.raw`SYNTHETIC_QUOTE_"_SLASH_\_758255363`;
+    const serialized = JSON.stringify({ [specialKey]: specialKey }, null, 2);
+    const redacted = redactApiKey(serialized, specialKey) as string;
+    expect(JSON.parse(redacted)).toEqual({ "[REDACTED_API_KEY]": "[REDACTED_API_KEY]" });
+    expect(redactApiKey(`Error: ${specialKey}`, specialKey)).toBe("Error: [REDACTED_API_KEY]");
+  });
 });

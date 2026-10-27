@@ -14,7 +14,21 @@ export function selectApiKey(
 /** Upstream data can echo request headers, including in object keys. */
 export function redactApiKey(value: unknown, apiKey: string): unknown {
   if (!apiKey) return value;
-  if (typeof value === "string") return value.replaceAll(apiKey, "[REDACTED_API_KEY]");
+  if (typeof value === "string") {
+    // Tool handlers may have serialized an upstream object before this output
+    // boundary. Parse JSON text first: replacing the raw key cannot find a
+    // quoted/backslashed key, while replacing JSON syntax can corrupt it.
+    try {
+      const parsed: unknown = JSON.parse(value);
+      const redacted = redactApiKey(parsed, apiKey);
+      if (JSON.stringify(redacted) !== JSON.stringify(parsed)) {
+        return JSON.stringify(redacted, null, value.includes("\n") ? 2 : undefined);
+      }
+    } catch { /* Plain text is handled below. */ }
+    const escapedKey = JSON.stringify(apiKey).slice(1, -1);
+    return value.replaceAll(escapedKey, "[REDACTED_API_KEY]")
+      .replaceAll(apiKey, "[REDACTED_API_KEY]");
+  }
   if (Array.isArray(value)) return value.map(item => redactApiKey(item, apiKey));
   if (value !== null && typeof value === "object") {
     return Object.fromEntries(

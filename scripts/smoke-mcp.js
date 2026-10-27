@@ -43,6 +43,7 @@ const repoRoot = path.resolve(scriptDir, "..");
 const serverEntry = path.join(repoRoot, "dist", "index.js");
 const sentinel = "SYNTHETIC_N8N_KEY_DO_NOT_USE_758255363";
 const storedSentinel = "SYNTHETIC_STORED_KEY_758255363";
+const specialKey = String.raw`SYNTHETIC_QUOTE_"_SLASH_\_758255363`;
 
 function reportFailure(message, stderr = "") {
   console.error(`MCP smoke failed: ${message}`);
@@ -83,13 +84,16 @@ const sourceServer = http.createServer((request, response) => {
   } else if (responseMode === "success-echo") {
     response.writeHead(200, { "content-type": "application/json" });
     if (request.method === "POST") {
-      response.end(JSON.stringify({ id: sentinel, name: "created-on-stub" }));
+      response.end(JSON.stringify({ id: expectedKey, name: "created-on-stub" }));
     } else if (request.method === "PATCH") {
-      activatedEchoId = request.url?.includes(sentinel) ?? false;
-      response.end(JSON.stringify({ id: sentinel, active: true }));
+      activatedEchoId = request.url?.includes(expectedKey) ?? false;
+      response.end(JSON.stringify({ id: expectedKey, active: true }));
     } else {
-      response.end(JSON.stringify({ id: "wf", echoed_value: sentinel, [sentinel]: "object-key-echo" }));
+      response.end(JSON.stringify({ id: "wf", echoed_value: expectedKey, [expectedKey]: "object-key-echo" }));
     }
+  } else if (responseMode === "error-json-echo") {
+    response.writeHead(401, { "content-type": "application/json" });
+    response.end(JSON.stringify({ error: expectedKey, nested: { [expectedKey]: "echo" } }));
   } else {
     response.writeHead(401);
     response.end(`Übersicht: rejected header ${expectedKey}`);
@@ -213,6 +217,56 @@ try {
       stderr.includes(sentinel)) {
     throw new Error("a successful response or structured audit leaked an API key");
   }
+  const specialTransport = new StdioClientTransport({
+    command: process.execPath, args: [serverEntry], cwd: repoRoot, stderr: "pipe",
+    env: { ...process.env, HOME: tempHome, USERPROFILE: tempHome,
+      N8N_MANAGER_API_KEY: specialKey, N8N_MANAGER_SERVER_URL: sourceUrl },
+  });
+  const specialClient = new Client({ name: "n8n-manager-escaped-key-smoke", version: "0.1.0" });
+  try {
+    await specialClient.connect(specialTransport);
+    const addedSpecial = await specialClient.callTool({
+      name: "n8n_add_server", arguments: { name: "special", url: sourceUrl },
+    });
+    if (addedSpecial.isError ||
+        !JSON.parse(fs.readFileSync(configPath, "utf8")).servers.some(server =>
+          server.name === "special" && server.apiKey === specialKey)) {
+      throw new Error("a host key with quote and backslash was not accepted");
+    }
+    expectedKey = specialKey;
+    const specialResult = await specialClient.callTool({
+      name: "n8n_get_workflow", arguments: { workflow_id: "wf", server_name: "special" },
+    });
+    const specialText = specialResult.content?.find(part => part.type === "text")?.text ?? "";
+    const parsedSpecial = JSON.parse(specialText);
+    if (specialText.includes(specialKey) || parsedSpecial.echoed_value === specialKey ||
+        Object.keys(parsedSpecial).includes(specialKey)) {
+      throw new Error("a JSON-escaped host key survived the MCP output boundary");
+    }
+    responseMode = "error-json-echo";
+    const specialError = await specialClient.callTool({
+      name: "n8n_get_workflow", arguments: { workflow_id: "wf", server_name: "special" },
+    });
+    const specialErrorText = specialError.content?.find(part => part.type === "text")?.text ?? "";
+    const upstreamError = JSON.parse(JSON.parse(specialErrorText.slice(specialErrorText.indexOf("{"))).error);
+    const createSpecialError = await specialClient.callTool({
+      name: "n8n_create_workflow", arguments: { name: "special-error", nodes: [], server_name: "special" },
+    });
+    const createSpecialText = createSpecialError.content?.find(part => part.type === "text")?.text ?? "";
+    const createUpstreamError = JSON.parse(JSON.parse(createSpecialText.slice(createSpecialText.indexOf("{"))).error);
+    const auditLines = fs.readFileSync(path.join(tempHome, ".n8n-manager-mcp", "audit.log"), "utf8").trim().split("\n");
+    const lastAudit = JSON.parse(auditLines.at(-1));
+    const auditUpstreamError = JSON.parse(JSON.parse(lastAudit.message).error);
+    for (const probe of [upstreamError, createUpstreamError, auditUpstreamError]) {
+      if (probe.error === specialKey || Object.keys(probe.nested).includes(specialKey)) {
+        throw new Error("a nested JSON error or audit message reconstructed the host key");
+      }
+    }
+  } finally {
+    expectedKey = sentinel;
+    responseMode = "success-echo";
+    await specialClient.close().catch(() => {});
+  }
   const absentEnv = { ...process.env, HOME: tempHome, USERPROFILE: tempHome, N8N_MANAGER_SERVER_URL: sourceUrl };
   delete absentEnv.N8N_MANAGER_API_KEY;
   const absentTransport = new StdioClientTransport({
@@ -230,7 +284,8 @@ try {
     const legacyUpdate = await absentClient.callTool({
       name: "n8n_add_server", arguments: { name: "smoke", url: sourceUrl },
     });
-    if (legacyUpdate.isError || JSON.parse(fs.readFileSync(configPath, "utf8")).servers[0].apiKey !== sentinel) {
+    if (legacyUpdate.isError || JSON.parse(fs.readFileSync(configPath, "utf8"))
+        .servers.find(server => server.name === "smoke")?.apiKey !== sentinel) {
       throw new Error("an existing profile did not keep its key with no environment key");
     }
   } finally {
