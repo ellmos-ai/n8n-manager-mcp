@@ -22,6 +22,7 @@ import * as path from "path";
 import { homedir } from "os";
 import { isPathInside, resolveBackupPath, sanitizePathPart } from "./backup-paths.js";
 import { writeJsonFileAtomically } from "./config-store.js";
+import { N8N_API_KEY_ENV, N8N_SERVER_URL_ENV, redactApiKey, selectApiKey } from "./credentials.js";
 import { resolveSafety, type SafetySettings } from "./safety.js";
 import {
   connectionIndexInputSchema,
@@ -134,7 +135,7 @@ function normalizeServerInput(name: string, rawUrl: string, apiKey: string): Nor
 
   const key = apiKey.trim();
   if (!key) {
-    throw new Error("API key is required.");
+    throw new Error(`API key is required. Set ${N8N_API_KEY_ENV} in the MCP host environment.`);
   }
   if (/\s/.test(key)) {
     throw new Error("API key must not contain whitespace.");
@@ -201,7 +202,13 @@ function stripWorkflowForImport(workflow: Record<string, unknown>): Record<strin
 async function writeAudit(config: ServerConfig, entry: AuditEntry): Promise<void> {
   if (!getSafety(config).auditLog) return;
   await ensureConfigDir();
-  const line = JSON.stringify({ timestamp: new Date().toISOString(), ...entry }) + "\n";
+  const safeEntry = { ...entry };
+  for (const server of config.servers) {
+    if (safeEntry.message) {
+      safeEntry.message = redactApiKey(safeEntry.message, server.apiKey) as string;
+    }
+  }
+  const line = JSON.stringify({ timestamp: new Date().toISOString(), ...safeEntry }) + "\n";
   await fs.appendFile(AUDIT_LOG_FILE, line, "utf-8");
 }
 
@@ -330,16 +337,17 @@ async function n8nRequest(
   };
 
   try {
-    const opts: RequestInit = { method, headers };
+    // A redirect could forward the API-key header to a different host.
+    const opts: RequestInit = { method, headers, redirect: "manual" };
     if (body && method !== "GET") {
       opts.body = JSON.stringify(body);
     }
     const resp = await fetch(url, opts);
     const data = resp.ok ? await resp.json().catch(() => ({})) : { error: await resp.text() };
-    return { ok: resp.ok, status: resp.status, data };
+    return { ok: resp.ok, status: resp.status, data: resp.ok ? data : redactApiKey(data, server.apiKey) };
   } catch (e: unknown) {
     const msg = e instanceof Error ? e.message : String(e);
-    return { ok: false, status: 0, data: { error: msg } };
+    return { ok: false, status: 0, data: { error: redactApiKey(msg, server.apiKey) } };
   }
 }
 
@@ -760,27 +768,45 @@ server.tool(
 
 server.tool(
   "n8n_add_server",
-  "Add or update an n8n server connection. The API key can be created in n8n under Settings > API.",
+  `Add or update an n8n server connection. For a new profile or key rotation, set ${N8N_API_KEY_ENV} and ${N8N_SERVER_URL_ENV} in the MCP host environment. Existing keys are preserved unless rotate_key is true.`,
   {
     name: z.string().describe("Server name (e.g. 'production', 'staging')"),
     url: z.string().describe("n8n server URL (e.g. 'http://localhost:5678')"),
-    api_key: z.string().describe("n8n API key (from Settings > API in n8n)"),
+    rotate_key: z.boolean().optional().describe("Explicitly replace the existing stored key from the MCP host environment. Required to change an existing server URL."),
     is_default: z.boolean().optional().describe(
       "Optional default policy: omitted preserves an existing server's flag; true promotes this server; false explicitly removes its default flag."
     ),
   },
-  async ({ name, url, api_key, is_default }) => {
+  async ({ name, url, rotate_key, is_default }) => {
+    const config = await loadConfig();
+    const existing = config.servers.find(s => s.name === name.trim());
     let normalized: NormalizedServerInput;
     try {
-      normalized = normalizeServerInput(name, url, api_key);
+      normalized = normalizeServerInput(name, url, selectApiKey(existing?.apiKey, process.env[N8N_API_KEY_ENV], rotate_key === true));
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       return { content: [{ type: "text" as const, text: `Invalid server configuration: ${message}` }] };
     }
 
-    const config = await loadConfig();
+    if (existing && normalized.url !== existing.url && rotate_key !== true) {
+      return { content: [{ type: "text" as const, text: "Changing a server URL requires rotate_key=true and a host-pinned URL and key." }] };
+    }
+    if (!existing || rotate_key === true) {
+      const pinnedUrl = process.env[N8N_SERVER_URL_ENV];
+      if (!pinnedUrl) {
+        return { content: [{ type: "text" as const, text: `Set ${N8N_SERVER_URL_ENV} in the MCP host environment before adding or rotating a server.` }] };
+      }
+      let expectedUrl: string;
+      try {
+        expectedUrl = normalizeServerInput(name, pinnedUrl, normalized.apiKey).url;
+      } catch {
+        return { content: [{ type: "text" as const, text: `Invalid ${N8N_SERVER_URL_ENV} in the MCP host environment.` }] };
+      }
+      if (normalized.url !== expectedUrl) {
+        return { content: [{ type: "text" as const, text: `Server URL must match ${N8N_SERVER_URL_ENV} in the MCP host environment.` }] };
+      }
+    }
 
-    const existing = config.servers.find(s => s.name === normalized.name);
     const wasDefault = existing?.isDefault === true;
 
     // Remove existing server with same name

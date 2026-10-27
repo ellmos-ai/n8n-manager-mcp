@@ -17,7 +17,7 @@ export async function writeJsonFileAtomically(filePath: string, value: unknown):
   );
 
   try {
-    await fs.writeFile(temporaryPath, JSON.stringify(value, null, 2), "utf-8");
+    await fs.writeFile(temporaryPath, JSON.stringify(value, null, 2), { encoding: "utf-8", mode: 0o600 });
     await fs.rename(temporaryPath, filePath);
   } catch (error) {
     await fs.unlink(temporaryPath).catch(() => undefined);
