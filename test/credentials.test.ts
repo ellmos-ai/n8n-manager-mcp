@@ -43,4 +43,23 @@ describe("API key source and output boundary", () => {
     expect(JSON.parse(redacted)).toEqual({ "[REDACTED_API_KEY]": "[REDACTED_API_KEY]" });
     expect(redactApiKey(`Error: ${specialKey}`, specialKey)).toBe("Error: [REDACTED_API_KEY]");
   });
+
+  it("redacts keys in prefixed errors with repeatedly serialized JSON", () => {
+    const specialKey = String.raw`SYNTHETIC_QUOTE_"_SLASH_\_758255363`;
+    for (const depth of [1, 2, 3, 8]) {
+      let nested = specialKey;
+      for (let level = 0; level < depth; level++) {
+        nested = JSON.stringify({ headers: nested });
+      }
+      const upstream = `Request failed: ${nested}`;
+      const requestData = redactApiKey({ error: upstream }, specialKey);
+      const result = redactApiKeys({ content: [{ type: "text", text: JSON.stringify(requestData) }] }, [specialKey]);
+      const audit = redactApiKeys({ message: JSON.stringify(requestData) }, [specialKey]);
+      for (const boundary of [result, audit]) {
+        const encoded = JSON.stringify(boundary);
+        expect(encoded).toContain("[REDACTED_API_KEY]");
+        expect(encoded).not.toContain("SYNTHETIC_QUOTE_");
+      }
+    }
+  });
 });

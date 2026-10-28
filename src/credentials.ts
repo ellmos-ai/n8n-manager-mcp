@@ -25,9 +25,21 @@ export function redactApiKey(value: unknown, apiKey: string): unknown {
         return JSON.stringify(redacted, null, value.includes("\n") ? 2 : undefined);
       }
     } catch { /* Plain text is handled below. */ }
-    const escapedKey = JSON.stringify(apiKey).slice(1, -1);
-    return value.replaceAll(escapedKey, "[REDACTED_API_KEY]")
-      .replaceAll(apiKey, "[REDACTED_API_KEY]");
+    // Error text can prefix a JSON object containing another serialized JSON
+    // string. The whole message then cannot be parsed, and its key can have
+    // any number of escaping layers. Stop when the next form cannot fit.
+    const forms = [apiKey];
+    let form = apiKey;
+    while (form.length <= value.length) {
+      const escaped = JSON.stringify(form).slice(1, -1);
+      if (escaped === form || escaped.length > value.length) break;
+      forms.push(escaped);
+      form = escaped;
+    }
+    return forms.reverse().reduce(
+      (text, key) => text.replaceAll(key, "[REDACTED_API_KEY]"),
+      value,
+    );
   }
   if (Array.isArray(value)) return value.map(item => redactApiKey(item, apiKey));
   if (value !== null && typeof value === "object") {

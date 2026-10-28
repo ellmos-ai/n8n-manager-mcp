@@ -94,6 +94,11 @@ const sourceServer = http.createServer((request, response) => {
   } else if (responseMode === "error-json-echo") {
     response.writeHead(401, { "content-type": "application/json" });
     response.end(JSON.stringify({ error: expectedKey, nested: { [expectedKey]: "echo" } }));
+  } else if (responseMode === "prefixed-json-echo") {
+    response.writeHead(401, { "content-type": "text/plain" });
+    response.end(`Request failed: ${JSON.stringify({
+      headers: JSON.stringify({ "X-N8N-API-KEY": expectedKey }),
+    })}`);
   } else {
     response.writeHead(401);
     response.end(`Übersicht: rejected header ${expectedKey}`);
@@ -260,6 +265,21 @@ try {
     for (const probe of [upstreamError, createUpstreamError, auditUpstreamError]) {
       if (probe.error === specialKey || Object.keys(probe.nested).includes(specialKey)) {
         throw new Error("a nested JSON error or audit message reconstructed the host key");
+      }
+    }
+    responseMode = "prefixed-json-echo";
+    const prefixedError = await specialClient.callTool({
+      name: "n8n_get_workflow", arguments: { workflow_id: "wf", server_name: "special" },
+    });
+    const prefixedCreateError = await specialClient.callTool({
+      name: "n8n_create_workflow", arguments: { name: "prefixed-error", nodes: [], server_name: "special" },
+    });
+    const prefixedAudit = fs.readFileSync(path.join(tempHome, ".n8n-manager-mcp", "audit.log"), "utf8")
+      .trim().split("\n").at(-1);
+    for (const probe of [prefixedError, prefixedCreateError, prefixedAudit]) {
+      const encoded = JSON.stringify(probe);
+      if (encoded.includes("SYNTHETIC_QUOTE_") || !encoded.includes("[REDACTED_API_KEY]")) {
+        throw new Error("a prefixed nested JSON error leaked the host key into tool output or audit");
       }
     }
   } finally {
