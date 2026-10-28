@@ -12,7 +12,7 @@ export async function writeJsonFileAtomically(filePath, value) {
     const directory = path.dirname(filePath);
     const temporaryPath = path.join(directory, `.${path.basename(filePath)}.${randomUUID()}.tmp`);
     try {
-        await fs.writeFile(temporaryPath, JSON.stringify(value, null, 2), "utf-8");
+        await fs.writeFile(temporaryPath, JSON.stringify(value, null, 2), { encoding: "utf-8", mode: 0o600 });
         await fs.rename(temporaryPath, filePath);
     }
     catch (error) {

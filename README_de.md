@@ -94,15 +94,15 @@ Der n8n Manager MCP Server fungiert als **lokale, über Standard-Ein-/Ausgabe (s
 | +------------------------------------+----------------------------------+----------------------------+ |
 | | Pre-Mutation-Workflow-Snapshots    | Lokales Append-Only-Audit-Log    | Multi-Server-Konfig-Store  | |
 | | ~/.n8n-manager-mcp/backups/        | ~/.n8n-manager-mcp/audit.log     | ~/.n8n-manager-mcp/        | |
-| | ({server}/{id}-{timestamp}.json)   | (Forensisches Zeitstempel-Log)   | (servers.json, Modus 0600) | |
+| | ({server}/{id}-{timestamp}.json)   | (Forensisches Zeitstempel-Log)   | (servers.json, POSIX 0600) | |
 | +------------------------------------+----------------------------------+----------------------------+ |
 +===================================================+====================================================+
                                                     |
                                                     v
 +========================================================================================================+
-| [SICHT 4: AIR-GAP SICHERHEITSPERIMETER, ZERO-EGRESS & RUNASINVOKER]                                    |
+| [SICHT 4: SICHERHEITSPERIMETER, LOKALES STDIO & RUNASINVOKER]                                          |
 | Standard-Benutzermodus (RunAsInvoker: Non-Elevation INV-PRIV-07) | Null Telemetrie / Tracking          |
-| Lokale Loopback-Bindung (127.0.0.1 Standard INV-LOCAL-01)       | 48h-SLA-Sicherheitsprotokoll         |
+| Kein MCP-Listener (Stdio-Transport INV-LOCAL-01)              | 48h-SLA-Sicherheitsprotokoll         |
 +========================================================================================================+
 ```
 
@@ -204,7 +204,7 @@ sequenceDiagram
 - `sichere n8n workflow mutation mit backup`
 - `n8n multi-server synchronisation mcp`
 - `n8n offline node katalog ai agents`
-- `zero-egress n8n automatisierung datenschutz`
+- `lokales stdio n8n automatisierung ohne telemetrie`
 - `modelcontextprotocol n8n typescript integration`
 
 ---
@@ -225,7 +225,7 @@ sequenceDiagram
 | **Forensisches Audit-Log** | Strukturiertes Append-Only `audit.log` (`INV-AUDIT-04`) | Standard-Webserver-Access-Logs | Flüchtige Terminal-Ausgabe | Nur grafische Ausführungshistorie | Cloud-Hersteller-Logaufbewahrung |
 | **Node-Introspektion** | Integrierter Offline-Katalog (`n8n_describe_nodes`) | Manuelle Onlinedokumentation | Raten & Parameter-Ausprobieren | Visuelle Node-Palette | Online-Entwicklerportal |
 | **Multi-Server-Isolation** | Isolierte Profile (`servers.json`) | Manuelles Token-Wechseln | Shell-History-Token-Lecks | Multi-Tab-Login-Durcheinander | Cloud-Workspace-Umschaltung |
-| **Privatsphäre & Zero-Egress**| 100% lokaler Stdio-Transport, Zero Telemetrie | Direkter HTTP-Client-Verkehr | Lokale Shell-Ausführung | Browser-Tracking & Analytik | Remote Drittanbieter-Hosting |
+| **Privatsphäre ohne Telemetrie**| Lokales Stdio; HTTP nur zu konfigurierten n8n-/Manager-Endpunkten | Direkter HTTP-Client-Verkehr | Lokale Shell-Ausführung | Browser-Tracking & Analytik | Remote Drittanbieter-Hosting |
 | **Workflow-Migration** | Integrierte Tools `n8n_export_workflow` & `import` | Eigene Python/Curl-Pipelines | Komplexe bash/jq-Skripte | Manueller Download/Upload-Dialog | Cloud-Enterprise-Bezahlschranke |
 | **Lizenz & Auditsicherheit** | 100% Permissiv MIT (Geprüft, 48h SLA) | Fair-Code (n8n Quellcode verfügbar) | Gemischte / Ad-hoc Lizenzen | Kommerziell / Fair-Code | Proprietäre geschlossene Cloud |
 
@@ -240,7 +240,7 @@ sequenceDiagram
 
 | Invarianten-ID | Fähigkeit / Invariante | Technische Garantie | Anwendervorteil |
 | :--- | :--- | :--- | :--- |
-| `INV-LOCAL-01` | **100% Local-First & Zero-Egress** | MCP-Stdio-Transport; standardmäßig nur an `127.0.0.1` gebunden; keine externe Telemetrie | Vollständige Privatsphäre; keine Workflow-Logik oder Zugangsdaten verlassen das lokale System |
+| `INV-LOCAL-01` | **Lokaler MCP-Transport ohne Telemetrie** | MCP nutzt lokales Stdio und keine Drittanbieter-Telemetrie; konfigurierte entfernte n8n-Server erhalten API-Anfragen samt API-Key-Header | Zugangsdaten gehen bei API-Anfragen nur an den konfigurierten n8n-Endpunkt |
 | `INV-READ-02` | **Monotones Read-Only-Schutzgating** | `N8N_MANAGER_READ_ONLY=1` erzwingt eine prozessweite Obergrenze gegen Werkzeug-Overrides | Verlässlicher Schutz gegen versehentliches Löschen oder Ändern kritischer Produktions-Workflows |
 | `INV-BACK-03` | **Automatische Pre-Mutation-Backups** | Vollständige JSON-Snapshots unter `~/.n8n-manager-mcp/backups/` vor Update/Löschen | 1-Klick-Wiederherstellung über `n8n_restore_workflow` nach Fehlern oder ungewollten Änderungen |
 | `INV-AUDIT-04` | **Lokale Audit-Protokollierung** | Strukturierter JSON-Audit-Trail im Append-Only-Format unter `~/.n8n-manager-mcp/audit.log` | Lückenlose forensische Nachvollziehbarkeit aller Agentenaktionen und Ausführungsergebnisse |
@@ -313,7 +313,7 @@ npm install -g n8n-manager-mcp
 Nach der Installation in Claude eingeben:
 
 1. **n8n-Server hinzufügen:**
-   > "Füge meinen n8n-Server unter http://localhost:5678 mit dem API-Key abc123 hinzu"
+   > "Füge meinen n8n-Server namens Produktion unter http://localhost:5678 hinzu"
 
 2. **Workflows anzeigen:**
    > "Zeige alle Workflows auf meinem n8n-Server"
@@ -405,6 +405,14 @@ abgelehnt, bevor n8n-API-, Dateisystem- oder Workflow-Array-Zugriffe erfolgen.
 
 Server-Verbindungen und Sicherheitseinstellungen werden in `~/.n8n-manager-mcp/servers.json` gespeichert.
 
+### Datenfluss des API-Schlüssels
+
+Setze `N8N_MANAGER_API_KEY` und `N8N_MANAGER_SERVER_URL` vor dem Start in der **Umgebung des MCP-Hostprozesses**. Nutze nach Möglichkeit die vertrauliche Benutzerkonfiguration des Clients oder einen Schlüsselspeicher des Betriebssystems. Prüfe, ob dein Client Umgebungswerte im Klartext in einer Konfigurationsdatei ablegt. `N8N_MANAGER_SERVER_URL` muss der URL im Aufruf von `n8n_add_server` entsprechen; abschließende Schrägstriche werden normalisiert. Gib den API-Schlüssel weder im Chat noch als Werkzeugargument ein.
+
+`n8n_add_server` liest den Schlüssel aus der Hostumgebung, prüft ihn und speichert ihn mit dem Serverprofil in der lokalen `servers.json`. Die Datei ist **Klartext, nicht verschlüsselt**. Neue Dateien werden unter POSIX mit Modus `0600` angelegt; unter Windows gelten die Zugriffsrechte des Verzeichnisses. Das MCP-Werkzeugschema, ausgehende Werkzeugergebnisse und die Serverliste enthalten keinen konfigurierten Schlüsselwert. API-Anfragen senden ihn im Header `X-N8N-API-KEY` an die konfigurierte n8n-URL; Weiterleitungen werden nicht verfolgt. Nutze HTTPS für entfernte n8n-Server. Zurückgespiegelte Schlüssel aus erfolgreichen und fehlgeschlagenen Antworten werden an den MCP-Ausgabe- und Audit-Grenzen geschwärzt, auch in JSON-Objektschlüsseln und Workflow-IDs.
+
+Bestehende Profile in `servers.json` funktionieren weiter. Ein Update mit derselben URL behält den gespeicherten Schlüssel auch dann, wenn ein Umgebungsschlüssel gesetzt ist. Für eine Schlüsselrotation oder URL-Änderung setze den neuen Schlüssel und die passende URL in der Hostumgebung, starte den MCP-Server neu und rufe `n8n_add_server` mit `rotate_key: true` auf. Eine URL-Änderung ohne Rotation wird abgelehnt. Bei mehreren Servern konfiguriere jeden Server mit seinem eigenen Umgebungswertpaar und starte den MCP-Prozess zwischen den Paaren neu; bereits gespeicherte Schlüssel werden nicht still ersetzt. Nach der Einrichtung kann das Wertepaar beim nächsten Start entfernt werden, weil der Schlüssel im lokalen Profil bleibt. Entferne alte Prompts und Client-Aufrufe, die `api_key` als Werkzeugargument übergeben haben.
+
 Sicherheits-Standards:
 
 - `backup_before_mutations: true` sichert das Workflow-JSON vor Update-, Lösch-, Aktivierungs- und Überschreib-Restore-Operationen.
@@ -445,12 +453,12 @@ npx vitest --watch    # Watch-Modus
 npm run smoke         # Manueller stdio MCP-Smoke-Test (erfordert vorher npm run build)
 ```
 
-Der Verifikationsstand umfasst Windows lokal und Ubuntu Linux in GitHub Actions; GitHub Actions führt Build, Test und npm-Paketprüfungen auf Node.js 20, 22 und 24 aus. Der commitspezifische lokale Beleg wird in `CHANGELOG.md` gepflegt. Der Smoke-Runner startet `dist/index.js` über den MCP-SDK-Client, prüft alle 19 Werkzeug-Registrierungen und ruft das sichere Katalog-Werkzeug `n8n_describe_nodes` ohne n8n-Zugangsdaten auf.
+Der Verifikationsstand umfasst Windows lokal und Ubuntu Linux in GitHub Actions; GitHub Actions führt Build, Test und npm-Paketprüfungen auf Node.js 20, 22 und 24 aus. Der commitspezifische lokale Beleg wird in `CHANGELOG.md` gepflegt. Der Smoke-Runner startet `dist/index.js` über den MCP-SDK-Client, prüft alle 19 Werkzeug-Registrierungen und testet die Servereinrichtung mit synthetischen Zugangsdaten. Lokale Loopback-Stubserver prüfen die Schwärzung von Schlüsseln und die Ablehnung von Weiterleitungen. Ein echter n8n-Server wird nicht kontaktiert.
 
 ### Beitragen & Entwicklungsworkflow
 
 Beiträge sind herzlich willkommen! Bitte beachte die Richtlinien in [CONTRIBUTING.md](CONTRIBUTING.md):
-- **10 Governance- & Laufzeit-Invarianten (`INV-LOCAL-01` bis `INV-SLA-10`)**: 100% Local-First, Zero-Egress, monotoner Read-Only-Schutz und automatische Backups.
+- **10 Governance- & Laufzeit-Invarianten (`INV-LOCAL-01` bis `INV-SLA-10`)**: lokaler MCP-Transport ohne Telemetrie, monotoner Read-Only-Schutz und automatische Backups.
 - **Rechte-Nicht-Eskalation (`RunAsInvoker`)**: Ausführung ausschließlich im unprivilegierten Standard-Benutzerkontext.
 - **Plan D Workflow**: Entwicklung ausschließlich im kanonischen lokalen Klon (`C:\_Local_DEV\repos\n8n-manager-mcp`) und GitHub `origin/main`.
 - **48h Sicherheits-SLA**: Koordinierte Meldewege über `security@ellmos.ai` und `security@open-bricks.org`.

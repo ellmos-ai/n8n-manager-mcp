@@ -159,8 +159,8 @@ describe("metadata and manifest parity", () => {
 
     expect(readme).toContain("## Core Capabilities & Safety Invariants");
     expect(readmeDe).toContain("## Kernfähigkeiten & Sicherheitsinvarianten");
-    expect(readme).toContain("100% Local-First & Zero-Egress");
-    expect(readmeDe).toContain("100% Local-First & Zero-Egress");
+    expect(readme).toContain("Local MCP Transport & No Telemetry");
+    expect(readmeDe).toContain("Lokaler MCP-Transport ohne Telemetrie");
     expect(readme).toContain("Monotonic Read-Only Enforcement");
     expect(readmeDe).toContain("Monotones Read-Only-Schutzgating");
     expect(readme).toContain("Automated Pre-Mutation Backups");
@@ -379,8 +379,8 @@ describe("metadata and manifest parity", () => {
     expect(readmeDe).toContain("Manuelle n8n Web-UI");
     expect(readme).toContain("Generic Cloud SaaS");
     expect(readmeDe).toContain("Generische Cloud-SaaS");
-    expect(readme).toContain("100% Local Stdio Transport, Zero Telemetry");
-    expect(readmeDe).toContain("100% lokaler Stdio-Transport, Zero Telemetrie");
+    expect(readme).toContain("Local stdio transport; HTTP only to configured n8n/manager endpoints");
+    expect(readmeDe).toContain("Lokales Stdio; HTTP nur zu konfigurierten n8n-/Manager-Endpunkten");
     expect(readme).toContain("## Third-Party Licenses & Transparency");
     expect(readmeDe).toContain("## Drittanbieter-Lizenzen & Transparenz");
   });
@@ -540,12 +540,12 @@ describe("metadata and manifest parity", () => {
     expect(readmeEn).toContain("[VIEW 1: CALLER RUNTIMES & AGENT ECOSYSTEM]");
     expect(readmeEn).toContain("[VIEW 2: N8N-MANAGER-MCP CORE ENGINE & SAFETY ARBITRATION]");
     expect(readmeEn).toContain("[VIEW 3: RUNTIME PERSISTENCE, BACKUP SNAPSHOTS & LOCAL AUDIT WAL]");
-    expect(readmeEn).toContain("[VIEW 4: DEFENSE PERIMETER, ZERO-EGRESS & RUNASINVOKER]");
+    expect(readmeEn).toContain("[VIEW 4: DEFENSE PERIMETER, LOCAL STDIO & RUNASINVOKER]");
 
     expect(readmeDe).toContain("[SICHT 1: AUFRUFER-LAUFZEITEN & AGENTEN-ÖKOSYSTEM]");
     expect(readmeDe).toContain("[SICHT 2: N8N-MANAGER-MCP KERN-ENGINE & SICHERHEITS-ARBITRIERUNG]");
     expect(readmeDe).toContain("[SICHT 3: LOKALE PERSISTENZ, BACKUP-SNAPSHOTS & AUDIT-WAL]");
-    expect(readmeDe).toContain("[SICHT 4: AIR-GAP SICHERHEITSPERIMETER, ZERO-EGRESS & RUNASINVOKER]");
+    expect(readmeDe).toContain("[SICHT 4: SICHERHEITSPERIMETER, LOKALES STDIO & RUNASINVOKER]");
   });
 
   it("verifies root NOTICE file attribution and copyright integrity", () => {

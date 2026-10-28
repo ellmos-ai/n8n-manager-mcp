@@ -22,6 +22,7 @@ import * as path from "path";
 import { homedir } from "os";
 import { isPathInside, resolveBackupPath, sanitizePathPart } from "./backup-paths.js";
 import { writeJsonFileAtomically } from "./config-store.js";
+import { N8N_API_KEY_ENV, N8N_SERVER_URL_ENV, redactApiKey, redactApiKeys, selectApiKey } from "./credentials.js";
 import { resolveSafety, type SafetySettings } from "./safety.js";
 import {
   connectionIndexInputSchema,
@@ -134,7 +135,7 @@ function normalizeServerInput(name: string, rawUrl: string, apiKey: string): Nor
 
   const key = apiKey.trim();
   if (!key) {
-    throw new Error("API key is required.");
+    throw new Error(`API key is required. Set ${N8N_API_KEY_ENV} in the MCP host environment.`);
   }
   if (/\s/.test(key)) {
     throw new Error("API key must not contain whitespace.");
@@ -201,7 +202,9 @@ function stripWorkflowForImport(workflow: Record<string, unknown>): Record<strin
 async function writeAudit(config: ServerConfig, entry: AuditEntry): Promise<void> {
   if (!getSafety(config).auditLog) return;
   await ensureConfigDir();
-  const line = JSON.stringify({ timestamp: new Date().toISOString(), ...entry }) + "\n";
+  const record = { timestamp: new Date().toISOString(), ...entry };
+  const keys = [process.env[N8N_API_KEY_ENV] ?? "", ...config.servers.map(server => server.apiKey)];
+  const line = JSON.stringify(redactApiKeys(record, keys)) + "\n";
   await fs.appendFile(AUDIT_LOG_FILE, line, "utf-8");
 }
 
@@ -330,16 +333,17 @@ async function n8nRequest(
   };
 
   try {
-    const opts: RequestInit = { method, headers };
+    // A redirect could forward the API-key header to a different host.
+    const opts: RequestInit = { method, headers, redirect: "manual" };
     if (body && method !== "GET") {
       opts.body = JSON.stringify(body);
     }
     const resp = await fetch(url, opts);
     const data = resp.ok ? await resp.json().catch(() => ({})) : { error: await resp.text() };
-    return { ok: resp.ok, status: resp.status, data };
+    return { ok: resp.ok, status: resp.status, data: resp.ok ? data : redactApiKey(data, server.apiKey) };
   } catch (e: unknown) {
     const msg = e instanceof Error ? e.message : String(e);
-    return { ok: false, status: 0, data: { error: msg } };
+    return { ok: false, status: 0, data: { error: redactApiKey(msg, server.apiKey) } };
   }
 }
 
@@ -352,7 +356,37 @@ const server = new McpServer({
   version: "0.1.21",
 });
 
-server.tool(
+/** Read keys without creating a config directory for tools that need none. */
+async function outputBoundaryKeys(): Promise<string[]> {
+  const keys: string[] = [];
+  const environmentKey = process.env[N8N_API_KEY_ENV];
+  if (environmentKey) keys.push(environmentKey);
+  try {
+    const stored = JSON.parse(await fs.readFile(CONFIG_FILE, "utf-8")) as Partial<ServerConfig>;
+    if (Array.isArray(stored.servers)) {
+      for (const profile of stored.servers) {
+        if (typeof profile?.apiKey === "string" && profile.apiKey) keys.push(profile.apiKey);
+      }
+    }
+  } catch { /* No saved profiles or unreadable config: the tool handles that separately. */ }
+  return keys;
+}
+
+/** Redact only the outgoing MCP result; internal response data and IDs stay intact. */
+const registerRawTool = server.tool.bind(server) as (...args: unknown[]) => unknown;
+const safeTool = ((...args: unknown[]) => {
+  const callback = args.at(-1);
+  if (typeof callback !== "function") throw new Error("MCP tool callback is missing.");
+  args[args.length - 1] = async (...callbackArgs: unknown[]) => {
+    const before = await outputBoundaryKeys();
+    const result = await callback(...callbackArgs);
+    const after = await outputBoundaryKeys();
+    return redactApiKeys(result, [...before, ...after]);
+  };
+  return registerRawTool(...args);
+}) as typeof server.tool;
+
+safeTool(
   "n8n_safety_status",
   "Show n8n Manager safety settings, backup directory, audit log location, and whether the optional n8n-workflow-manager seam is configured and reachable.",
   {},
@@ -401,7 +435,7 @@ server.tool(
 
 // ── Tool: n8n_manager_history ────────────────────────────────────────
 
-server.tool(
+safeTool(
   "n8n_manager_history",
   "Read version history, recorded decisions, and sync history from a running n8n-workflow-manager. Requires the N8N_MCP_MANAGER_URL environment variable; without it, this MCP talks to n8n directly and no such history exists. Read-only.",
   {
@@ -452,7 +486,7 @@ server.tool(
   }
 );
 
-server.tool(
+safeTool(
   "n8n_set_safety_mode",
   "Configure local safety settings: read-only mode, backup-before-mutation, and audit logging.",
   {
@@ -476,7 +510,7 @@ server.tool(
 
 // ── Tool: n8n_list_workflows ─────────────────────────────────────────
 
-server.tool(
+safeTool(
   "n8n_list_workflows",
   "List all workflows on an n8n server. Returns workflow names, IDs, active status, and node counts.",
   {
@@ -506,7 +540,7 @@ server.tool(
 
 // ── Tool: n8n_get_workflow ───────────────────────────────────────────
 
-server.tool(
+safeTool(
   "n8n_get_workflow",
   "Get detailed information about a specific n8n workflow including all nodes, connections, and settings.",
   {
@@ -527,7 +561,7 @@ server.tool(
 
 // ── Tool: n8n_create_workflow ────────────────────────────────────────
 
-server.tool(
+safeTool(
   "n8n_create_workflow",
   "Create a new n8n workflow. Provide the full workflow JSON including nodes and connections.",
   {
@@ -611,7 +645,7 @@ server.tool(
 
 // ── Tool: n8n_update_workflow ────────────────────────────────────────
 
-server.tool(
+safeTool(
   "n8n_update_workflow",
   "Update an existing n8n workflow. Send the full updated workflow JSON.",
   {
@@ -651,7 +685,7 @@ server.tool(
 
 // ── Tool: n8n_delete_workflow ────────────────────────────────────────
 
-server.tool(
+safeTool(
   "n8n_delete_workflow",
   "Delete a workflow from an n8n server. By default, a JSON backup is saved before deletion.",
   {
@@ -685,7 +719,7 @@ server.tool(
 
 // ── Tool: n8n_activate_workflow ──────────────────────────────────────
 
-server.tool(
+safeTool(
   "n8n_activate_workflow",
   "Activate or deactivate an n8n workflow.",
   {
@@ -720,7 +754,7 @@ server.tool(
 
 // ── Tool: n8n_list_executions ────────────────────────────────────────
 
-server.tool(
+safeTool(
   "n8n_list_executions",
   "List recent workflow executions on an n8n server. Shows status, timing, and errors.",
   {
@@ -758,29 +792,47 @@ server.tool(
 
 // ── Tool: n8n_add_server ─────────────────────────────────────────────
 
-server.tool(
+safeTool(
   "n8n_add_server",
-  "Add or update an n8n server connection. The API key can be created in n8n under Settings > API.",
+  `Add or update an n8n server connection. For a new profile or key rotation, set ${N8N_API_KEY_ENV} and ${N8N_SERVER_URL_ENV} in the MCP host environment. Existing keys are preserved unless rotate_key is true.`,
   {
     name: z.string().describe("Server name (e.g. 'production', 'staging')"),
     url: z.string().describe("n8n server URL (e.g. 'http://localhost:5678')"),
-    api_key: z.string().describe("n8n API key (from Settings > API in n8n)"),
+    rotate_key: z.boolean().optional().describe("Explicitly replace the existing stored key from the MCP host environment. Required to change an existing server URL."),
     is_default: z.boolean().optional().describe(
       "Optional default policy: omitted preserves an existing server's flag; true promotes this server; false explicitly removes its default flag."
     ),
   },
-  async ({ name, url, api_key, is_default }) => {
+  async ({ name, url, rotate_key, is_default }) => {
+    const config = await loadConfig();
+    const existing = config.servers.find(s => s.name === name.trim());
     let normalized: NormalizedServerInput;
     try {
-      normalized = normalizeServerInput(name, url, api_key);
+      normalized = normalizeServerInput(name, url, selectApiKey(existing?.apiKey, process.env[N8N_API_KEY_ENV], rotate_key === true));
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       return { content: [{ type: "text" as const, text: `Invalid server configuration: ${message}` }] };
     }
 
-    const config = await loadConfig();
+    if (existing && normalized.url !== existing.url && rotate_key !== true) {
+      return { content: [{ type: "text" as const, text: "Changing a server URL requires rotate_key=true and a host-pinned URL and key." }] };
+    }
+    if (!existing || rotate_key === true) {
+      const pinnedUrl = process.env[N8N_SERVER_URL_ENV];
+      if (!pinnedUrl) {
+        return { content: [{ type: "text" as const, text: `Set ${N8N_SERVER_URL_ENV} in the MCP host environment before adding or rotating a server.` }] };
+      }
+      let expectedUrl: string;
+      try {
+        expectedUrl = normalizeServerInput(name, pinnedUrl, normalized.apiKey).url;
+      } catch {
+        return { content: [{ type: "text" as const, text: `Invalid ${N8N_SERVER_URL_ENV} in the MCP host environment.` }] };
+      }
+      if (normalized.url !== expectedUrl) {
+        return { content: [{ type: "text" as const, text: `Server URL must match ${N8N_SERVER_URL_ENV} in the MCP host environment.` }] };
+      }
+    }
 
-    const existing = config.servers.find(s => s.name === normalized.name);
     const wasDefault = existing?.isDefault === true;
 
     // Remove existing server with same name
@@ -814,7 +866,7 @@ server.tool(
 
 // ── Tool: n8n_list_servers ───────────────────────────────────────────
 
-server.tool(
+safeTool(
   "n8n_list_servers",
   "List all configured n8n server connections.",
   {},
@@ -837,7 +889,7 @@ server.tool(
 
 // ── Tool: n8n_ping_server ────────────────────────────────────────────
 
-server.tool(
+safeTool(
   "n8n_ping_server",
   "Test the connection to an n8n server.",
   {
@@ -862,7 +914,7 @@ server.tool(
 
 // ── Tool: n8n_remove_server ──────────────────────────────────────────
 
-server.tool(
+safeTool(
   "n8n_remove_server",
   "Remove an n8n server from the configuration.",
   {
@@ -889,7 +941,7 @@ server.tool(
 
 // ── Tool: n8n_export_workflow ────────────────────────────────────────
 
-server.tool(
+safeTool(
   "n8n_export_workflow",
   "Export a workflow from an n8n server as JSON. Returns the complete workflow definition that can be imported into another n8n instance.",
   {
@@ -913,7 +965,7 @@ server.tool(
 
 // ── Tool: n8n_import_workflow ────────────────────────────────────────
 
-server.tool(
+safeTool(
   "n8n_list_backups",
   "List local workflow backups created before n8n mutations.",
   {
@@ -931,7 +983,7 @@ server.tool(
   }
 );
 
-server.tool(
+safeTool(
   "n8n_restore_workflow",
   "Restore a workflow from a local backup. By default creates a new workflow; pass target_workflow_id to overwrite an existing workflow.",
   {
@@ -990,7 +1042,7 @@ server.tool(
   }
 );
 
-server.tool(
+safeTool(
   "n8n_import_workflow",
   "Import a workflow JSON onto an n8n server. Takes a full n8n workflow JSON and creates it on the server.",
   {
@@ -1043,7 +1095,7 @@ server.tool(
 
 // ── Tool: n8n_describe_nodes ─────────────────────────────────────────
 
-server.tool(
+safeTool(
   "n8n_describe_nodes",
   "Get information about common n8n node types. Useful for understanding which nodes to use when building workflows.",
   {
