@@ -272,7 +272,7 @@ describe("metadata and manifest parity", () => {
   it("verifies llms.txt timestamp, security reference, and tool inventory", () => {
     const llmsTxt = fs.readFileSync(path.join(repoRoot, "llms.txt"), "utf-8");
 
-    expect(llmsTxt).toContain("Last-checked: 2026-10-01");
+    expect(llmsTxt).toContain("Last-checked: 2026-10-30");
     expect(llmsTxt).toContain("NOTICE");
     expect(llmsTxt).toContain("SECURITY.md");
     expect(llmsTxt).toContain("THIRD_PARTY_LICENSES.md");
@@ -286,8 +286,8 @@ describe("metadata and manifest parity", () => {
     const readme = fs.readFileSync(path.join(repoRoot, "README.md"), "utf-8");
     const readmeDe = fs.readFileSync(path.join(repoRoot, "README_de.md"), "utf-8");
 
-    expect(readme).toContain("198%20passed");
-    expect(readmeDe).toContain("198%20passed");
+    expect(readme).toContain("205%20passed");
+    expect(readmeDe).toContain("205%20passed");
     expect(readme).toContain("README_de.md");
     expect(readmeDe).toContain("README.md");
     expect(readme).toContain("https://github.com/open-bricks");
@@ -565,6 +565,7 @@ describe("metadata and manifest parity", () => {
   it("verifies CHANGELOG.md contains recent Pfad A and Pfad B release entries", () => {
     const changelog = fs.readFileSync(path.join(repoRoot, "CHANGELOG.md"), "utf-8");
     expect(changelog).toContain("## [Unreleased]");
+    expect(changelog).toContain("Pfad B: 2026-10-30");
     expect(changelog).toContain("Pfad A: 2026-10-01");
     expect(changelog).toContain("Pfad B: 2026-09-29");
     expect(changelog).toContain("Pfad B: 2026-09-26");
@@ -574,7 +575,8 @@ describe("metadata and manifest parity", () => {
 
   it("verifies MARKETING-LOG.txt contains Pfad A Stand 2026-10-01 audit entry", () => {
     const marketing = fs.readFileSync(path.join(repoRoot, "MARKETING-LOG.txt"), "utf-8");
-    expect(marketing).toContain("Last Updated: 2026-10-01");
+    expect(marketing).toContain("Last Updated: 2026-10-30");
+    expect(marketing).toContain("14. PATH B DISCOVERABILITY, STEP-BY-STEP TERMINAL SHOWCASE, MULTI-SERVER SYNC SEQUENCE & LEVEL 1 SBOM RE-AUDIT (2026-10-30)");
     expect(marketing).toContain("13. PATH A TECHNICAL HYGIENE, CI CONCURRENCY HARDENING & LEVEL 1 SBOM RE-AUDIT (2026-10-01)");
     expect(marketing).toContain("12. PATH B DISCOVERABILITY, ASCII 4-VIEW ARCHITECTURE & LEVEL 1 SBOM PLAIN-TEXT AUDIT (2026-09-29)");
   });
@@ -606,9 +608,40 @@ describe("metadata and manifest parity", () => {
     expect(readmeEn).toContain("CONTRIBUTING.md");
     expect(readmeDe).toContain("CONTRIBUTING.md");
     expect(llmsTxt).toContain("CONTRIBUTING.md");
-    expect(readmeEn).toContain("Verified-2026--10--01");
-    expect(readmeDe).toContain("Verified-2026--10--01");
-    expect(llmsTxt).toContain("Verification (2026-10-01)");
-    expect(llmsTxt).toContain("Last-checked: 2026-10-01");
+    expect(readmeEn).toContain("Verified-2026--10--30");
+    expect(readmeDe).toContain("Verified-2026--10--30");
+    expect(llmsTxt).toContain("Verification (2026-10-30)");
+    expect(llmsTxt).toContain("Last-checked: 2026-10-30");
+  });
+  it("verifies terminal execution showcase and quick start session in English and German READMEs", () => {
+    const readmeEn = fs.readFileSync(path.join(repoRoot, "README.md"), "utf-8");
+    const readmeDe = fs.readFileSync(path.join(repoRoot, "README_de.md"), "utf-8");
+
+    expect(readmeEn).toContain("### End-to-End Developer & Agent Execution Showcase");
+    expect(readmeDe).toContain("### Schrittweiser Entwickler- & Agenten-Showcase");
+    expect(readmeEn).toContain("n8n_add_server");
+    expect(readmeDe).toContain("n8n_add_server");
+    expect(readmeEn).toContain("n8n_ping_server");
+    expect(readmeDe).toContain("n8n_ping_server");
+    expect(readmeEn).toContain("n8n_describe_nodes");
+    expect(readmeDe).toContain("n8n_describe_nodes");
+    expect(readmeEn).toContain("n8n_update_workflow");
+    expect(readmeDe).toContain("n8n_update_workflow");
+    expect(readmeEn).toContain("n8n_restore_workflow");
+    expect(readmeDe).toContain("n8n_restore_workflow");
+    expect(readmeEn).toContain("N8N_MANAGER_READ_ONLY");
+    expect(readmeDe).toContain("N8N_MANAGER_READ_ONLY");
+  });
+
+  it("verifies multi-server workflow migration sequence diagram across English and German READMEs", () => {
+    const readmeEn = fs.readFileSync(path.join(repoRoot, "README.md"), "utf-8");
+    const readmeDe = fs.readFileSync(path.join(repoRoot, "README_de.md"), "utf-8");
+
+    expect(readmeEn).toContain("### Multi-Server Workflow Migration & Staging Synchronization Lifecycle");
+    expect(readmeDe).toContain("### Multi-Server Workflow-Migration & Staging-Synchronisationszyklus");
+    expect(readmeEn).toContain("n8n_export_workflow");
+    expect(readmeDe).toContain("n8n_export_workflow");
+    expect(readmeEn).toContain("n8n_import_workflow");
+    expect(readmeDe).toContain("n8n_import_workflow");
   });
 });

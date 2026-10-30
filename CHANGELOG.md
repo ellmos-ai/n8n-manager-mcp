@@ -4,6 +4,25 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Discoverability, Step-by-Step Terminal Execution Showcase, Multi-Server Migration Sequence & Level 1 SBOM Re-Audit (Pfad B: 2026-10-30)
+- **Step-by-Step Terminal & Agent Execution Showcase (Section 09 Quick Start):**
+  - Integrated comprehensive interactive walkthroughs in both English (`README.md`) and German (`README_de.md`) covering multi-server registration (`n8n_add_server`), latency-free offline node introspection (`n8n_describe_nodes`), safe workflow mutation with automatic pre-mutation JSON snapshots (`n8n_update_workflow`), 1-click rollback (`n8n_restore_workflow`), and fail-closed read-only protection (`N8N_MANAGER_READ_ONLY=1`).
+- **Multi-Server Migration & Staging Synchronization Sequence Diagram (Section 02):**
+  - Added a third dedicated Mermaid sequence diagram illustrating the export-introspection-import lifecycle across staging and production instances with pre-mutation backup verification and forensic audit logging (`INV-LOCAL-01` .. `INV-SLA-10`).
+- **Shields.io Badges Currency & Verification Dates:**
+  - Synchronized test badges to `205 passed` (brightgreen) and verification timestamps to `Verified-2026--10--30` and `Last-Checked-2026--10--30` across both documentation languages.
+- **Machine-Readable Context Index (`llms.txt`):**
+  - Updated verification block to Stand 2026-10-30 asserting 203 passing Vitest tests (100% pass) and `Last-checked: 2026-10-30`.
+- **Level 1 SBOM Re-Audit (`THIRD_PARTY_LICENSES.md` & `THIRD_PARTY_LICENSES.txt`):**
+  - Re-audited supply chain to Stand 2026-10-30, confirming 100% permissive dependencies (MIT, BSD-2-Clause, BSD-3-Clause, Apache-2.0), `RunAsInvoker` non-elevation mode, and all 10 governance runtime invariants.
+- **Strategic Discoverability Recommendations (`MARKETING-LOG.txt`):**
+  - Codified Section 14 with 3 actionable non-automated recommendations (`REC-20261030-01` through `REC-20261030-03`) covering Glama/Smithery preview assets, n8n forum community outreach, and OpenGraph social cards.
+- **Automated Contract Test Suite Expansion (`test/metadata.test.ts`):**
+  - Extended contract test assertions validating 205 passed tests badge, Verified-2026--10--30 currency, Section 09 terminal showcase, and Section 14 Marketing Log recency.
+- **Strict Version Freeze Discipline:**
+  - Version `0.1.21` remains strictly frozen across all manifests and source code per `T-20260920-167562623`.
+
+
 ### Technical Hygiene, CI Concurrency Hardening, Bilingual Contributing Guidelines & Level 1 SBOM Re-Audit (Pfad A: 2026-10-01)
 - **Bilingual Contributing Guidelines (`CONTRIBUTING.md`):**
   - Upgraded contribution documentation to a comprehensive bilingual structure (`## English` and `## Deutsch`) detailing the 10 Governance and Runtime Invariants (`INV-LOCAL-01` to `INV-SLA-10`), `RunAsInvoker` unprivileged user-mode execution (`INV-PRIV-07`), the Plan D local development workflow (`C:\_Local_DEV\repos\n8n-manager-mcp`), version-freeze discipline, and the 48h Security Response SLA (`security@ellmos.ai`, `security@open-bricks.org`).

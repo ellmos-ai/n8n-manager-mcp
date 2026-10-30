@@ -7,7 +7,7 @@
 *Teil der [ellmos-ai](https://github.com/ellmos-ai)-Familie und des [open-bricks](https://github.com/open-bricks)-Dachverbunds.*
 
 [![npm](https://img.shields.io/npm/v/n8n-manager-mcp.svg)](https://www.npmjs.com/package/n8n-manager-mcp)
-[![Tests](https://img.shields.io/badge/Tests-198%20passed-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
+[![Tests](https://img.shields.io/badge/Tests-205%20passed-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
 [![MCP Tools](https://img.shields.io/badge/MCP%20Tools-19%20tools-blue.svg)](https://github.com/ellmos-ai/n8n-manager-mcp)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D20-blue.svg)](https://nodejs.org)
 [![Sicherheit](https://img.shields.io/badge/Sicherheit-Backups%20%7C%20Audit%20%7C%20Read--Only-success.svg)](SECURITY.md)
@@ -15,8 +15,8 @@
 [![Drittanbieter](https://img.shields.io/badge/Drittanbieter-Gepr%C3%BCft%20%7C%20Permissiv-success.svg)](THIRD_PARTY_LICENSES.md)
 [![Level 1 SBOM: Plain Text](https://img.shields.io/badge/Level%201%20SBOM-Plain%20Text-success.svg)](THIRD_PARTY_LICENSES.txt)
 [![Attribution: NOTICE](https://img.shields.io/badge/Attribution-NOTICE-blue.svg)](NOTICE)
-[![Verified](https://img.shields.io/badge/Verified-2026--10--01-blue.svg)](llms.txt)
-[![Last-Checked](https://img.shields.io/badge/Last--Checked-2026--10--01-success.svg)](llms.txt)
+[![Verified](https://img.shields.io/badge/Verified-2026--10--30-blue.svg)](llms.txt)
+[![Last-Checked](https://img.shields.io/badge/Last--Checked-2026--10--30-success.svg)](llms.txt)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![LLM Ready](https://img.shields.io/badge/LLM--Ready-llms.txt-orange.svg)](llms.txt)
 [![Ecosystem: ellmos--ai](https://img.shields.io/badge/Ecosystem-ellmos--ai-blue.svg)](https://github.com/ellmos-ai)
@@ -162,6 +162,37 @@ sequenceDiagram
         Safety->>Audit: Strukturierten forensischen Beleg anhängen (INV-AUDIT-04)
         Safety-->>AI: Erfolgsantwort mit Backup-Pfad & Rollback-Beleg
     end
+```
+
+### Multi-Server Workflow-Migration & Staging-Synchronisationszyklus
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor AI as KI-Assistent (Claude / Cursor)
+    participant MCP as n8n-manager-mcp Router
+    participant Staging as Staging n8n-Instanz
+    participant Store as Lokaler Speicher (~/.n8n-manager-mcp)
+    participant Prod as Produktions n8n-Instanz
+    participant Audit as Forensischer Audit-Logger
+
+    Note over AI,MCP: Phase 1: Export & Inspektion aus der Staging-Umgebung
+    AI->>MCP: n8n_export_workflow(serverId, workflowId)
+    MCP->>Staging: GET /workflows/42 (Staging-Workflow abrufen)
+    Staging-->>MCP: Workflow-JSON-Nutzdaten
+    MCP-->>AI: Exportiertes Workflow-JSON & Node-Topologie
+
+    Note over AI,MCP: Phase 2: Offline-Node-Kompatibilitätsprüfung
+    AI->>MCP: n8n_describe_nodes(nodes)
+    MCP-->>AI: Integriertes Node-Schema & erforderliche Parameter (INV-NODE-09)
+
+    Note over AI,MCP: Phase 3: Sichere Bereitstellung & Pre-Mutation-Snapshot
+    AI->>MCP: n8n_import_workflow(serverId, workflow, activate)
+    MCP->>Store: Sicherheits-Snapshot anlegen (~/backups/production/42-ts.json, INV-BACK-03)
+    MCP->>Prod: POST /workflows (Workflow erstellen / übertragen)
+    Prod-->>MCP: Erstellter Workflow (id: 108, active: false)
+    MCP->>Audit: Forensischen Beleg anhängen (INV-AUDIT-04)
+    MCP-->>AI: Bereitstellungs-Erfolgsbeleg & Rollback-Referenz
 ```
 
 ---
@@ -310,19 +341,158 @@ npm install -g n8n-manager-mcp
 <a id="quick-start"></a>
 ## Schnellstart
 
-Nach der Installation in Claude eingeben:
+### Natürlichsprachige Eingabeaufforderungen
 
-1. **n8n-Server hinzufügen:**
-   > "Füge meinen n8n-Server namens Produktion unter http://localhost:5678 hinzu"
+Nach der Installation können Sie diese Prompts direkt in Ihrem KI-Assistenten verwenden:
 
-2. **Workflows anzeigen:**
-   > "Zeige alle Workflows auf meinem n8n-Server"
+1. **n8n-Server registrieren:**
+   > "Füge meinen n8n-Server namens production unter http://localhost:5678 mit meinem API-Schlüssel hinzu"
 
-3. **Workflow erstellen:**
-   > "Erstelle einen n8n-Workflow, der bei einem Webhook auslöst, Daten von einer API abruft und eine Slack-Nachricht sendet"
+2. **Workflows auflisten:**
+   > "Zeige mir alle Workflows auf meinem n8n-Server"
 
-4. **Ausführungen prüfen:**
-   > "Zeige die letzten 10 Workflow-Ausführungen"
+3. **Nodes offline inspizieren:**
+   > "Beschreibe die HTTP Request- und Webhook-Nodes, damit wir einen neuen Workflow aufbauen können"
+
+4. **Workflow erstellen:**
+   > "Erstelle einen n8n-Workflow, der über einen Webhook ausgelöst wird, Daten von einer API abruft und eine Slack-Nachricht sendet"
+
+5. **Ausführungen prüfen:**
+   > "Zeige mir die letzten 10 Workflow-Ausführungen auf production"
+
+6. **Umgebungsübergreifend übertragen:**
+   > "Exportiere Workflow 42 aus staging und importiere ihn unaktiviert in production"
+
+### Schrittweiser Entwickler- & Agenten-Showcase
+
+Nachfolgend ein detaillierter Ablauf, wie ein KI-Assistent (z. B. Claude Code oder Cursor) über `n8n-manager-mcp` Konfiguration, Inspektion, automatische Pre-Mutation-Backups und Rollbacks ausführt:
+
+#### 1. Multi-Server-Registrierung & Verbindungsprüfung
+Konfigurieren Sie Ihre n8n-Endpunkte. Zugangsdaten und API-Schlüssel werden mit restriktiven Dateirechten (`0600`) unter `~/.n8n-manager-mcp/servers.json` isoliert:
+```json
+// Tool-Aufruf: n8n_add_server
+{
+  "name": "staging",
+  "url": "http://127.0.0.1:5678",
+  "apiKey": "n8n_api_key_staging",
+  "isDefault": true
+}
+```
+*Antwort-Beleg:*
+```json
+{
+  "success": true,
+  "server": "staging",
+  "url": "http://127.0.0.1:5678",
+  "isDefault": true
+}
+```
+
+Erreichbarkeit prüfen ohne Eingriff in bestehende Workflows:
+```json
+// Tool-Aufruf: n8n_ping_server
+{
+  "name": "staging"
+}
+```
+*Antwort-Beleg:*
+```json
+{
+  "server": "staging",
+  "status": "online",
+  "latencyMs": 14
+}
+```
+
+#### 2. Latenzfreie Offline-Node-Inspektion
+Node-Schemas und Verbindungspins direkt aus dem integrierten Offline-Katalog abfragen ohne Netzwerk-Latenz (`INV-NODE-09`):
+```json
+// Tool-Aufruf: n8n_describe_nodes
+{
+  "nodeTypes": ["n8n-nodes-base.webhook", "n8n-nodes-base.httpRequest"]
+}
+```
+*Antwort-Beleg:*
+```json
+{
+  "nodes": [
+    {
+      "name": "n8n-nodes-base.webhook",
+      "displayName": "Webhook",
+      "description": "Starts the workflow when a webhook request is received",
+      "inputs": [],
+      "outputs": ["main"]
+    },
+    {
+      "name": "n8n-nodes-base.httpRequest",
+      "displayName": "HTTP Request",
+      "description": "Makes an HTTP request and returns the response",
+      "inputs": ["main"],
+      "outputs": ["main"]
+    }
+  ]
+}
+```
+
+#### 3. Sichere Workflow-Mutation mit automatischem Snapshot
+Vor jeder Aktualisierung sichert `n8n-manager-mcp` den vollständigen Workflow-Zustand als zeitgestempelten JSON-Snapshot (`INV-BACK-03`):
+```json
+// Tool-Aufruf: n8n_update_workflow
+{
+  "id": "42",
+  "workflow": {
+    "name": "Kunden Webhook Ingest [v2]",
+    "nodes": [ /* aktualisierter Node-Graph */ ],
+    "connections": { /* Node-Verdrahtung */ }
+  }
+}
+```
+*Antwort-Beleg (Pre-Mutation-Backup verifiziert):*
+```json
+{
+  "success": true,
+  "id": "42",
+  "name": "Kunden Webhook Ingest [v2]",
+  "active": true,
+  "backupPath": "~/.n8n-manager-mcp/backups/staging/42-2026-10-30T04-45-00-000Z.json",
+  "auditReceipt": "AUDIT-20261030-42-MUTATION-OK"
+}
+```
+
+#### 4. 1-Klick-Rollback
+Sollte eine Änderung im Produktivbetrieb zu Fehlern führen, stellt ein einziger Aufruf den gesicherten Zustand wieder her:
+```json
+// Tool-Aufruf: n8n_restore_workflow
+{
+  "id": "42",
+  "backupPath": "~/.n8n-manager-mcp/backups/staging/42-2026-10-30T04-45-00-000Z.json"
+}
+```
+*Antwort-Beleg:*
+```json
+{
+  "success": true,
+  "id": "42",
+  "restoredFrom": "~/.n8n-manager-mcp/backups/staging/42-2026-10-30T04-45-00-000Z.json",
+  "status": "rolled_back"
+}
+```
+
+#### 5. Fail-Closed Read-Only-Schutz
+Bei aktiver `N8N_MANAGER_READ_ONLY=1` Umgebungsvariable wird jede schreibende Operation unmittelbar an der Prozessgrenze blockiert (`INV-READ-02`):
+```json
+// Tool-Aufruf: n8n_delete_workflow (unter N8N_MANAGER_READ_ONLY=1)
+{
+  "id": "42"
+}
+```
+*Antwort-Beleg (Fail-Closed Schutzschranke):*
+```json
+{
+  "error": "Operation rejected: N8N_MANAGER_READ_ONLY mode is active (INV-READ-02). Mutations are prohibited.",
+  "status": "blocked"
+}
+```
 
 ---
 

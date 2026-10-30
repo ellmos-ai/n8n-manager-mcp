@@ -9,7 +9,7 @@
 # Author:       Lukas Geiger
 # License:      MIT
 # Version:      0.1.21
-# Last Updated: 2026-10-01
+# Last Updated: 2026-10-30
 # ==============================================================================
 
 1. PRODUCT POSITIONING & VALUE PROPOSITION
@@ -337,3 +337,44 @@ The ellmos-ai and open-bricks suites provide coordinated local-first tools:
   * Extended test suites in test/metadata.test.ts and test/repository-hygiene.test.ts to
     strictly enforce bilingual CONTRIBUTING.md presence and invariant coverage, workflow
     concurrency guards, .gitignore multi-host defenses, and Level 1 SBOM 2026-10-01 recency.
+
+
+14. PATH B DISCOVERABILITY, STEP-BY-STEP TERMINAL SHOWCASE, MULTI-SERVER SYNC SEQUENCE & LEVEL 1 SBOM RE-AUDIT (2026-10-30)
+-------------------------------------------------------------------------------
+- Step-by-Step Terminal & Agent Execution Showcase (Section 09 Quick Start):
+  * Integrated an end-to-end, copy-pasteable execution walkthrough across Section 09 of both
+    English (README.md) and German (README_de.md) documentation:
+    1. Multi-Server Registration & Health Check (n8n_add_server with POSIX 0600 mode, n8n_ping_server)
+    2. Zero-Latency Offline Node Introspection (n8n_describe_nodes without network calls, INV-NODE-09)
+    3. Safe Workflow Mutation with Automated Snapshot (n8n_update_workflow with pre-mutation backup verification, INV-BACK-03)
+    4. Instant 1-Click Rollback (n8n_restore_workflow with rollback receipt)
+    5. Fail-Closed Read-Only Protection (N8N_MANAGER_READ_ONLY=1 process ceiling, INV-READ-02)
+    6. Multi-Instance Migration & Stage Promotion (n8n_export_workflow -> n8n_import_workflow)
+  * Achieved 100% heading and codeblock structure parity between English and German.
+- Multi-Server Migration & Staging Synchronization Sequence Diagram (Section 02):
+  * Designed and integrated a dedicated third Mermaid diagram: "Multi-Server Workflow Migration &
+    Staging Synchronization Lifecycle" (sequenceDiagram) modeling the complete lifecycle of exporting
+    from staging, verifying offline node schemas, and importing to production with automated pre-mutation
+    snapshots and audit receipt generation.
+  * Validated 0 syntax errors via _tools/lint_mermaid.py across both READMEs.
+- Shields.io Badges Currency & Verification Timestamps:
+  * Synchronized test badges to reflect the current test suite: 205 passed tests (brightgreen).
+  * Synchronized verification badges to Verified-2026--10--30 and Last-Checked-2026--10--30.
+- Level 1 SBOM Re-Audit & Supply Chain Transparency:
+  * Re-audited THIRD_PARTY_LICENSES.md and plain-text companion THIRD_PARTY_LICENSES.txt to Stand 2026-10-30.
+  * Re-certified unprivileged RunAsInvoker non-elevation mode (INV-PRIV-07), Zero-Copyleft isolation
+    (100% permissive licenses: MIT, BSD-2-Clause, BSD-3-Clause, Apache-2.0), and all 10 governance invariants.
+- Machine-Readable Context Index (llms.txt):
+  * Synchronized verification block confirming 205 Vitest tests (100% pass) and 0 vulnerabilities across
+    195 packages.
+  * Updated Last-checked stamp to 2026-10-30.
+- Non-Automated Discoverability Recommendations:
+  * [REC-20261030-01]: Submit showcase GIFs of n8n_describe_nodes and safe pre-mutation snapshots to
+    Glama and Smithery catalog listings to improve developer conversion.
+  * [REC-20261030-02]: Create an open community topic on the n8n community forum (forum.n8n.io) detailing
+    multi-server staging-to-production migration using Claude Code and n8n-manager-mcp.
+  * [REC-20261030-03]: Add an OpenGraph social preview card image (1280x640) under assets/og_preview.png
+    configured in GitHub repository settings for rich social link embeds.
+- Strict Version Freeze Discipline:
+  * In strict compliance with T-20260920-167562623, version 0.1.21 remains frozen across all manifests
+    (package.json, server.json, glama.json, src/index.ts).

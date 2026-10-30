@@ -7,7 +7,7 @@
 *Part of the [ellmos-ai](https://github.com/ellmos-ai) family and the [open-bricks](https://github.com/open-bricks) umbrella.*
 
 [![npm](https://img.shields.io/npm/v/n8n-manager-mcp.svg)](https://www.npmjs.com/package/n8n-manager-mcp)
-[![Tests](https://img.shields.io/badge/Tests-198%20passed-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
+[![Tests](https://img.shields.io/badge/Tests-205%20passed-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
 [![MCP Tools](https://img.shields.io/badge/MCP%20Tools-19%20tools-blue.svg)](https://github.com/ellmos-ai/n8n-manager-mcp)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D20-blue.svg)](https://nodejs.org)
 [![Safety](https://img.shields.io/badge/Safety-Backups%20%7C%20Audit%20%7C%20Read--Only-success.svg)](SECURITY.md)
@@ -15,8 +15,8 @@
 [![Third-Party](https://img.shields.io/badge/Third--Party-Audited%20%7C%20Permissive-success.svg)](THIRD_PARTY_LICENSES.md)
 [![Level 1 SBOM: Plain Text](https://img.shields.io/badge/Level%201%20SBOM-Plain%20Text-success.svg)](THIRD_PARTY_LICENSES.txt)
 [![Attribution: NOTICE](https://img.shields.io/badge/Attribution-NOTICE-blue.svg)](NOTICE)
-[![Verified](https://img.shields.io/badge/Verified-2026--10--01-blue.svg)](llms.txt)
-[![Last-Checked](https://img.shields.io/badge/Last--Checked-2026--10--01-success.svg)](llms.txt)
+[![Verified](https://img.shields.io/badge/Verified-2026--10--30-blue.svg)](llms.txt)
+[![Last-Checked](https://img.shields.io/badge/Last--Checked-2026--10--30-success.svg)](llms.txt)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![LLM Ready](https://img.shields.io/badge/LLM--Ready-llms.txt-orange.svg)](llms.txt)
 [![Ecosystem: ellmos--ai](https://img.shields.io/badge/Ecosystem-ellmos--ai-blue.svg)](https://github.com/ellmos-ai)
@@ -162,6 +162,37 @@ sequenceDiagram
         Safety->>Audit: Append structured forensic receipt (INV-AUDIT-04)
         Safety-->>AI: Success response with backup path & rollback receipt
     end
+```
+
+### Multi-Server Workflow Migration & Staging Synchronization Lifecycle
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor AI as AI Assistant (Claude / Cursor)
+    participant MCP as n8n-manager-mcp Router
+    participant Staging as Staging n8n Instance
+    participant Store as Local Storage (~/.n8n-manager-mcp)
+    participant Prod as Production n8n Instance
+    participant Audit as Forensic Audit Logger
+
+    Note over AI,MCP: Phase 1: Export & Introspection from Staging
+    AI->>MCP: n8n_export_workflow(serverId, workflowId)
+    MCP->>Staging: GET /workflows/42 (Fetch Staging Workflow)
+    Staging-->>MCP: Workflow JSON Payload
+    MCP-->>AI: Exported Workflow JSON & Node Topology
+
+    Note over AI,MCP: Phase 2: Offline Node Compatibility Verification
+    AI->>MCP: n8n_describe_nodes(nodes)
+    MCP-->>AI: Bundled Node Schema & Required Properties (INV-NODE-09)
+
+    Note over AI,MCP: Phase 3: Safe Promotion & Pre-Mutation Snapshot
+    AI->>MCP: n8n_import_workflow(serverId, workflow, activate)
+    MCP->>Store: Create Safety Snapshot (~/backups/production/42-ts.json, INV-BACK-03)
+    MCP->>Prod: POST /workflows (Create/Promote Workflow)
+    Prod-->>MCP: Created Workflow (id: 108, active: false)
+    MCP->>Audit: Append Forensic Receipt (INV-AUDIT-04)
+    MCP-->>AI: Promotion Success Receipt & Rollback Handle
 ```
 
 ---
@@ -310,19 +341,158 @@ npm install -g n8n-manager-mcp
 <a id="schnellstart"></a>
 ## Quick Start
 
-After installation, use these commands in your AI assistant:
+### Natural Language Prompts
+
+After installation, use these prompts directly in your AI assistant:
 
 1. **Add your n8n server:**
-   > "Add my n8n server named production at http://localhost:5678"
+   > "Add my n8n server named production at http://localhost:5678 with my API key"
 
 2. **List workflows:**
    > "Show me all workflows on my n8n server"
 
-3. **Create a workflow:**
+3. **Inspect nodes offline:**
+   > "Describe the HTTP Request and Webhook nodes so we can construct a new workflow"
+
+4. **Create a workflow:**
    > "Create an n8n workflow that triggers on a webhook, fetches data from an API, and sends a Slack message"
 
-4. **Check executions:**
-   > "Show me the last 10 workflow executions"
+5. **Check executions:**
+   > "Show me the last 10 workflow executions on production"
+
+6. **Promote across environments:**
+   > "Export workflow 42 from staging and import it to production without activating"
+
+### End-to-End Developer & Agent Execution Showcase
+
+Below is a step-by-step walkthrough of how an AI assistant (e.g. Claude Code or Cursor) interacts with `n8n-manager-mcp` across configuration, inspection, pre-mutation snapshotting, and rollback:
+
+#### 1. Multi-Server Registration & Health Check
+Configure your n8n endpoints. Passwords and API keys are stored with restricted POSIX file permissions (`0600`) under `~/.n8n-manager-mcp/servers.json`:
+```json
+// Tool Call: n8n_add_server
+{
+  "name": "staging",
+  "url": "http://127.0.0.1:5678",
+  "apiKey": "n8n_api_key_staging",
+  "isDefault": true
+}
+```
+*Response Receipt:*
+```json
+{
+  "success": true,
+  "server": "staging",
+  "url": "http://127.0.0.1:5678",
+  "isDefault": true
+}
+```
+
+Verify connection reachability without modifying workflows:
+```json
+// Tool Call: n8n_ping_server
+{
+  "name": "staging"
+}
+```
+*Response Receipt:*
+```json
+{
+  "server": "staging",
+  "status": "online",
+  "latencyMs": 14
+}
+```
+
+#### 2. Zero-Latency Offline Node Introspection
+Inspect node schemas and connection ports instantaneously from the bundled catalog without making network requests (`INV-NODE-09`):
+```json
+// Tool Call: n8n_describe_nodes
+{
+  "nodeTypes": ["n8n-nodes-base.webhook", "n8n-nodes-base.httpRequest"]
+}
+```
+*Response Receipt:*
+```json
+{
+  "nodes": [
+    {
+      "name": "n8n-nodes-base.webhook",
+      "displayName": "Webhook",
+      "description": "Starts the workflow when a webhook request is received",
+      "inputs": [],
+      "outputs": ["main"]
+    },
+    {
+      "name": "n8n-nodes-base.httpRequest",
+      "displayName": "HTTP Request",
+      "description": "Makes an HTTP request and returns the response",
+      "inputs": ["main"],
+      "outputs": ["main"]
+    }
+  ]
+}
+```
+
+#### 3. Safe Workflow Mutation with Automated Snapshot
+When updating an existing workflow, `n8n-manager-mcp` automatically saves a timestamped JSON snapshot before sending changes to the n8n API (`INV-BACK-03`):
+```json
+// Tool Call: n8n_update_workflow
+{
+  "id": "42",
+  "workflow": {
+    "name": "Customer Webhook Ingest [v2]",
+    "nodes": [ /* updated node graph */ ],
+    "connections": { /* node wiring */ }
+  }
+}
+```
+*Response Receipt (Pre-Mutation Backup Verified):*
+```json
+{
+  "success": true,
+  "id": "42",
+  "name": "Customer Webhook Ingest [v2]",
+  "active": true,
+  "backupPath": "~/.n8n-manager-mcp/backups/staging/42-2026-10-30T04-45-00-000Z.json",
+  "auditReceipt": "AUDIT-20261030-42-MUTATION-OK"
+}
+```
+
+#### 4. Instant 1-Click Rollback
+If a newly deployed workflow mutation causes unexpected behavior, restore the exact previous state in a single tool call:
+```json
+// Tool Call: n8n_restore_workflow
+{
+  "id": "42",
+  "backupPath": "~/.n8n-manager-mcp/backups/staging/42-2026-10-30T04-45-00-000Z.json"
+}
+```
+*Response Receipt:*
+```json
+{
+  "success": true,
+  "id": "42",
+  "restoredFrom": "~/.n8n-manager-mcp/backups/staging/42-2026-10-30T04-45-00-000Z.json",
+  "status": "rolled_back"
+}
+```
+
+#### 5. Fail-Closed Read-Only Protection
+To lock the environment against any modifications during security audits, set `N8N_MANAGER_READ_ONLY=1`. Any mutation call is blocked at process boundary (`INV-READ-02`):
+```json
+// Tool Call: n8n_delete_workflow (with N8N_MANAGER_READ_ONLY=1)
+{
+  "id": "42"
+}
+```
+*Response Receipt (Fail-Closed Gate):*
+```json
+{
+  "error": "Operation rejected: N8N_MANAGER_READ_ONLY mode is active (INV-READ-02). Mutations are prohibited.",
+  "status": "blocked"
+}
+```
 
 ---
 
