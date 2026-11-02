@@ -466,7 +466,7 @@ describe("metadata and manifest parity", () => {
     expect(pkg.keywords).toBeDefined();
     expect(pkg.keywords?.length).toBe(20);
     expect(pkg.keywords).toContain("local-first");
-    expect(pkg.keywords).toContain("zero-egress");
+    expect(pkg.keywords).toContain("stdio");
     expect(pkg.keywords).toContain("claude-code");
     expect(pkg.keywords).toContain("mcp-server");
     expect(pkg.keywords).toContain("n8n-workflows");

@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Documentation package completeness
+- Include the existing Spanish README in npm packages alongside English and German. Remove the inaccurate zero-egress discovery keyword: configured n8n API connections use the network, and interactive terminal startup may check for updates. Runtime behavior and version are unchanged.
+
 ### Transitive dependency security updates
 - Raise the `@hono/node-server` override floor to 2.1.3 and lock 2.1.6, addressing GHSA-rmxm-3fg6-px4f.
 - Raise the `qs` override floor to 6.16.1 and lock 6.17.1, addressing GHSA-6pq8-jhm2-2vcw.
