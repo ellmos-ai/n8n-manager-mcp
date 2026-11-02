@@ -92,7 +92,7 @@ Die folgenden Referenz-IDs ordnen aktuelles Quellverhalten und veröffentlichte 
 1. **Fokussierter Umfang:** Ein Thema, Bugfix oder Feature pro Pull Request.
 2. **Vertragstests & Regression:** Neue oder modifizierte Funktionen durch Unit- und Vertragstests in `test/` absichern (`npm test`).
 3. **Smoke-Prüfung:** Werkzeug-Registrierung und Schema-Funktion via `npm run smoke` verifizieren.
-4. **Dokumentations-Parität:** Bei Änderungen an Nutzerverhalten oder Werkzeugen `README.md`, `README_de.md`, `README_es.md`, `README_ja.md` und `llms.txt` aktualisieren.
+4. **Dokumentations-Parität:** Bei Änderungen an Nutzerverhalten oder Werkzeugen `README.md`, `README_de.md`, `README_es.md`, `README_ja.md`, `README_ru.md` und `llms.txt` aktualisieren.
 5. **Lizenz & Urheberschaft:** Alle Beiträge werden unter der [MIT-Lizenz](LICENSE) bereitgestellt; Urheberrecht gem. [NOTICE](NOTICE).
 
 ### 4. Sicherheit & Meldewege

@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Russian user guide (2026-11-03)
+- Add the complete Russian README, reciprocal five-language navigation, npm package inclusion and discovery indexing. Preserve implementation and security-policy limits; runtime and version unchanged.
+
 ### Japanese user guide (2026-11-03)
 - Add the complete Japanese README, reciprocal four-language navigation, npm package inclusion, and discovery indexing. Clarify the optional manager's configurable host and correct the CodeBox description in all four guides. Runtime and version unchanged.
 
