@@ -36,12 +36,12 @@ Falls Private Vulnerability Reporting im Repository noch nicht aktiv ist, kontak
 
 ### Integrierte Schutz- und Sicherheitsmechanismen
 
-- **Local-First & Socket-Bindung:** Der MCP-Server läuft standardmäßig lokal über Stdio und bindet lokale Netzwerkdienste ausschließlich an `127.0.0.1`.
+- **Lokaler MCP-Transport:** Der MCP-Server verwendet Stdio und öffnet keinen eigenen MCP-Netzwerkport. Konfigurierte n8n-Endpunkte erhalten REST-Anfragen; ihre Adresse kann lokal oder entfernt sein. Ein Update-Check ist nur beim interaktiven Terminalstart vorgesehen (`stdout.isTTY`), nicht im regulären Stdio-MCP-Betrieb.
 - **Read-Only Schutzmodus:** Der Nur-Lese-Modus blockiert Operationen zum Erstellen, Aktualisieren, Löschen, Aktivieren/Deaktivieren, Importieren und Wiederherstellen von Workflows. Über `N8N_MANAGER_READ_ONLY=1` wird dieser Modus prozessweit monoton erzwungen und kann nicht durch persistierte Einstellungen überschrieben werden.
-- **Automatische Workflow-Backups:** Vor mutierenden Operationen (Update, Löschen, Aktivieren, Überschreiben) wird standardmäßig ein lokales JSON-Backup unter `~/.n8n-manager-mcp/backups/` angelegt.
-- **Audit-Protokollierung:** Alle Mutationsereignisse werden standardmäßig lokal in `~/.n8n-manager-mcp/audit.log` auditiert.
-- **Eingabe- und Pfadvalidierung:** Backup-Pfade und Eingabeparameter unterliegen strengen Desinfektionsregeln (Path-Traversal-Schutz, Validierung numerischer Limits auf 1..1000, Index-Grenzen 0..1000).
-- **Prozessisolierung & Non-Elevation:** Der Server operiert im Benutzerkontext ohne administrative Rechte (Non-Elevation).
+- **Konfigurierbare Workflow-Backups:** Wenn `backup_before_mutations` aktiviert ist (Standard: true), wird vor Update, Löschen, Aktivieren/Deaktivieren und überschreibendem Restore ein lokales JSON-Backup unter `~/.n8n-manager-mcp/backups/` angelegt. Ein fehlgeschlagenes aktiviertes Backup verhindert diese nachfolgende Mutation; deaktivierte Backups bieten diesen Schutz nicht.
+- **Konfigurierbare Audit-Protokollierung:** Bei aktiviertem `audit_log` (Standard: true) werden protokollierte Mutationsausgänge lokal an `~/.n8n-manager-mcp/audit.log` angehängt. Die Datei ist nicht manipulationssicher. Schreibfehler werden weitergereicht und können auch nach einer bereits ausgeführten Remote-Mutation auftreten; ein Fehlerresultat beweist daher keine Rücknahme.
+- **Eingabe- und Pfadvalidierung:** Backup-Pfadsegmente werden bereinigt und für die betroffenen Backup-, Listen- und Restore-Operationen auf den konfigurierten Root begrenzt; numerische Limits (1..1000) und Verbindungsindizes (0..1000) werden validiert.
+- **Prozessrechte:** Der Server benötigt im vorgesehenen Betrieb keine administrativen Rechte und fordert keine Erhöhung an. Er erbt die Rechte des startenden Prozesses; eine technische Rechteabsenkung oder eine RunAsInvoker-Manifestgarantie ist nicht implementiert.
 - **Sicherheitsstatus-Inspektion:** Über die Werkzeuge `n8n_safety_status` und `n8n_set_safety_mode` können die aktuellen Sicherheitsrichtlinien jederzeit eingesehen und angepasst werden.
 
 ---
@@ -82,10 +82,10 @@ If Private Vulnerability Reporting is not yet active, please contact the securit
 
 ### Built-in Safety Controls & Invariants
 
-- **Local-First & Loopback Binding:** The MCP server operates locally via stdio and connects to local n8n instances via `127.0.0.1` by default.
+- **Local MCP Transport:** The MCP server uses stdio and opens no MCP network listening port. Configured n8n endpoints receive REST requests and can be local or remote. An update check is invoked only during interactive terminal startup (`stdout.isTTY`), not regular stdio MCP operation.
 - **Monotonic Read-Only Mode:** Read-only mode blocks create, update, delete, activate/deactivate, import, and restore operations. Setting `N8N_MANAGER_READ_ONLY=1` enforces process-level read-only mode that cannot be overridden by persisted configuration or MCP tools.
-- **Automated Workflow Backups:** Full workflow JSON is backed up automatically before update, delete, activate/deactivate, and overwrite-restore operations under `~/.n8n-manager-mcp/backups/`.
-- **Local Audit Logging:** Mutation results are recorded locally to `~/.n8n-manager-mcp/audit.log`.
+- **Configurable Workflow Backups:** When `backup_before_mutations` is enabled (default: true), workflow JSON is backed up before update, delete, activate/deactivate, and overwrite-restore operations under `~/.n8n-manager-mcp/backups/`. Failure of an enabled backup prevents that following mutation; disabled backups provide no such protection.
+- **Configurable Local Audit Logging:** When `audit_log` is enabled (default: true), logged mutation outcomes are appended to `~/.n8n-manager-mcp/audit.log`. The file is not tamper-proof. Write errors propagate and may occur after a remote mutation has already succeeded; an error result therefore does not prove rollback.
 - **Input & Path Validation:** Backup path segments are sanitized and constrained to the configured root; traversal sequences and symlink escapes are rejected. Numeric limits (1..1000) and connection indices (0..1000) are strictly validated.
-- **Process Isolation & Non-Elevation:** The server runs in user-space without elevated privileges.
+- **Process Privileges:** Intended operation does not require administrator privileges and the server does not request elevation. It inherits the launching process privileges; no privilege-dropping mechanism or RunAsInvoker manifest guarantee is implemented.
 - **Runtime Safety Inspection:** Use `n8n_safety_status` and `n8n_set_safety_mode` to inspect and govern active safety settings.

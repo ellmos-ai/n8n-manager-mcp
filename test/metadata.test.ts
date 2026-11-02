@@ -124,7 +124,8 @@ describe("metadata and manifest parity", () => {
     expect(secContent).toContain("security@ellmos.ai");
     expect(secContent).toContain("support@lukasgeiger.com");
     expect(secContent).toContain("lukas@open-bricks.org");
-    expect(secContent).toContain("Local-First");
+    expect(secContent).toContain("Local MCP Transport");
+    expect(secContent).toContain("Lokaler MCP-Transport");
     expect(secContent).toContain("N8N_MANAGER_READ_ONLY=1");
     expect(secContent).toContain("~/.n8n-manager-mcp/backups/");
     expect(secContent).toContain("~/.n8n-manager-mcp/audit.log");

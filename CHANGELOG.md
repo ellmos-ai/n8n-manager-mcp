@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Security documentation runtime boundaries
+- Align bilingual SECURITY.md with stdio transport, configured REST endpoints, terminal-only update checks, optional backup/audit settings, propagated audit errors, scoped path checks, and inherited process privileges. Preserve all reporting contacts and existing48-hour, five-business-day, and30-day policy commitments. No runtime or version change.
+
 ### Documentation package completeness
 - Include the existing Spanish README in npm packages alongside English and German. Remove the inaccurate zero-egress discovery keyword: configured n8n API connections use the network, and interactive terminal startup may check for updates. Runtime behavior and version are unchanged.
 
