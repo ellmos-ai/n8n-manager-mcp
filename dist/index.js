@@ -455,7 +455,7 @@ safeTool("n8n_create_workflow", "Create a new n8n workflow. Provide the full wor
     nodes: z.array(z.object({
         type: z.string().describe("n8n node type, e.g. 'n8n-nodes-base.webhook'"),
         name: z.string().describe("Node display name"),
-        parameters: z.record(z.unknown()).optional().describe("Node parameters"),
+        parameters: z.record(z.string(), z.unknown()).optional().describe("Node parameters"),
         position: z.array(z.number()).optional().describe("[x, y] position"),
     })).describe("Array of workflow nodes"),
     connections: z.array(z.object({

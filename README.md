@@ -15,8 +15,8 @@
 [![Third-Party](https://img.shields.io/badge/Third--Party-Audited%20%7C%20Permissive-success.svg)](THIRD_PARTY_LICENSES.md)
 [![Level 1 SBOM: Plain Text](https://img.shields.io/badge/Level%201%20SBOM-Plain%20Text-success.svg)](THIRD_PARTY_LICENSES.txt)
 [![Attribution: NOTICE](https://img.shields.io/badge/Attribution-NOTICE-blue.svg)](NOTICE)
-[![Verified](https://img.shields.io/badge/Verified-2026--10--30-blue.svg)](llms.txt)
-[![Last-Checked](https://img.shields.io/badge/Last--Checked-2026--10--30-success.svg)](llms.txt)
+[![Verified](https://img.shields.io/badge/Verified-2026--11--02-blue.svg)](llms.txt)
+[![Last-Checked](https://img.shields.io/badge/Last--Checked-2026--11--02-success.svg)](llms.txt)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![LLM Ready](https://img.shields.io/badge/LLM--Ready-llms.txt-orange.svg)](llms.txt)
 [![Ecosystem: ellmos--ai](https://img.shields.io/badge/Ecosystem-ellmos--ai-blue.svg)](https://github.com/ellmos-ai)
@@ -621,11 +621,11 @@ npx vitest --watch    # Watch mode
 npm run smoke         # Manual stdio MCP smoke test (requires npm run build first)
 ```
 
-The current verification record covers Windows locally and Ubuntu Linux in GitHub Actions; GitHub Actions runs build, test, and npm package checks on Node.js 20, 22, and 24. The commit-specific local record is kept in `CHANGELOG.md`. The smoke runner starts `dist/index.js` through the MCP SDK client, verifies all 19 tool registrations and secret-free server setup with synthetic credentials, and uses loopback stubs to test key redaction and redirect refusal. It does not contact a real n8n server.
+The current verification record covers Windows locally and Ubuntu Linux in GitHub Actions; GitHub Actions runs build, test, and npm package checks on Node.js 20 and 22. The commit-specific local record is kept in `CHANGELOG.md`. The smoke runner starts `dist/index.js` through the MCP SDK client, verifies all 19 tool registrations and secret-free server setup with synthetic credentials, and uses loopback stubs to test key redaction and redirect refusal. It does not contact a real n8n server.
 
 ### Contributing & Development Workflow
 
-Contributions are welcome! Please review [CONTRIBUTING.md](CONTRIBUTING.md) for full guidelines, including:
+Contributions are welcome! Please review [CONTRIBUTING.md](CONTRIBUTING.md) and our [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) for full guidelines, including:
 - **10 Governance & Runtime Invariants (`INV-LOCAL-01` to `INV-SLA-10`)**: local MCP transport without telemetry, monotonic read-only gates, and automated backups.
 - **Unprivileged User Mode (`RunAsInvoker`)**: Zero administrative elevation requested.
 - **Plan D Workflow**: Development strictly against canonical local clones and GitHub `origin/main`.

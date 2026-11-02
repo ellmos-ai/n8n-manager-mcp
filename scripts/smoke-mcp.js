@@ -15,6 +15,7 @@ import { fileURLToPath } from "node:url";
 
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
+import { N8N_API_KEY_ENV, N8N_SERVER_URL_ENV } from "../dist/credentials.js";
 
 const expectedTools = [
   "n8n_activate_workflow",
@@ -44,6 +45,46 @@ const serverEntry = path.join(repoRoot, "dist", "index.js");
 const sentinel = "SYNTHETIC_N8N_KEY_DO_NOT_USE_758255363";
 const storedSentinel = "SYNTHETIC_STORED_KEY_758255363";
 const specialKey = String.raw`SYNTHETIC_QUOTE_"_SLASH_\_758255363`;
+
+function checkProductSkill(tools) {
+  const skill = fs.readFileSync(path.join(repoRoot, "SKILL.md"), "utf8");
+  const rows = [...skill.matchAll(/^\| `(n8n_\w+)` \| ([^|]+)\|/gm)];
+  const names = rows.map(row => row[1]);
+  if (new Set(names).size !== names.length ||
+      JSON.stringify([...names].sort()) !== JSON.stringify(tools.map(tool => tool.name).sort())) {
+    throw new Error("SKILL.md tool table must describe each registered tool exactly once");
+  }
+  for (const [, name, parameters] of rows) {
+    const tool = tools.find(item => item.name === name);
+    const documented = [...parameters.matchAll(/`([^`]+)`/g)].map(match => match[1]);
+    const offered = Object.keys(tool.inputSchema.properties ?? {});
+    if (new Set(documented).size !== documented.length ||
+        JSON.stringify([...documented].sort()) !== JSON.stringify([...offered].sort())) {
+      throw new Error(`SKILL.md ${name} parameters disagree with tools/list: expected ${offered.join(", ")}`);
+    }
+  }
+  let hostConfigurations = 0;
+  for (const [, source] of skill.matchAll(/^```json\r?\n([\s\S]*?)^```/gm)) {
+    const example = JSON.parse(source);
+    if (example.mcpServers) {
+      for (const config of Object.values(example.mcpServers)) {
+        hostConfigurations++;
+        if (!config.env?.[N8N_API_KEY_ENV] || !config.env?.[N8N_SERVER_URL_ENV] ||
+            "N8N_API_KEY" in config.env || "N8N_API_URL" in config.env) {
+          throw new Error("SKILL.md host setup must use the actual host-only credential variables");
+        }
+      }
+    } else if (example.name?.startsWith("n8n_")) {
+      const tool = tools.find(item => item.name === example.name);
+      const args = example.arguments ?? {};
+      if (!tool || Object.keys(args).some(key => !(key in (tool.inputSchema.properties ?? {}))) ||
+          (tool.inputSchema.required ?? []).some(key => !(key in args))) {
+        throw new Error(`SKILL.md ${example.name} example violates its offered argument contract`);
+      }
+    }
+  }
+  if (hostConfigurations === 0) throw new Error("SKILL.md is missing a host configuration example");
+}
 
 function reportFailure(message, stderr = "") {
   console.error(`MCP smoke failed: ${message}`);
@@ -145,6 +186,8 @@ try {
     if (unexpected.length > 0) parts.push(`unexpected: ${unexpected.join(", ")}`);
     throw new Error(`tool list mismatch (${parts.join("; ")})`);
   }
+
+  checkProductSkill(tools);
 
   const addServer = tools.find(tool => tool.name === "n8n_add_server");
   if (Object.hasOwn(addServer?.inputSchema?.properties ?? {}, "api_key")) {

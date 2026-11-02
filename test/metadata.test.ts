@@ -50,6 +50,9 @@ describe("metadata and manifest parity", () => {
       "README_de.md",
       "CHANGELOG.md",
       "CONTRIBUTING.md",
+      "CODE_OF_CONDUCT.md",
+      "SKILL.md",
+      "llm.txt",
       "SECURITY.md",
       "THIRD_PARTY_LICENSES.md",
       "THIRD_PARTY_LICENSES.txt",
@@ -267,12 +270,15 @@ describe("metadata and manifest parity", () => {
     expect(pkg.files).toContain("THIRD_PARTY_LICENSES.txt");
     expect(pkg.files).toContain("MARKETING-LOG.txt");
     expect(pkg.files).toContain("CONTRIBUTING.md");
+    expect(pkg.files).toContain("CODE_OF_CONDUCT.md");
+    expect(pkg.files).toContain("SKILL.md");
+    expect(pkg.files).toContain("llm.txt");
   });
 
   it("verifies llms.txt timestamp, security reference, and tool inventory", () => {
     const llmsTxt = fs.readFileSync(path.join(repoRoot, "llms.txt"), "utf-8");
 
-    expect(llmsTxt).toContain("Last-checked: 2026-10-30");
+    expect(llmsTxt).toContain("Last-checked: 2026-11-02");
     expect(llmsTxt).toContain("NOTICE");
     expect(llmsTxt).toContain("SECURITY.md");
     expect(llmsTxt).toContain("THIRD_PARTY_LICENSES.md");
@@ -608,10 +614,10 @@ describe("metadata and manifest parity", () => {
     expect(readmeEn).toContain("CONTRIBUTING.md");
     expect(readmeDe).toContain("CONTRIBUTING.md");
     expect(llmsTxt).toContain("CONTRIBUTING.md");
-    expect(readmeEn).toContain("Verified-2026--10--30");
-    expect(readmeDe).toContain("Verified-2026--10--30");
-    expect(llmsTxt).toContain("Verification (2026-10-30)");
-    expect(llmsTxt).toContain("Last-checked: 2026-10-30");
+    expect(readmeEn).toContain("Verified-2026--11--02");
+    expect(readmeDe).toContain("Verified-2026--11--02");
+    expect(llmsTxt).toContain("Verification (2026-11-02)");
+    expect(llmsTxt).toContain("Last-checked: 2026-11-02");
   });
   it("verifies terminal execution showcase and quick start session in English and German READMEs", () => {
     const readmeEn = fs.readFileSync(path.join(repoRoot, "README.md"), "utf-8");
@@ -643,5 +649,35 @@ describe("metadata and manifest parity", () => {
     expect(readmeDe).toContain("n8n_export_workflow");
     expect(readmeEn).toContain("n8n_import_workflow");
     expect(readmeDe).toContain("n8n_import_workflow");
+  });
+
+  it("verifies CODE_OF_CONDUCT.md bilingual structure and Contributor Covenant pledge", () => {
+    const coc = fs.readFileSync(path.join(repoRoot, "CODE_OF_CONDUCT.md"), "utf-8");
+    expect(coc).toContain("Verhaltenskodex / Code of Conduct");
+    expect(coc).toContain("## Deutsch");
+    expect(coc).toContain("## English");
+    expect(coc).toContain("Contributor Covenant v2.1");
+    expect(coc).toContain("security@ellmos.ai");
+  });
+
+  it("verifies llm.txt compatibility pointer to llms.txt and SKILL.md", () => {
+    const llmTxt = fs.readFileSync(path.join(repoRoot, "llm.txt"), "utf-8");
+    expect(llmTxt).toContain("llms.txt");
+    expect(llmTxt).toContain("SKILL.md");
+  });
+
+  it("verifies product skill SKILL.md frontmatter, tool inventory, and governance invariants", () => {
+    const skill = fs.readFileSync(path.join(repoRoot, "SKILL.md"), "utf-8");
+    expect(skill).toContain("name: n8n-manager-mcp");
+    expect(skill).toContain("type: product-skill");
+    expect(skill).toContain("version: 0.1.21");
+    expect(skill).toContain("19 Tools");
+    expect(skill).toContain("n8n_list_workflows");
+    expect(skill).toContain("n8n_get_workflow");
+    expect(skill).toContain("n8n_create_workflow");
+    expect(skill).toContain("n8n_update_workflow");
+    expect(skill).toContain("n8n_delete_workflow");
+    expect(skill).toContain("INV-LOCAL-01");
+    expect(skill).toContain("INV-SLA-10");
   });
 });
