@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Product skill API contract correction
+- Correct all tool parameter names against actual MCP `tools/list`, including snake_case safety controls, string-encoded workflow JSON and explicit restore target semantics.
+- Use the host-only `N8N_MANAGER_API_KEY` / `N8N_MANAGER_SERVER_URL` setup and document separate profile registration; never pass a key through an MCP tool call.
+- Extend the existing local MCP smoke test to compare all 19 documented signatures and JSON examples with the offered schemas. The original PR18 skill fails this regression before correction.
+- Preserve version 0.1.21, workflow configuration and product runtime behavior.
+- Correct the verification index to 208 tests and replace its outdated zero-advisory claim with the two moderate findings returned by the current dependency audit; no dependency remediation is claimed by this documentation change.
+
 ### Repository Hygiene, Product Skill, Code of Conduct & Contract Test Expansion (Pfad A: 2026-11-02)
 - **Mandatory Product Skill (`SKILL.md`):**
   - Authored official product skill `SKILL.md` adhering to P-022 (`MENSCH-UND-LLM-POLICY.md`) and GITHUB-POLICY standards with valid YAML frontmatter, functional tool categorizations across all 19 MCP tools, environment variable documentation (`N8N_API_URL`, `N8N_API_KEY`, `N8N_MANAGER_READ_ONLY`, `N8N_MCP_MANAGER_URL`), human/agent workflow execution patterns (inspection, safe mutation, rollback restore), and 10 runtime invariants (`INV-LOCAL-01` to `INV-SLA-10`).
