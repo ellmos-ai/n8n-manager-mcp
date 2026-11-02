@@ -2,7 +2,7 @@
 
 # n8n Manager MCP Server
 
-**🇬🇧 [English](README.md) · 🇩🇪 Deutsch · 🇪🇸 [Español](README_es.md)**
+**🇬🇧 [English](README.md) · 🇩🇪 Deutsch · 🇪🇸 [Español](README_es.md) · 🇯🇵 [日本語](README_ja.md)**
 
 *Teil der [ellmos-ai](https://github.com/ellmos-ai)-Familie und des [open-bricks](https://github.com/open-bricks)-Dachverbunds.*
 
@@ -573,8 +573,8 @@ Die Anbindung ist **opt-in und read-only**:
   erreichbar, Manager-Version), nicht nur die Umgebungsvariable.
 
 Einrichtung: `pip install n8n-workflow-manager`, dann `n8n-manager serve` (bindet `127.0.0.1:8100`).
-Die Manager-API ist absichtlich unauthentifiziert und nur auf dem Loopback erreichbar;
-eine Nicht-Loopback-URL wird in `n8n_safety_status` als Warnung markiert.
+Die Manager-API ist nicht authentifiziert und bindet standardmäßig an Loopback; der Host ist konfigurierbar.
+Eine Nicht-Loopback-URL wird in `n8n_safety_status` als Warnung markiert.
 
 Numerische Schranken sind Teil der MCP-Schemas: Limits für Workflows, Executions und
 Backups sind endliche positive Ganzzahlen von **1 bis 1000** (die bisherigen Defaults
@@ -717,7 +717,7 @@ Unsere Partnerorganisation **[open-bricks](https://github.com/open-bricks)** und
 | **[safe-start-for-codex](https://github.com/dev-bricks/safe-start-for-codex)** | `dev-bricks` | Schneller Agent-Bootstrap und Umgebungstest-Runner |
 | **[automation-master](https://github.com/dev-bricks/automation-master)** | `dev-bricks` | Zentraler Multi-Host-Automations-Orchestrator |
 | **[DevCenter](https://github.com/dev-bricks/DevCenter)** | `dev-bricks` | Zentrales Entwickler-Dashboard für lokale Tool-Chains |
-| **[CodeBox](https://github.com/dev-bricks/CodeBox)** | `dev-bricks` | Isolierte Multi-Language Tool-Ausführungsumgebung |
+| **[CodeBox](https://github.com/dev-bricks/CodeBox)** | `dev-bricks` | Desktop-Code-Editor/IDE für mehrsprachige Entwicklung |
 | **[githubbot](https://github.com/dev-bricks/githubbot)** | `dev-bricks` | Automatisierte Multi-Org Repository-Wartung und Auffindbarkeit |
 | **[swarm-ai](https://github.com/ellmos-ai/swarm-ai)** | `ellmos-ai` | Verteiltes Multi-Agenten-Schwarm-Framework mit Stigmergie-Koordination |
 | **[ellmos-core](https://github.com/ellmos-ai/ellmos-core)** | `ellmos-ai` | Enterprise KI-Agenten-Backend, hybrides RAG und mandantenfähige Sicherheit |

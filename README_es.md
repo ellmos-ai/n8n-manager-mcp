@@ -2,7 +2,7 @@
 
 # Servidor MCP de n8n Manager
 
-**🇬🇧 [English](README.md) · 🇩🇪 [Deutsch](README_de.md) · 🇪🇸 Español**
+**🇬🇧 [English](README.md) · 🇩🇪 [Deutsch](README_de.md) · 🇪🇸 Español · 🇯🇵 [日本語](README_ja.md)**
 
 *Parte de la familia [ellmos-ai](https://github.com/ellmos-ai) y del paraguas [open-bricks](https://github.com/open-bricks).*
 
@@ -562,7 +562,7 @@ La integración es **optativa y de solo lectura**:
 - Si el gestor está configurado, pero no es accesible, la herramienta **devuelve un mensaje explícito de error** en lugar de responder silenciosamente con datos de la instancia n8n. Esa instancia no tiene el historial de decisiones, por lo que la respuesta alternativa no sería equivalente.
 - `n8n_safety_status` informa del estado *medido* de la integración (configurada, accesible y versión del gestor), no solo de la variable de entorno.
 
-Configuración: `pip install n8n-workflow-manager` y después `n8n-manager serve` (se enlaza a `127.0.0.1:8100`). La API del gestor no requiere autenticación y solo escucha en loopback por diseño; si la URL no es de loopback, `n8n_safety_status` lo indica.
+Configuración: `pip install n8n-workflow-manager` y después `n8n-manager serve` (se enlaza a `127.0.0.1:8100`). La API del gestor no requiere autenticación y, de forma predeterminada, se enlaza a loopback; el host se puede configurar. `n8n_safety_status` señala las URL que no son de loopback.
 
 Los límites numéricos forman parte de los esquemas MCP: los límites para listar flujos de trabajo, ejecuciones y copias de seguridad son enteros positivos finitos del **1 al 1000** (los valores predeterminados existentes siguen siendo 100, 20 y 20); los índices de conexiones `from_output` y `to_input` de los flujos de trabajo son enteros finitos no negativos del **0 al 1000**. Los esquemas de entrada MCP o la validación del flujo de trabajo rechazan los valores no válidos antes de la operación correspondiente. La carga de la configuración local puede acceder al sistema de archivos antes de comprobar el modo de solo lectura.
 
@@ -698,7 +698,7 @@ Nuestra organización colaboradora **[open-bricks](https://github.com/open-brick
 | **[safe-start-for-codex](https://github.com/dev-bricks/safe-start-for-codex)** | `dev-bricks` | Inicio rápido y fiable del agente, y comprobación del entorno |
 | **[automation-master](https://github.com/dev-bricks/automation-master)** | `dev-bricks` | Orquestador de automatización multidispositivo y monitor de tareas |
 | **[DevCenter](https://github.com/dev-bricks/DevCenter)** | `dev-bricks` | Panel unificado del espacio de trabajo para cadenas de herramientas locales |
-| **[CodeBox](https://github.com/dev-bricks/CodeBox)** | `dev-bricks` | Entorno aislado para ejecutar código en varios lenguajes |
+| **[CodeBox](https://github.com/dev-bricks/CodeBox)** | `dev-bricks` | Editor de código / IDE de escritorio para desarrollo con varios lenguajes |
 | **[githubbot](https://github.com/dev-bricks/githubbot)** | `dev-bricks` | Motor automatizado para mantenimiento de repositorios y visibilidad en varias organizaciones |
 | **[swarm-ai](https://github.com/ellmos-ai/swarm-ai)** | `ellmos-ai` | Marco distribuido de enjambres de múltiples agentes con coordinación estigmérgica |
 | **[ellmos-core](https://github.com/ellmos-ai/ellmos-core)** | `ellmos-ai` | Backend empresarial de agentes de IA, RAG híbrido y seguridad multiinquilino |

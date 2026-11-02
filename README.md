@@ -2,7 +2,7 @@
 
 # n8n Manager MCP Server
 
-**🇬🇧 English · 🇩🇪 [Deutsch](README_de.md) · 🇪🇸 [Español](README_es.md)**
+**🇬🇧 English · 🇩🇪 [Deutsch](README_de.md) · 🇪🇸 [Español](README_es.md) · 🇯🇵 [日本語](README_ja.md)**
 
 *Part of the [ellmos-ai](https://github.com/ellmos-ai) family and the [open-bricks](https://github.com/open-bricks) umbrella.*
 
@@ -571,8 +571,8 @@ The seam is **opt-in and read-only**:
   manager version), not just the environment variable.
 
 Setup: `pip install n8n-workflow-manager`, then `n8n-manager serve` (binds `127.0.0.1:8100`).
-The manager API is unauthenticated and loopback-only by design; a non-loopback URL is
-flagged in `n8n_safety_status`.
+The manager API is unauthenticated and binds to loopback by default; its host is configurable.
+A non-loopback URL is flagged in `n8n_safety_status`.
 
 Numeric guardrails are part of the MCP schemas: workflow, execution, and
 backup list limits are finite positive integers from **1 to 1000** (the existing
@@ -713,7 +713,7 @@ Our partner organization **[open-bricks](https://github.com/open-bricks)** and s
 | **[safe-start-for-codex](https://github.com/dev-bricks/safe-start-for-codex)** | `dev-bricks` | Fast, reliable agent bootstrap and environment check runner |
 | **[automation-master](https://github.com/dev-bricks/automation-master)** | `dev-bricks` | Central multi-host automation orchestrator and task monitor |
 | **[DevCenter](https://github.com/dev-bricks/DevCenter)** | `dev-bricks` | Unified developer workspace dashboard for local tool chains |
-| **[CodeBox](https://github.com/dev-bricks/CodeBox)** | `dev-bricks` | Sandboxed multi-language tool execution environment |
+| **[CodeBox](https://github.com/dev-bricks/CodeBox)** | `dev-bricks` | Desktop code editor / IDE for multi-language development |
 | **[githubbot](https://github.com/dev-bricks/githubbot)** | `dev-bricks` | Automated multi-org repository maintenance and discoverability engine |
 | **[swarm-ai](https://github.com/ellmos-ai/swarm-ai)** | `ellmos-ai` | Distributed multi-agent swarming framework with stigmergic coordination |
 | **[ellmos-core](https://github.com/ellmos-ai/ellmos-core)** | `ellmos-ai` | Enterprise AI agent backend, hybrid RAG, and multi-tenant security |

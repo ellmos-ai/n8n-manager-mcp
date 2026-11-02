@@ -18,6 +18,7 @@ Part of the ellmos family. Node.js, MIT. Published as `n8n-manager-mcp` on npm. 
 
 - [README (English)](https://github.com/ellmos-ai/n8n-manager-mcp/blob/main/README.md): navigation, target users, project capability/boundary table, tools, installation, and configuration
 - [README (Deutsch)](https://github.com/ellmos-ai/n8n-manager-mcp/blob/main/README_de.md): German-language guide to installation, tools, configuration, and documented implementation limits
+- [README (日本語)](https://github.com/ellmos-ai/n8n-manager-mcp/blob/main/README_ja.md): Japanese-language guide to installation, tools, configuration, and documented implementation limits
 - [README (Español)](https://github.com/ellmos-ai/n8n-manager-mcp/blob/main/README_es.md): Spanish-language guide to installation, tools, configuration, and documented implementation limits
 - [SKILL.md](https://github.com/ellmos-ai/n8n-manager-mcp/blob/main/SKILL.md): Product skill instructions for autonomous agents and LLMs
 - [llm.txt](https://github.com/ellmos-ai/n8n-manager-mcp/blob/main/llm.txt): Compatibility pointer to canonical llms.txt and SKILL.md
