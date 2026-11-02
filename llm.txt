@@ -1,0 +1,4 @@
+# n8n-manager-mcp — LLM Guidance Pointer
+
+This repository provides canonical LLM guidance, architecture notes, and machine-readable navigation in **[llms.txt](llms.txt)**.
+For autonomous agent workflows, tool definitions, and MCP integration procedures, see **[SKILL.md](SKILL.md)**.

@@ -4,6 +4,25 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Repository Hygiene, Product Skill, Code of Conduct & Contract Test Expansion (Pfad A: 2026-11-02)
+- **Mandatory Product Skill (`SKILL.md`):**
+  - Authored official product skill `SKILL.md` adhering to P-022 (`MENSCH-UND-LLM-POLICY.md`) and GITHUB-POLICY standards with valid YAML frontmatter, functional tool categorizations across all 19 MCP tools, environment variable documentation (`N8N_API_URL`, `N8N_API_KEY`, `N8N_MANAGER_READ_ONLY`, `N8N_MCP_MANAGER_URL`), human/agent workflow execution patterns (inspection, safe mutation, rollback restore), and 10 runtime invariants (`INV-LOCAL-01` to `INV-SLA-10`).
+- **LLM Compatibility Pointer (`llm.txt`):**
+  - Added standard compatibility pointer `llm.txt` linking LLMs and autonomous agents directly to canonical context in `llms.txt` and operational procedures in `SKILL.md`.
+- **Bilingual Community Code of Conduct (`CODE_OF_CONDUCT.md`):**
+  - Implemented bilingual `CODE_OF_CONDUCT.md` (`## Deutsch` and `## English`) based on Contributor Covenant v2.1 with reporting channels to `security@ellmos.ai` and `security@open-bricks.org` per GITHUB-POLICY Section 1.
+- **Package Manifest Distribution (`package.json`):**
+  - Whitelisted `CODE_OF_CONDUCT.md`, `SKILL.md`, and `llm.txt` in `package.json` `files` array to ensure accessibility across npm package tarballs and downstream agent consumption.
+- **Documentation & Verification Parity:**
+  - Synchronized verification and check badges to `2026--11--02` across `README.md`, `README_de.md`, and `llms.txt`.
+  - Harmonized CI test execution description in both READMEs to explicitly reference active LTS matrices Node.js 20 and 22 in alignment with `tests.yml` and `INV-SLA-10`.
+  - Added cross-links to `CODE_OF_CONDUCT.md`, `SKILL.md`, and `llm.txt` in `README.md`, `README_de.md`, and `llms.txt`.
+- **Contract & Hygiene Test Suite Expansion (`test/metadata.test.ts` & `test/repository-hygiene.test.ts`):**
+  - Added automated contract tests verifying existence and bilingual structure of `CODE_OF_CONDUCT.md`, compatibility pointer semantics of `llm.txt`, and frontmatter/tool/invariant schema in `SKILL.md`.
+  - Extended repository hygiene tests to assert trackability and explicit packaging whitelist for newly added governance files. Total test suite expanded to 208 passing tests (100% pass).
+- **Strict Version Freeze Discipline:**
+  - Version `0.1.21` remains strictly frozen across all manifests and source code per `T-20260920-167562623`.
+
 ### Discoverability, Step-by-Step Terminal Execution Showcase, Multi-Server Migration Sequence & Level 1 SBOM Re-Audit (Pfad B: 2026-10-30)
 - **Step-by-Step Terminal & Agent Execution Showcase (Section 09 Quick Start):**
   - Integrated comprehensive interactive walkthroughs in both English (`README.md`) and German (`README_de.md`) covering multi-server registration (`n8n_add_server`), latency-free offline node introspection (`n8n_describe_nodes`), safe workflow mutation with automatic pre-mutation JSON snapshots (`n8n_update_workflow`), 1-click rollback (`n8n_restore_workflow`), and fail-closed read-only protection (`N8N_MANAGER_READ_ONLY=1`).
