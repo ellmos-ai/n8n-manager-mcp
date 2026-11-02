@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Transitive dependency security updates
+- Raise the `@hono/node-server` override floor to 2.1.3 and lock 2.1.6, addressing GHSA-rmxm-3fg6-px4f.
+- Raise the `qs` override floor to 6.16.1 and lock 6.17.1, addressing GHSA-6pq8-jhm2-2vcw.
+- Preserve every other locked package version and the existing optional-platform constraints. The updated source lockfile audit reports zero known advisories; product version remains 0.1.21.
+
 ### Product skill API contract correction
 - Correct all tool parameter names against actual MCP `tools/list`, including snake_case safety controls, string-encoded workflow JSON and explicit restore target semantics.
 - Use the host-only `N8N_MANAGER_API_KEY` / `N8N_MANAGER_SERVER_URL` setup and document separate profile registration; never pass a key through an MCP tool call.
