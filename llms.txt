@@ -6,9 +6,9 @@
 
 Verification (2026-11-02): fresh `npm test`, build, smoke discovery, and
 package dry-run pass with 208 Vitest tests (100% pass).
-The 2026-11-02 dependency audit reports two moderate advisories:
-GHSA-rmxm-3fg6-px4f (@hono/node-server) and GHSA-6pq8-jhm2-2vcw (qs).
-This is a dependency inventory finding, not proof of a reachable exploit in the stdio server; remediation remains separate work.
+The 2026-11-02 audit of the unreleased source lockfile reports zero known advisories.
+It locks @hono/node-server 2.1.6 and qs 6.17.1, above the patched floors for
+GHSA-rmxm-3fg6-px4f and GHSA-6pq8-jhm2-2vcw; every other locked package version is preserved.
 The package dry-run contains the built server and smoke discovery reports all
 19 tools.
 
