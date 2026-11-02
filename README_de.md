@@ -12,8 +12,8 @@
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D20-blue.svg)](https://nodejs.org)
 [![Sicherheit](https://img.shields.io/badge/Sicherheit-Backups%20%7C%20Audit%20%7C%20Read--Only-success.svg)](SECURITY.md)
 [![Security](https://img.shields.io/badge/Security-48h%20SLA%20%7C%20Local--First-blue.svg)](SECURITY.md)
-[![Drittanbieter](https://img.shields.io/badge/Drittanbieter-Gepr%C3%BCft%20%7C%20Permissiv-success.svg)](THIRD_PARTY_LICENSES.md)
-[![Level 1 SBOM: Plain Text](https://img.shields.io/badge/Level%201%20SBOM-Plain%20Text-success.svg)](THIRD_PARTY_LICENSES.txt)
+[![Drittanbieter](https://img.shields.io/badge/Drittanbieter-Lizenzinventar-success.svg)](THIRD_PARTY_LICENSES.md)
+[![Dependency Inventory: Plain Text](https://img.shields.io/badge/Dependency%20Inventory-Plain%20Text-success.svg)](THIRD_PARTY_LICENSES.txt)
 [![Attribution: NOTICE](https://img.shields.io/badge/Attribution-NOTICE-blue.svg)](NOTICE)
 [![Verified](https://img.shields.io/badge/Verified-2026--11--02-blue.svg)](llms.txt)
 [![Last-Checked](https://img.shields.io/badge/Last--Checked-2026--11--02-success.svg)](llms.txt)
@@ -35,17 +35,17 @@ MCP-Server (Model Context Protocol) zur Verwaltung von n8n-Workflows über KI-As
 | 02 | [📊 Duale Mermaid-Diagramme](#sec-02) ([#duale-mermaid-diagramme](#duale-mermaid-diagramme)) | Komponenten-Flowchart TD & Sicherer Mutations-Lebenszyklus im Sequenzdiagramm |
 | 03 | [🌐 Verzeichnis-Status & Registries](#sec-03) ([#verzeichnis-status](#verzeichnis-status)) | Offizielle Einträge auf npm, Glama, PulseMCP und Enterprise DNA |
 | 04 | [🎯 Zielgruppen & Auffindbarkeit](#sec-04) ([#zielgruppen--auffindbarkeit](#zielgruppen--auffindbarkeit)) | Persona-Mapping `[PERSONA-01]` bis `[PERSONA-04]` und High-Intent-Suchbegriffe |
-| 05 | [⚖️ Vergleichsmatrix & Alternativen](#sec-05) ([#vergleichsmatrix--alternativen](#vergleichsmatrix--alternativen)) | 10-Dimensionen-Vergleich vs direkte REST-API, Shell-CLI, Web-UI und Cloud-SaaS |
-| 06 | [🛡️ Kernfähigkeiten & Sicherheitsinvarianten](#sec-06) ([#kernfähigkeiten--sicherheitsinvarianten](#kernfähigkeiten--sicherheitsinvarianten)) | 10 formale Invarianten (`INV-LOCAL-01` bis `INV-SLA-10`), Read-Only-Gates, Audit-Logs |
+| 05 | [📋 Projektfunktionen und Grenzen](#sec-05) ([#vergleichsmatrix--alternativen](#vergleichsmatrix--alternativen)) | 10 dokumentierte Funktionsbereiche mit ihren Grenzen |
+| 06 | [🛡️ Fähigkeiten und Implementierungsgrenzen](#sec-06) ([#kernfähigkeiten--sicherheitsinvarianten](#kernfähigkeiten--sicherheitsinvarianten)) | Read-Only-Modus, optionale lokale Backups und Audit-Logs, Eingabeprüfungen und Geltungsbereich |
 | 07 | [✨ Funktionen](#sec-07) ([#funktionen](#funktionen)) | Direkte REST-Anbindung, Multi-Server-Routing, Backup-Snapshots, Node-Katalog |
 | 08 | [⚙️ Installation](#sec-08) ([#installation](#installation)) | Ein-Befehl-Einrichtung für Claude Code, Claude Desktop, Cursor und Windsurf |
 | 09 | [🚀 Schnellstart](#sec-09) ([#schnellstart](#schnellstart)) | Schrittweise Workflow-Erstellung, Ausführungsinspektion und Server-Wechsel |
 | 10 | [🛠️ Verfügbare Tools (19 Tools)](#sec-10) ([#verfügbare-tools](#verfügbare-tools)) | Vollständige MCP-Tool-Referenz für CRUD, Ausführungen, Backups und Nodes |
 | 11 | [🔗 Optional: Anbindung an den n8n-workflow-manager](#sec-11) ([#optional-anbindung-an-den-n8n-workflow-manager](#optional-anbindung-an-den-n8n-workflow-manager)) | Entscheidungsdokumentation und Versionsverlauf über gekoppeltes Manager-Modul |
 | 12 | [🔒 Konfiguration & Sicherheits-Standards](#sec-12) ([#konfiguration](#konfiguration)) | Umgebungsvariablen, lokales Backup-Wurzelverzeichnis und monotone Schranken |
-| 13 | [🧪 Entwicklung & Tests](#sec-13) ([#entwicklung](#entwicklung)) | Multi-OS Vitest Testsuite, Smoke-Runner und Offline-Node-Katalog-Tests |
+| 13 | [🧪 Entwicklung & Tests](#sec-13) ([#entwicklung](#entwicklung)) | Testsuite, Smoke-Runner und Plattformumfang der aktuellen CI |
 | 14 | [🧱 ellmos-ai Ökosystem](#sec-14) ([#ellmos-ai-ökosystem](#ellmos-ai-ökosystem)) | Geschwister-MCP-Server, BACH Agenten-OS und open-bricks Desktop-Suiten |
-| 15 | [📜 Drittanbieter-Lizenzen & Transparenz](#sec-15) ([#drittanbieter-lizenzen--transparenz](#drittanbieter-lizenzen--transparenz)) | 100% permissive Open-Source-Abhängigkeiten (MIT, BSD, Apache-2.0) |
+| 15 | [📜 Drittanbieter-Lizenzen & Transparenz](#sec-15) ([#drittanbieter-lizenzen--transparenz](#drittanbieter-lizenzen--transparenz)) | Projektlizenz und Abhängigkeits-Lizenzinventar |
 | 16 | [📈 Marketing- & Zielgruppen-Log](#sec-16) ([#marketing--personas-protokoll](#marketing--personas-protokoll)) | Umfassendes Positionierungs-Log, Keyword-Matrix und 3-Phasen-Roadmap |
 | 17 | [📝 Änderungsprotokoll](#sec-17) ([#änderungsprotokoll](#änderungsprotokoll)) | Vollständige Release-Notizen, Sicherheitshärtungen und Discoverability-Historie |
 | 18 | [⚖️ Haftung & Gesetzlicher Hinweis (§ 521 BGB)](#sec-18) ([#haftung--liability](#haftung--liability)) | Schenkungsklausel nach §§ 516 ff. BGB, MIT-Haftungsausschluss, 48h SLA |
@@ -61,9 +61,9 @@ MCP-Server (Model Context Protocol) zur Verwaltung von n8n-Workflows über KI-As
 
 Der n8n Manager MCP Server fungiert als **lokale, über Standard-Ein-/Ausgabe (stdio) angebundene Brücke** zwischen modernen KI-Entwicklungsumgebungen (Claude Code, Claude Desktop, Cursor, Windsurf) und lokalen oder cloudbasierten n8n-Instanzen.
 
-- **Prozessmodell:** Läuft vollständig im unprivilegierten Benutzerkontext (`RunAsInvoker`) als dedizierter Node.js-Kindprozess über Standard-Ein-/Ausgabe (`stdio`) mit JSON-RPC 2.0.
-- **Fail-Closed Sicherheits-Middleware:** Jede zustandsverändernde Aktion durchläuft vor dem API-Kontakt eine monotone Schranke (`N8N_MANAGER_READ_ONLY=1`).
-- **Multi-Instanzen-Router:** Ermöglicht die flexible Adressierung getrennter Umgebungen (Entwicklung, Staging, Produktion) mit isolierten API-Keys und atomarer Speicherung (`servers.json`).
+- **Prozessmodell:** Läuft als Node.js-Prozess und kommuniziert über Standard-Ein-/Ausgabe (`stdio`) mit JSON-RPC 2.0 mit dem MCP-Client. Die Rechte des startenden Prozesses werden geerbt.
+- **Prüfungen vor Mutationen:** Workflow-Mutations-Handler laden zuerst die lokale Konfiguration und prüfen dann den Read-Only-Modus, bevor sie eine n8n-Mutationsanfrage senden. Ein blockierter Aufruf kann trotzdem einen lokalen Audit-Eintrag anhängen; auch das Laden der Konfiguration greift auf das Dateisystem zu.
+- **Multi-Instanzen-Router:** Leitet Aufrufe anhand lokaler Serverprofile an konfigurierte n8n-Instanzen. API-Keys in `servers.json` liegen im Klartext; Konfigurationsupdates verwenden eine temporäre Datei und Umbenennung.
 - **Integrierter Node-Katalog:** Listet gängige n8n-Node-Typen und kurze Beschreibungen nach Kategorie (`n8n_describe_nodes`) ohne Netzwerkanfrage. Vollständige Node-Schemas oder Pflichtparameter liefert das Werkzeug nicht.
 
 ### Vier-Sichten-Architektur-Topologie
@@ -77,32 +77,32 @@ Der n8n Manager MCP Server fungiert als **lokale, über Standard-Ein-/Ausgabe (s
                                                     |
                                                     v
 +========================================================================================================+
-| [SICHT 2: N8N-MANAGER-MCP KERN-ENGINE & SICHERHEITS-ARBITRIERUNG]                                      |
+| [SICHT 2: N8N-MANAGER-MCP KERN-ENGINE & MUTATIONSPRÜFUNGEN]                                      |
 | +----------------------------------------------------------------------------------------------------+ |
 | | Werkzeug-Dispatcher (19 registrierte MCP-Tools: CRUD, Ausführungsinspektion, Snapshots, Node-Katalog)| |
 | +----------------------------------------------------------------------------------------------------+ |
-| | Fail-Closed-Sicherheitsfilter: N8N_MANAGER_READ_ONLY-Erzwingung (INV-READ-02)                       | |
-| | Eingabevalidierung & Schutz: Zod-Schema-Zahlengrenzen & Pfadtraversierungs-Sperre (INV-TRAV-06)     | |
-| | Multi-Instanzen-Router: Isolierung für Entwicklungs-, Staging- und Produktions-Keys (INV-SRV-05)    | |
+| | Read-Only-Prüfung: gespeicherte Einstellung oder N8N_MANAGER_READ_ONLY=1 als Prozessobergrenze                       | |
+| | Eingabegrenzen und Backup-Pfadprüfungen (auf implementierte Handler begrenzt)     | |
+| | Multi-Instanzen-Routing: konfigurierte Profile und Endpunkte    | |
 | | Integrierter Offline-Node-Katalog: Gängige Node-Typen & Beschreibungen (INV-NODE-09)                 | |
 | +----------------------------------------------------------------------------------------------------+ |
 +===================================================+====================================================+
                                                     |
                                                     v
 +========================================================================================================+
-| [SICHT 3: LOKALE PERSISTENZ, BACKUP-SNAPSHOTS & AUDIT-WAL]                                             |
+| [SICHT 3: LOKALE PERSISTENZ, BACKUP-SNAPSHOTS & AUDIT-LOG]                                             |
 | +------------------------------------+----------------------------------+----------------------------+ |
-| | Pre-Mutation-Workflow-Snapshots    | Lokales Append-Only-Audit-Log    | Multi-Server-Konfig-Store  | |
+| | Bedingte Workflow-Snapshots        | Lokales Append-Only-Audit-Log    | Multi-Server-Konfig-Store  | |
 | | ~/.n8n-manager-mcp/backups/        | ~/.n8n-manager-mcp/audit.log     | ~/.n8n-manager-mcp/        | |
-| | ({server}/{id}-{timestamp}-{reason}.json) | (Forensisches Audit-Log)   | (servers.json, POSIX 0600) | |
+| | ({server}/{id}-{timestamp}-{reason}.json) | (Zeitgestempelte JSON-Einträge) | (servers.json; POSIX 0600 angefordert) | |
 | +------------------------------------+----------------------------------+----------------------------+ |
 +===================================================+====================================================+
                                                     |
                                                     v
 +========================================================================================================+
-| [SICHT 4: SICHERHEITSPERIMETER, LOKALES STDIO & RUNASINVOKER]                                          |
-| Standard-Benutzermodus (RunAsInvoker: Non-Elevation INV-PRIV-07) | Null Telemetrie / Tracking          |
-| Kein MCP-Listener (Stdio-Transport INV-LOCAL-01)              | 48h-SLA-Sicherheitsprotokoll         |
+| [SICHT 4: STDIO-TRANSPORT, KONFIGURIERTE ENDPOINTS & STARTRECHTE]                                          |
+| Erbt Rechte des startenden Prozesses | n8n-/Manager-Anfragen; Update-Check im interaktiven Terminal möglich          |
+| Kein MCP-Listener (Stdio-Transport)      | Veröffentlichte Sicherheitsrichtlinie und Meldewege         |
 +========================================================================================================+
 ```
 
@@ -121,13 +121,13 @@ Der n8n Manager MCP Server fungiert als **lokale, über Standard-Ein-/Ausgabe (s
 flowchart TD
     Client["KI-Client (Claude Code / Desktop / Cursor / Windsurf)"] -->|"MCP-Stdio-Protokoll (JSON-RPC 2.0)"| Router["Werkzeug-Router (19 Tools)"]
     subgraph MCPServer["n8n Manager MCP Server (Lokaler Stdio-Prozess)"]
-        Router --> Safety["Sicherheitsschicht (Read-Only-Gate & Traversal-Schutz)"]
-        Safety --> Backup["Pre-Mutation-Snapshot-Engine"]
+        Router --> Safety["Mutationsprüfungen (Read-Only-Gate & Backup-Pfadprüfung)"]
+        Safety --> Backup["Bedingter Pre-Mutation-Snapshot"]
         Safety --> MultiServer["Multi-Server-Verwaltung"]
         Safety --> Catalog["Integrierter Node-Katalog (n8n_describe_nodes)"]
-        Backup --> Audit["Append-Only-Audit-Logger"]
+        Router --> Audit["Lokales Audit-Log"]
     end
-    MultiServer -->|"REST API (API Key / Auth Header)"| LocalInst["Lokale n8n-Instanz (127.0.0.1:5678)"]
+    MultiServer -->|"REST API (API Key / Auth Header)"| LocalInst["Konfigurierte n8n-Instanz (lokale oder entfernte URL)"]
     MultiServer -->|"REST API (HTTPS / Token)"| CloudInst["Remote- / Cloud-n8n-Instanz"]
     Backup --> BackupFS[("Backups (~/.n8n-manager-mcp/backups/)")]
     Audit --> AuditFS[("Audit-Log (~/.n8n-manager-mcp/audit.log)")]
@@ -135,7 +135,7 @@ flowchart TD
 
 ### Sicherer Workflow-Mutations-Lebenszyklus
 
-Die Diagramme bilden den aktuellen Werkzeugvertrag ab. Der Pre-Mutation-Snapshot wird angelegt, wenn backup_before_mutations aktiviert ist (Standard: true).
+Die Diagramme zeigen die vorgesehene Reihenfolge. Snapshots werden nur versucht, wenn `backup_before_mutations` aktiviert ist (Standard: true); schlägt der Versuch fehl, wird die folgende n8n-Mutationsanfrage nicht gesendet. Fehler beim Anhängen des Audit-Logs werden weitergereicht und können nach einer erfolgreichen Remote-Mutation auftreten.
 
 ```mermaid
 sequenceDiagram
@@ -146,15 +146,15 @@ sequenceDiagram
     participant Snapshot as Backup Engine
     participant Store as Local Storage (~/.n8n-manager-mcp)
     participant N8N as n8n REST API Instance
-    participant Audit as Forensic Audit Logger
+    participant Audit as Lokales Audit-Log
 
     AI->>MCP: Call n8n_update_workflow or n8n_delete_workflow
     MCP->>Safety: Check read-only enforcement
     alt Read-only active (INV-READ-02)
-        Safety-->>AI: Return text explaining that the mutation is blocked
         opt audit_log enabled (default true)
-            Safety->>Audit: Record blocked mutation attempt
+            Safety->>Audit: Append blocked mutation attempt
         end
+        Safety-->>AI: Return text explaining the mutation is blocked (or an error if audit append fails)
     else Mutation permitted
         opt backup_before_mutations enabled (default true)
             Safety->>Snapshot: Trigger pre-mutation snapshot (INV-BACK-03)
@@ -183,7 +183,7 @@ sequenceDiagram
     participant MCP as n8n-manager-mcp Router
     participant Staging as Staging n8n Instance
     participant Prod as Production n8n Instance
-    participant Audit as Forensic Audit Logger
+    participant Audit as Lokales Audit-Log
 
     Note over AI,MCP: Phase 1: Export aus Staging
     AI->>MCP: n8n_export_workflow(workflow_id=42, server_name=staging)
@@ -230,12 +230,12 @@ sequenceDiagram
 <a id="target-personas--discoverability"></a>
 ## Zielgruppen & Auffindbarkeit
 
-| Zielgruppe / Persona | Kernbedürfnisse | Gelöste Probleme | Zentrale Suchbegriffe |
+| Zielgruppe / Persona | Typische Anforderungen | Beispielaufgabe und Grenze | Zentrale Suchbegriffe |
 | :--- | :--- | :--- | :--- |
-| **[PERSONA-01] Autonome KI-Agenten & Schwärme** | Zerstörungsfreie Workflow-Steuerung, Pre-Mutation-Snapshots, klare Werkzeugantworten | LLM-Halluzinationen beschädigen aktive Workflows; kein Offline-Node-Graph einsehbar | `n8n mcp server`, `ai agent n8n workflow management`, `claude code n8n automation` |
-| **[PERSONA-02] DevOps & Multi-Environment-Architekten** | Sicheres Multi-Server-Routing, Export/Import-Synchronisation über Stages | Manuelle JSON-Export-Reibung; Staging-zu-Produktions-Drift; unversionierte Workflow-Kopien | `n8n multi-server mcp`, `sync n8n workflows staging prod`, `n8n workflow export import mcp` |
-| **[PERSONA-03] SecOps, Compliance & Risikoteams** | Monotone Read-Only-Sperren, optionale lokale Audit-Protokollierung, Zero-External-Egress | Unregulierte Agenten-Mutationen; ungesicherte API-Aufrufe; Verlust forensischer Historie | `safe n8n mcp server`, `read-only n8n automation`, `audit log n8n ai integration` |
-| **[PERSONA-04] Ökosystem-Entwickler & Tool-Integratoren** | Standardisierte MCP-Schemas, validierte Manifeste, robuste TypeScript-SDK-Anbindung | Schema-Diskrepanzen in MCP-Verzeichnissen; fehlende Regressions- und Vertragstests | `modelcontextprotocol n8n`, `glama n8n-manager-mcp`, `smithery n8n workflow` |
+| **[PERSONA-01] Autonome KI-Agenten & Schwärme** | MCP-Workflow-Werkzeuge, klare Ergebnisse und ein Offline-Katalog gängiger Node-Namen | Workflows auf einem ausgewählten Server prüfen oder verwalten; Backups entstehen vor unterstützten Mutationen nur bei aktivierter Backup-Funktion. | `n8n mcp server`, `ai agent n8n workflow management`, `claude code n8n automation` |
+| **[PERSONA-02] DevOps & Multi-Environment-Architekten** | Getrennte Serverprofile und Workflow-Export/-Import zwischen konfigurierten n8n-Instanzen | Workflows zwischen konfigurierten Servern übertragen; Import erstellt einen neuen Workflow ohne vorheriges Backup. | `n8n multi-server mcp`, `sync n8n workflows staging prod`, `n8n workflow export import mcp` |
+| **[PERSONA-03] SecOps, Compliance & Risikoteams** | Read-Only-Steuerung, optionales lokales Audit-Log und lokale Backup-Dateien | Read-Only-Obergrenze setzen oder lokale Einträge prüfen; konfigurierte n8n-/Manager-Endpunkte erhalten weiterhin Anfragen, lokale Dateien können Workflow-Daten oder API-Keys enthalten. | `safe n8n mcp server`, `read-only n8n automation`, `audit log n8n ai integration` |
+| **[PERSONA-04] Ökosystem-Entwickler & Tool-Integratoren** | MCP-Werkzeugschemas, Manifeste, TypeScript-Quelltext und Test-/Smoke-Befehle | Werkzeuge integrieren und Änderungen mit Test- und Smoke-Befehlen prüfen; die CI läuft derzeit auf Ubuntu. | `modelcontextprotocol n8n`, `glama n8n-manager-mcp`, `smithery n8n workflow` |
 
 ### Suchbegriffe mit hoher Absicht (High-Intent SEO)
 
@@ -245,7 +245,7 @@ sequenceDiagram
 - `sichere n8n workflow mutation mit backup`
 - `n8n multi-server synchronisation mcp`
 - `n8n offline node katalog ai agents`
-- `lokales stdio n8n automatisierung ohne telemetrie`
+- `n8n MCP stdio mit konfigurierten Server-Endpunkten`
 - `modelcontextprotocol n8n typescript integration`
 
 ---
@@ -255,20 +255,20 @@ sequenceDiagram
 <a id="5-comparative-matrix--alternatives"></a>
 <a id="vergleichsmatrix--alternativen"></a>
 <a id="comparative-matrix--alternatives"></a>
-## Vergleichsmatrix & Alternativen
+## Projektfunktionen und Grenzen
 
-| Dimension | `n8n-manager-mcp` | Direkte n8n REST API | Standard Agent Shell | Manuelle n8n Web-UI | Generische Cloud-SaaS |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **Primäre Schnittstelle** | Natives MCP Stdio (JSON-RPC) | Reines HTTP REST (Curl/Axios) | Ad-hoc CLI / Bash-Skripte | Interaktive Browser-Canvas | Proprietäres Webportal |
-| **Sicherheits-Leitplanken** | Monotones Read-Only-Gate (`N8N_MANAGER_READ_ONLY=1`) | Keine (Ungeprüfte API-Aufrufe) | Shell-Exit-Code-Heuristik | Menschliche Bestätigungsdialoge | Remote Rollenregeln (RBAC) |
-| **Mutations-Backups** | Pre-Mutation-Snapshots für unterstützte Operationen (standardmäßig aktiviert; `INV-BACK-03`) | Keine (Überschreibt Live-System) | Keine (Skriptabhängig) | Keine (Direkte Canvas-Änderung) | Anbieterabhängige Snapshots |
-| **Rollback-Fähigkeit** | 1-Klick `n8n_restore_workflow` von lokaler Platte | Manuelle JSON-Rekonstruktion | Eigene Rollback-Skripte nötig | Manuelles Neuerstellen von Nodes | Anbieter-Rollback (Kostenpflichtig) |
-| **Forensisches Audit-Log** | Optionales strukturiertes Append-Only-`audit.log`, standardmäßig aktiviert (`INV-AUDIT-04`) | Standard-Webserver-Access-Logs | Flüchtige Terminal-Ausgabe | Nur grafische Ausführungshistorie | Cloud-Hersteller-Logaufbewahrung |
-| **Node-Katalog** | Kategoriengefilterte Offline-Liste gängiger Typen und Beschreibungen (`n8n_describe_nodes`) | Manuelle Onlinedokumentation | Raten & Parameter-Ausprobieren | Visuelle Node-Palette | Online-Entwicklerportal |
-| **Multi-Server-Isolation** | Isolierte Profile (`servers.json`) | Manuelles Token-Wechseln | Shell-History-Token-Lecks | Multi-Tab-Login-Durcheinander | Cloud-Workspace-Umschaltung |
-| **Privatsphäre ohne Telemetrie**| Lokales Stdio; HTTP nur zu konfigurierten n8n-/Manager-Endpunkten | Direkter HTTP-Client-Verkehr | Lokale Shell-Ausführung | Browser-Tracking & Analytik | Remote Drittanbieter-Hosting |
-| **Workflow-Migration** | Integrierte Tools `n8n_export_workflow` & `import` | Eigene Python/Curl-Pipelines | Komplexe bash/jq-Skripte | Manueller Download/Upload-Dialog | Cloud-Enterprise-Bezahlschranke |
-| **Lizenz & Auditsicherheit** | 100% Permissiv MIT (Geprüft, 48h SLA) | Fair-Code (n8n Quellcode verfügbar) | Gemischte / Ad-hoc Lizenzen | Kommerziell / Fair-Code | Proprietäre geschlossene Cloud |
+| Bereich | Implementiertes Verhalten | Umfang und Grenzen |
+| :--- | :--- | :--- |
+| **MCP-Transport und Netzwerk** | Die Kommunikation mit dem MCP-Client erfolgt über stdio; der Server öffnet keinen MCP-Listener. | API-Anfragen gehen an konfigurierte n8n-URLs und bei Einrichtung an die Manager-URL. Der Update-Notifier kann beim Start in einem interaktiven TTY nach Updates suchen; im regulären Nicht-TTY-stdio-Betrieb wird dieser Check übersprungen. |
+| **Workflow-Werkzeuge** | 19 MCP-Werkzeuge listen, erstellen, aktualisieren, löschen, aktivieren/deaktivieren und exportieren/importieren Workflows, prüfen Ausführungen und verwalten Backups sowie Serverprofile. | Mutationen betreffen die ausgewählte konfigurierte n8n-Instanz. Ein Import erstellt einen neuen Workflow ohne Pre-Import-Backup oder Rollback-Handle. |
+| **Serverprofile** | Mehrere n8n-Profile werden lokal in `servers.json` gespeichert; URLs und API-Key-Eingaben werden validiert. | API-Keys liegen im Klartext. Neue Konfigurationsdateien fordern POSIX-Modus `0600` an; unter Windows gelten Verzeichnis-ACLs. |
+| **Read-Only-Modus** | Der gespeicherte Read-Only-Modus blockiert Workflow-Mutationswerkzeuge. `N8N_MANAGER_READ_ONLY=1` setzt eine Prozessobergrenze, die das Werkzeug nicht aufheben kann. | Die Konfiguration wird vor der Mutationsprüfung geladen. Ein blockierter Versuch kann ins lokale Audit-Log schreiben; der Modus beschränkt nicht allgemein Dateisystemzugriffe. |
+| **Backups vor Mutationen** | Bei aktiviertem `backup_before_mutations` (Standard: true) werden vor Update, Löschen, Aktivieren/Deaktivieren und überschreibendem Restore JSON-Snapshots versucht. | Erstellen und Import erhalten kein Pre-Mutation-Backup. Scheitert Abruf oder Speicherung eines aktivierten Snapshots, wird die folgende n8n-Mutationsanfrage nicht gesendet. Backup-JSON liegt lokal im Klartext. |
+| **Audit-Log** | Das lokale JSON-Append-Log ist konfigurierbar und standardmäßig aktiviert; es protokolliert unterstützte Mutationsergebnisse und blockierte Mutationsversuche. | Das Log ist nicht manipulationssicher. Append-Fehler werden weitergereicht und können nach erfolgreicher Remote-Mutation auftreten. |
+| **Eingaben und Backup-Pfade** | Numerische Eingaben haben feste Grenzen; Backup-Pfadsegmente werden bereinigt und bei Backup-, Listen- und Restore-Operationen mit Realpath-/Symlink-Prüfungen behandelt. | Diese Prüfungen gelten für die genannten Eingaben und Dateioperationen. Sie begründen keine allgemeine Immunität gegen Traversal, Prototype-Pollution oder Fehler durch fehlerhafte Payloads. |
+| **Optionale Manager-Historie** | `n8n_manager_history` liest bei gesetztem `N8N_MCP_MANAGER_URL` aus dem konfigurierten Manager und weicht bei Unerreichbarkeit nicht auf direkte n8n-Abfragen aus. | Bei Aktivierung sendet die Funktion eine Anfrage an den konfigurierten Manager-Endpunkt. |
+| **Offline-Node-Katalog** | `n8n_describe_nodes` listet gängige Node-Typen und Kurzbeschreibungen ohne API-Anfrage. | Vollständige Node-Schemas oder Pflichtparameter liefert der Katalog nicht. |
+| **Verifikation und Sicherheitsrichtlinie** | GitHub Actions führt Build-, Test-, Smoke- und Paketprüfungen auf Ubuntu mit Node.js 20 und 22 aus. `SECURITY.md` enthält Reaktions-, Triage- und Behebungszusagen. | Diese CI-Konfiguration belegt keine plattformübergreifende Stabilität. Die Sicherheitsfristen sind Richtlinienzusagen, kein Nachweis der tatsächlich gemessenen Reaktionsleistung. |
 
 ---
 
@@ -277,20 +277,22 @@ sequenceDiagram
 <a id="6-core-capabilities--safety-invariants"></a>
 <a id="kernfähigkeiten--sicherheitsinvarianten"></a>
 <a id="core-capabilities--safety-invariants"></a>
-## Kernfähigkeiten & Sicherheitsinvarianten
+## Fähigkeiten und Implementierungsgrenzen
 
-| Invarianten-ID | Fähigkeit / Invariante | Technische Garantie | Anwendervorteil |
-| :--- | :--- | :--- | :--- |
-| `INV-LOCAL-01` | **Lokaler MCP-Transport ohne Telemetrie** | MCP nutzt lokales Stdio und keine Drittanbieter-Telemetrie; konfigurierte entfernte n8n-Server erhalten API-Anfragen samt API-Key-Header | Zugangsdaten gehen bei API-Anfragen nur an den konfigurierten n8n-Endpunkt |
-| `INV-READ-02` | **Monotones Read-Only-Schutzgating** | `N8N_MANAGER_READ_ONLY=1` erzwingt eine prozessweite Obergrenze gegen Werkzeug-Overrides | Verlässlicher Schutz gegen versehentliches Löschen oder Ändern kritischer Produktions-Workflows |
-| `INV-BACK-03` | **Automatische Pre-Mutation-Backups** | Wenn aktiviert (Standard: true), werden Workflow-JSON-Snapshots unter `~/.n8n-manager-mcp/backups/` vor `n8n_update_workflow`, `n8n_delete_workflow`, `n8n_activate_workflow` und Wiederherstellungen durch Überschreiben gespeichert | Gesicherte Snapshots lassen sich mit `n8n_restore_workflow` wiederherstellen; Importe legen neue Workflows ohne Vorab-Backup an |
-| `INV-AUDIT-04` | **Lokale Audit-Protokollierung** | Strukturiertes JSON-Log im Append-Only-Format unter `~/.n8n-manager-mcp/audit.log`, standardmäßig aktiviert und konfigurierbar | Mutations-Ergebnisse werden lokal protokolliert, solange Audit-Logging aktiviert ist |
-| `INV-SRV-05` | **Multi-Server & Zugangsdaten-Isolation** | Isolierte Server-Konfigurationen in `servers.json`; API-Key-Whitespace-Validierung | Mühelose Workflow-Migration zwischen Entwicklungs-, Staging- und Produktiv-Instanzen |
-| `INV-TRAV-06` | **Strikte Eingabe- & Pfadtraversal-Sperre** | Feste Limits (1..1000), Verbindungsindizes (0..1000), Abweisung von Pfadausbrüchen | Resistent gegen Directory-Traversal-Angriffe, Prototype-Pollution und fehlerhafte Payloads |
-| `INV-PRIV-07` | **Non-Elevation & User-Space-Sicherheit** | Ausführung ausschließlich im unprivilegierten Benutzerkontext | Keine Administrator- oder Root-Rechte für lokalen Betrieb oder CI-Pipelines erforderlich |
-| `INV-SEAM-08` | **Opt-In Decision-History-Seam** | Sauberer Adapter zu `n8n-workflow-manager` via `N8N_MCP_MANAGER_URL`; explizites Fail-Fast | Verbindet menschliche Entscheidungsdokumentation mit MCP ohne Seiteneffekte im Standardmodus |
-| `INV-NODE-09` | **Integrierter Node-Katalog** | Kategoriengefilterte Textbeschreibungen gängiger Trigger-, Action-, Logic-, Transform- und KI-Node-Typen; keine vollständigen Schemas oder Pflichtparameter | Der Katalog dient der Orientierung; Node-Parameter und Workflow-Verbindungen müssen separat geprüft werden |
-| `INV-SLA-10` | **Multi-Node CI & 48h Sicherheits-SLA** | Automatisierte GitHub Actions CI auf Node.js 20, 22 mit Concurrency-Abbruch; 48h Antwort- / 5-Tage-Triage-Zusage | Garantiert dauerhafte Plattformstabilität, verifizierte Sicherheits-Reaktionszeit und regressionsfreie Verteilbarkeit |
+Diese Referenz-IDs gruppieren Implementierungsbereiche; sie sind keine externen Zertifizierungen oder Garantien.
+
+| Referenz | Implementiertes Verhalten | Umfang und Grenzen |
+| :--- | :--- | :--- |
+| `INV-LOCAL-01` | Die MCP-Client-Kommunikation erfolgt über lokales stdio. | n8n-API-Aufrufe gehen an konfigurierte Endpunkte; der optionale Manager und der Update-Check beim interaktiven Terminalstart können ebenfalls Netzwerkaufrufe auslösen. |
+| `INV-READ-02` | `N8N_MANAGER_READ_ONLY=1` bildet eine Umgebungsobergrenze, die das Werkzeug nicht deaktivieren kann. Ohne diese Variable kann der gespeicherte Read-Only-Modus geändert werden. | Die Konfiguration wird vor der Mutationsprüfung geladen; ein blockierter Versuch kann an die Audit-Datei angehängt werden. Ein Schreibfehler kann den Werkzeugaufruf fehlschlagen lassen. Das ist keine Einschränkung auf Betriebssystemebene. |
+| `INV-BACK-03` | Bei aktiviertem `backup_before_mutations` (Standard: true) werden vor Update, Löschen, Aktivieren/Deaktivieren und überschreibendem Restore JSON-Snapshots versucht. | Erstellen und Import werden nicht vorher gesichert. Ein fehlgeschlagener aktivierter Snapshot stoppt die anschließende n8n-Mutationsanfrage. Backups sind lokaler Klartext. |
+| `INV-AUDIT-04` | `audit_log` ist konfigurierbar und standardmäßig aktiviert; Einträge werden an die lokale Audit-Datei angehängt. | Das Log ist nicht manipulationssicher. Append-Fehler werden weitergereicht und können nach erfolgreicher Remote-Mutation auftreten. |
+| `INV-SRV-05` | Mehrere Serverprofile werden lokal gespeichert und für Anfragen ausgewählt. | API-Keys in `servers.json` liegen im Klartext. Neue Dateien fordern POSIX-Modus `0600` an; unter Windows gelten Verzeichnis-ACLs. |
+| `INV-TRAV-06` | Numerische Grenzen werden validiert; Backup-Pfadsegmente werden in den betreffenden Dateioperationen bereinigt und gegen den konfigurierten Root geprüft. | Realpath- und Symlink-Prüfungen betreffen Backup-, Listen- und Restore-Vorgänge. Eine allgemeine Immunität gegen Traversal, Prototype-Pollution oder fehlerhafte Payloads folgt daraus nicht. |
+| `INV-PRIV-07` | Der Server fordert keine Rechteerhöhung an. | Der Node-Prozess erbt die Rechte des startenden Prozesses; ein Rechteabbau oder eine `RunAsInvoker`-Erzwingung ist nicht implementiert. |
+| `INV-SEAM-08` | `n8n_manager_history` nutzt die optionale Integration über `N8N_MCP_MANAGER_URL` und fragt bei Nichterreichbarkeit des Managers nicht direkt n8n ab. | Bei Aktivierung wird eine Anfrage an den konfigurierten Manager-Endpunkt gesendet. |
+| `INV-NODE-09` | Der gebündelte Katalog beschreibt gängige Node-Typen nach Kategorien. | Vollständige Schemas oder Pflichtparameter werden nicht zurückgegeben. |
+| `INV-SLA-10` | GitHub Actions führt Build-, Test-, Smoke- und Paketprüfungen auf Ubuntu mit Node.js 20 und 22 aus. `SECURITY.md` enthält Reaktions-, Triage- und Behebungszusagen. | Diese CI-Konfiguration belegt keine plattformübergreifende Absicherung. Die Sicherheitsfristen sind Richtlinienzusagen, kein Nachweis tatsächlicher Reaktionsleistung. |
 
 <a id="sec-07"></a>
 <a id="7-funktionen"></a>
@@ -493,7 +495,7 @@ Workflow restored (overwritten) on staging: "Customer Webhook Ingest [v2]" (ID: 
 
 #### 5. Fail-Closed-Read-Only-Schutz
 
-Wenn audit_log aktiviert ist (Standard: true), wird ein blockierter Schreibversuch im Audit-Log erfasst. Ist N8N_MANAGER_READ_ONLY=1 in der MCP-Hostumgebung gesetzt, bildet die Variable eine monotone Grenze: n8n_set_safety_mode kann sie nicht deaktivieren. Entferne die Umgebungsvariable und starte den MCP-Server neu, um diese Grenze aufzuheben. Der generische Laufzeittext unten nennt weiterhin n8n_set_safety_mode; dieser Hinweis gilt nicht, solange die Umgebungsvariable die Grenze setzt.
+Wenn `audit_log` aktiviert ist (Standard: true), wird ein blockierter Schreibversuch an das Audit-Log angehängt; ein Schreibfehler kann den Werkzeugaufruf fehlschlagen lassen. Ist N8N_MANAGER_READ_ONLY=1 in der MCP-Hostumgebung gesetzt, bildet die Variable eine monotone Grenze: n8n_set_safety_mode kann sie nicht deaktivieren. Entferne die Umgebungsvariable und starte den MCP-Server neu, um diese Grenze aufzuheben. Der generische Laufzeittext unten nennt weiterhin n8n_set_safety_mode; dieser Hinweis gilt nicht, solange die Umgebungsvariable die Grenze setzt.
 
 Rufe n8n_delete_workflow auf:
 
@@ -577,8 +579,7 @@ eine Nicht-Loopback-URL wird in `n8n_safety_status` als Warnung markiert.
 Numerische Schranken sind Teil der MCP-Schemas: Limits für Workflows, Executions und
 Backups sind endliche positive Ganzzahlen von **1 bis 1000** (die bisherigen Defaults
 bleiben 100, 20 und 20), und Indizes für Workflow-Verbindungen `from_output`/`to_input`
-sind endliche nicht-negative Ganzzahlen von **0 bis 1000**. Ungültige Werte werden
-abgelehnt, bevor n8n-API-, Dateisystem- oder Workflow-Array-Zugriffe erfolgen.
+sind endliche nicht-negative Ganzzahlen von **0 bis 1000**. Ungültige Werte werden durch die MCP-Eingabeschemas oder die Workflow-Validierung vor der jeweiligen Operation abgelehnt. Das Laden der lokalen Konfiguration kann vor der Mutationsprüfung auf das Dateisystem zugreifen.
 
 ---
 
@@ -606,7 +607,7 @@ Sicherheits-Standards:
 - `read_only: false` kann mit `n8n_set_safety_mode` oder über `N8N_MANAGER_READ_ONLY=1` aktiviert werden.
   Die Umgebungsvariable ist eine Monotonie-Schranke: Solange sie gesetzt ist,
   können persistierte Einstellungen und `n8n_set_safety_mode` den Read-Only-Modus nicht deaktivieren.
-- Backups liegen unter `~/.n8n-manager-mcp/backups/` und können über die Backup-Tools eingesehen und wiederhergestellt werden. Server- und Workflownamen werden auf sichere Einzelpfade desinfiziert; reservierte Namen, Trennzeichen, Traversal-Sequenzen und Symlink-/Reparse-Ausbrüche können diesen Pfad nicht verlassen, und Auflistungen liefern ausschließlich reguläre `.json`-Dateien.
+- Backups liegen unter `~/.n8n-manager-mcp/backups/` und können über die Backup-Tools eingesehen und wiederhergestellt werden. Backup-Pfadsegmente werden bereinigt; bei Backup-, Listen- und Restore-Vorgängen gibt es Realpath-/Symlink-Prüfungen. Auflistungen liefern reguläre `.json`-Backups. Diese Prüfungen gelten für die genannten Operationen und sind keine allgemeine Dateisystemgarantie.
 - `n8n_add_server` validiert Serververbindungen vor dem Speichern: URLs müssen `http`- oder `https`-Basis-URLs ohne eingebettete Zugangsdaten, Query-Strings oder Fragmente sein, und API-Keys dürfen keine Leerzeichen enthalten.
 - `n8n_add_server` besitzt explizite Default-Semantik: Der erste Server wird Standard; ein Update ohne `is_default` behält den bisherigen Zustand; `true` befördert den Server; `false` entfernt das Flag gezielt, woraufhin die Default-Auflösung auf den ersten konfigurierten Server zurückgreift.
 
@@ -639,15 +640,15 @@ npx vitest --watch    # Watch-Modus
 npm run smoke         # Manueller stdio MCP-Smoke-Test (erfordert vorher npm run build)
 ```
 
-Der Verifikationsstand umfasst Windows lokal und Ubuntu Linux in GitHub Actions; GitHub Actions führt Build, Test und npm-Paketprüfungen auf Node.js 20 und 22 aus. Der commitspezifische lokale Beleg wird in `CHANGELOG.md` gepflegt. Der Smoke-Runner startet `dist/index.js` über den MCP-SDK-Client, prüft alle 19 Werkzeug-Registrierungen und testet die Servereinrichtung mit synthetischen Zugangsdaten. Lokale Loopback-Stubserver prüfen die Schwärzung von Schlüsseln und die Ablehnung von Weiterleitungen. Ein echter n8n-Server wird nicht kontaktiert.
+Der dokumentierte Verifikationsstand umfasst Windows lokal und Ubuntu Linux in GitHub Actions; GitHub Actions führt Build, Test und npm-Paketprüfungen auf Node.js 20 und 22 aus. Der commitspezifische lokale Beleg wird in `CHANGELOG.md` gepflegt. Der Smoke-Runner startet `dist/index.js` über den MCP-SDK-Client, prüft alle 19 Werkzeug-Registrierungen und testet die Servereinrichtung mit synthetischen Zugangsdaten. Lokale Loopback-Stubserver prüfen die Schwärzung von Schlüsseln und die Ablehnung von Weiterleitungen. Ein echter n8n-Server wird nicht kontaktiert.
 
 ### Beitragen & Entwicklungsworkflow
 
 Beiträge sind herzlich willkommen! Bitte beachte die Richtlinien in [CONTRIBUTING.md](CONTRIBUTING.md) und unseren [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md):
-- **10 Governance- & Laufzeit-Invarianten (`INV-LOCAL-01` bis `INV-SLA-10`)**: lokaler MCP-Transport ohne Telemetrie, monotoner Read-Only-Schutz und automatische Backups.
-- **Rechte-Nicht-Eskalation (`RunAsInvoker`)**: Ausführung ausschließlich im unprivilegierten Standard-Benutzerkontext.
+- **Implementierungsbereiche (`INV-LOCAL-01` bis `INV-SLA-10`)**: stdio-Transport, Read-Only-Modus, konfigurierbare Backups und Audit-Logs, Validierung und veröffentlichte Sicherheitsrichtlinie; Grenzen siehe oben.
+- **Prozessrechte:** Der Prozess erbt die Rechte seines Startprozesses und fordert keine Erhöhung an.
 - **Plan D Workflow**: Entwicklung ausschließlich im kanonischen lokalen Klon (`C:\_Local_DEV\repos\n8n-manager-mcp`) und GitHub `origin/main`.
-- **48h Sicherheits-SLA**: Koordinierte Meldewege über `security@ellmos.ai` und `security@open-bricks.org`.
+- **Veröffentlichte Sicherheitsrichtlinie:** Reaktions-, Triage- und Behebungszusagen stehen in `SECURITY.md`; Meldewege sind `security@ellmos.ai` und `security@open-bricks.org`.
 
 ---
 
@@ -735,21 +736,20 @@ Unsere Partnerorganisation **[open-bricks](https://github.com/open-bricks)** und
 ## Drittanbieter-Lizenzen & Transparenz
 
 Dieses Projekt steht unter der [MIT-Lizenz](LICENSE) mit dokumentierter Attribution in [NOTICE](NOTICE).
-Zur Gewährleistung vollständiger Lieferkettensicherheit in Enterprise- und autonomen Agentenumgebungen werden alle Abhängigkeiten kontinuierlich auditiert:
+Die folgende Tabelle enthält ausgewählte direkte Laufzeit- und Entwicklungsabhängigkeiten. Lizenzangaben stehen im Inventar des Repositories; sie behauptet weder kontinuierliche Audits noch eine zertifizierte Lieferkettensicherheit:
 
-| Abhängigkeit | Typ | Version | Lizenz | Verifikationsstatus |
+| Abhängigkeit | Typ | Version | Lizenz | Inventarstatus |
 | :--- | :--- | :--- | :--- | :--- |
-| [`@modelcontextprotocol/sdk`](https://github.com/modelcontextprotocol/typescript-sdk) | Laufzeit (Direkt) | `^1.29.0` | MIT | Permissiv / Auditiert |
-| [`zod`](https://github.com/colinhacks/zod) | Laufzeit (Direkt) | `^3.23.8` | MIT | Permissiv / Auditiert |
-| [`update-notifier`](https://github.com/yeoman/update-notifier) | Laufzeit (Direkt) | `^7.3.1` | BSD-2-Clause | Permissiv / Auditiert |
-| `typescript` | Entwicklung / Compiler | `^5.3.3` | Apache-2.0 | Permissiv / Auditiert |
-| `vitest` | Entwicklung / Test-Runner | `^4.1.11` | MIT | Permissiv / Auditiert |
-| `@types/node` | Entwicklung / Typdefinitionen | `^20.11.0` | MIT | Permissiv / Auditiert |
+| [`@modelcontextprotocol/sdk`](https://github.com/modelcontextprotocol/typescript-sdk) | Laufzeit (Direkt) | `^1.29.0` | MIT | Lizenz im Inventar aufgeführt |
+| [`zod`](https://github.com/colinhacks/zod) | Laufzeit (Direkt) | `^4.6.7` | MIT | Lizenz im Inventar aufgeführt |
+| [`update-notifier`](https://github.com/yeoman/update-notifier) | Laufzeit (Direkt) | `^7.3.1` | BSD-2-Clause | Lizenz im Inventar aufgeführt |
+| `typescript` | Entwicklung / Compiler | `^5.3.3` | Apache-2.0 | Lizenz im Inventar aufgeführt |
+| `vitest` | Entwicklung / Test-Runner | `^4.1.11` | MIT | Lizenz im Inventar aufgeführt |
+| `@types/node` | Entwicklung / Typdefinitionen | `^20.11.0` | MIT | Lizenz im Inventar aufgeführt |
 
-- **Keine Copyleft- oder AGPL-Bindung:** Enthält keinerlei virale Lizenzen oder ungeprüfte kommerzielle Module.
-- **Zero-External-Telemetry:** Sendet keine Analyse-Pings, Beacons oder Telemetrie an externe Server.
+- **Netzwerkumfang:** Der Server sendet Anfragen an konfigurierte n8n-Endpunkte und bei Aktivierung an den konfigurierten Manager-Endpunkt. Der Update-Notifier kann beim Start in einem interaktiven TTY nach Updates suchen; im regulären Nicht-TTY-stdio-Betrieb wird dieser Check übersprungen. Im geprüften Anwendungscode gibt es keinen Sender für Produktanalysen.
 - **Vollständiges Lizenzinventar:** Ausführliche Hinweise, Original-Lizenztexte und transitive Abhängigkeitsbäume finden sich in [`THIRD_PARTY_LICENSES.md`](THIRD_PARTY_LICENSES.md).
-- **Level 1 SBOM Plain-Text Begleiter:** Vollständiger maschinenlesbarer Audit-Trail, Non-Elevation-Nachweis und Lizenzbegleiter verfügbar in [`THIRD_PARTY_LICENSES.txt`](THIRD_PARTY_LICENSES.txt).
+- **Textbegleiter zum Abhängigkeitsinventar:** Eine Textliste zu Abhängigkeiten und Lizenzen steht in [`THIRD_PARTY_LICENSES.txt`](THIRD_PARTY_LICENSES.txt); sie ist weder ein Laufzeit-Audit-Trail noch ein Rechte-Nicht-Eskalationsnachweis.
 
 ---
 
@@ -795,11 +795,13 @@ This project is an unpaid open-source donation under the MIT License. Liability 
 
 ### Sicherheits-Reaktions-SLA & Meldewege
 
-Gemäß unserer verbindlichen Sicherheitsrichtlinie in [SECURITY.md](SECURITY.md) gelten folgende Service Level Agreements:
-- **Erstreaktions-SLA:** Verbindlich innerhalb von **48 Stunden** (`INV-SLA-10`).
-- **Triage-Zusage:** Vollständige Schwachstellenbewertung innerhalb von **5 Werktagen**.
-- **Behebungs-SLA:** Bereitstellung koordinierter Sicherheits-Patches innerhalb von **30 Kalendertagen**.
+Gemäß der veröffentlichten Sicherheitsrichtlinie in [SECURITY.md](SECURITY.md) gelten folgende Reaktions-, Triage- und Behebungszusagen:
+- **Erstreaktions-Zusage:** Die veröffentlichte Richtlinie setzt eine erste Reaktion innerhalb von **48 Stunden** (`INV-SLA-10`).
+- **Triage-Zusage:** Die veröffentlichte Richtlinie setzt eine Schwachstellenbewertung innerhalb von **5 Werktagen**.
+- **Behebungs-Zusage:** Die veröffentlichte Richtlinie setzt eine koordinierte Behebung innerhalb von **30 Kalendertagen nach Bestätigung** einer gemeldeten Schwachstelle.
 - **Direkte Kontaktstellen:**
   - `security@open-bricks.org`
   - `security@ellmos.ai`
   - `lukas@open-bricks.org`
+
+Dies sind Richtlinienzusagen; dieses Dokument enthält keine Messwerte zur tatsächlich erreichten Reaktionsleistung.

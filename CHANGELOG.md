@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Documentation source boundaries (2026-11-03)
+- Align EN/DE/ES, contributor guidance, and llms.txt with optional backups and audit logging, actual read-only/audit ordering, local plaintext storage, configured network endpoints, inherited privileges, scoped input/path checks, and current Ubuntu CI coverage. Replace unsupported competitor guarantees with documented project capabilities and limits. Correct four diagrams and the Zod metadata; preserve all seventeen example blocks and existing security policy commitments. Runtime and version unchanged.
+
 ### Security documentation runtime boundaries
 - Align bilingual SECURITY.md with stdio transport, configured REST endpoints, terminal-only update checks, optional backup/audit settings, propagated audit errors, scoped path checks, and inherited process privileges. Preserve all reporting contacts and existing48-hour, five-business-day, and30-day policy commitments. No runtime or version change.
 
