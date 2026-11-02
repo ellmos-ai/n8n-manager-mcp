@@ -2,12 +2,12 @@
 
 # n8n Manager MCP Server
 
-**🇩🇪 [Deutsche Version](README_de.md)**
+**🇬🇧 English · 🇩🇪 [Deutsch](README_de.md) · 🇪🇸 [Español](README_es.md)**
 
 *Part of the [ellmos-ai](https://github.com/ellmos-ai) family and the [open-bricks](https://github.com/open-bricks) umbrella.*
 
 [![npm](https://img.shields.io/npm/v/n8n-manager-mcp.svg)](https://www.npmjs.com/package/n8n-manager-mcp)
-[![Tests](https://img.shields.io/badge/Tests-205%20passed-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
+[![Tests](https://img.shields.io/badge/Tests-208%20passed-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
 [![MCP Tools](https://img.shields.io/badge/MCP%20Tools-19%20tools-blue.svg)](https://github.com/ellmos-ai/n8n-manager-mcp)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D20-blue.svg)](https://nodejs.org)
 [![Safety](https://img.shields.io/badge/Safety-Backups%20%7C%20Audit%20%7C%20Read--Only-success.svg)](SECURITY.md)
@@ -64,7 +64,7 @@ The n8n Manager MCP Server operates as a **local-first, stdio-connected bridge**
 - **Process Model:** Runs purely in user space (`RunAsInvoker`) as a dedicated Node.js child process communicating via standard input/output (`stdio`) using JSON-RPC 2.0.
 - **Fail-Closed Safety Middleware:** Every mutation tool call passes through an immutable safety gate before contacting n8n APIs or touching the filesystem.
 - **Multi-Instance Router:** Seamlessly targets independent n8n instances (development, staging, production) with isolated API credentials and atomic configuration persistence.
-- **Offline Node Catalog:** Provides instantaneous node schema introspection (`n8n_describe_nodes`) without incurring API latency or network calls.
+- **Offline Node Catalog:** Lists common n8n node types and short descriptions by category (`n8n_describe_nodes`) without a network call. It does not expose full node schemas or required properties.
 
 ### Architectural Topology Projection (4-View Model)
 
@@ -84,7 +84,7 @@ The n8n Manager MCP Server operates as a **local-first, stdio-connected bridge**
 | | Fail-Closed Safety Filter: N8N_MANAGER_READ_ONLY Enforcement (INV-READ-02)                          | |
 | | Input Validation & Sanitization: Zod Schema Numeric Bounds & Path Traversal Guards (INV-TRAV-06)   | |
 | | Multi-Instance Routing Engine: Development / Staging / Production Credentials Isolation (INV-SRV-05)| |
-| | Bundled Offline Node Catalog: In-Memory Node Schemas & Parameter Introspection (INV-NODE-09)        | |
+| | Bundled Offline Node Catalog: Common Node Types & Descriptions (INV-NODE-09)                         | |
 | +----------------------------------------------------------------------------------------------------+ |
 +===================================================+====================================================+
                                                     |
@@ -94,7 +94,7 @@ The n8n Manager MCP Server operates as a **local-first, stdio-connected bridge**
 | +------------------------------------+----------------------------------+----------------------------+ |
 | | Pre-Mutation Workflow Snapshots    | Append-Only Local Audit Trail    | Multi-Server Config Store  | |
 | | ~/.n8n-manager-mcp/backups/        | ~/.n8n-manager-mcp/audit.log     | ~/.n8n-manager-mcp/        | |
-| | ({server}/{id}-{timestamp}.json)   | (Forensic Timestamped Log)       | (servers.json, POSIX 0600) | |
+| | ({server}/{id}-{timestamp}-{reason}.json) | (Forensic Timestamped Log) | (servers.json, POSIX 0600) | |
 | +------------------------------------+----------------------------------+----------------------------+ |
 +===================================================+====================================================+
                                                     |
@@ -135,6 +135,8 @@ flowchart TD
 
 ### Safe Workflow Mutation Lifecycle
 
+These diagrams reflect the current tool contract. A pre-mutation snapshot is created when backup_before_mutations is enabled (default: true).
+
 ```mermaid
 sequenceDiagram
     autonumber
@@ -146,25 +148,33 @@ sequenceDiagram
     participant N8N as n8n REST API Instance
     participant Audit as Forensic Audit Logger
 
-    AI->>MCP: Call Mutation Tool (n8n_update_workflow / n8n_delete_workflow)
-    MCP->>Safety: Check N8N_MANAGER_READ_ONLY
-    alt Read-Only Active (INV-READ-02)
-        Safety-->>AI: Blocked: Read-only mode active (Fail-Closed)
-        Safety->>Audit: Record blocked mutation attempt
-    else Mutation Permitted
-        Safety->>Snapshot: Trigger Pre-Mutation Snapshot (INV-BACK-03)
-        Snapshot->>N8N: GET /workflows/{id} (Fetch current state)
-        N8N-->>Snapshot: Current Workflow JSON
-        Snapshot->>Store: Save timestamped backup (~/backups/{server}/{id}-{timestamp}.json)
-        Snapshot-->>Safety: Backup verified & path resolved
-        Safety->>N8N: Execute Mutation (PUT / DELETE / PATCH)
-        N8N-->>Safety: Mutation Response (200 OK / Updated ID)
-        Safety->>Audit: Append structured forensic receipt (INV-AUDIT-04)
-        Safety-->>AI: Success response with backup path & rollback receipt
+    AI->>MCP: Call n8n_update_workflow or n8n_delete_workflow
+    MCP->>Safety: Check read-only enforcement
+    alt Read-only active (INV-READ-02)
+        Safety-->>AI: Return text explaining that the mutation is blocked
+        opt audit_log enabled (default true)
+            Safety->>Audit: Record blocked mutation attempt
+        end
+    else Mutation permitted
+        opt backup_before_mutations enabled (default true)
+            Safety->>Snapshot: Trigger pre-mutation snapshot (INV-BACK-03)
+            Snapshot->>N8N: GET /workflows/{id}
+            N8N-->>Snapshot: Current workflow JSON
+            Snapshot->>Store: Save ~/.n8n-manager-mcp/backups/{server}/{id}-{timestamp}-{reason}.json
+            Snapshot-->>Safety: Backup path
+        end
+        Safety->>N8N: PUT /workflows/{id} or DELETE /workflows/{id}
+        N8N-->>Safety: Mutation result
+        opt audit_log enabled (default true)
+            Safety->>Audit: Append structured outcome to audit log (INV-AUDIT-04)
+        end
+        Safety-->>AI: Return text; include backup path when a backup was saved
     end
 ```
 
 ### Multi-Server Workflow Migration & Staging Synchronization Lifecycle
+
+The import step creates a new workflow. It does not create a pre-import backup or return a rollback handle.
 
 ```mermaid
 sequenceDiagram
@@ -172,27 +182,27 @@ sequenceDiagram
     actor AI as AI Assistant (Claude / Cursor)
     participant MCP as n8n-manager-mcp Router
     participant Staging as Staging n8n Instance
-    participant Store as Local Storage (~/.n8n-manager-mcp)
     participant Prod as Production n8n Instance
     participant Audit as Forensic Audit Logger
 
-    Note over AI,MCP: Phase 1: Export & Introspection from Staging
-    AI->>MCP: n8n_export_workflow(serverId, workflowId)
-    MCP->>Staging: GET /workflows/42 (Fetch Staging Workflow)
-    Staging-->>MCP: Workflow JSON Payload
-    MCP-->>AI: Exported Workflow JSON & Node Topology
+    Note over AI,MCP: Phase 1: Export from staging
+    AI->>MCP: n8n_export_workflow(workflow_id=42, server_name=staging)
+    MCP->>Staging: GET /workflows/42
+    Staging-->>MCP: Workflow JSON
+    MCP-->>AI: Cleaned workflow JSON as text
 
-    Note over AI,MCP: Phase 2: Offline Node Compatibility Verification
-    AI->>MCP: n8n_describe_nodes(nodes)
-    MCP-->>AI: Bundled Node Schema & Required Properties (INV-NODE-09)
+    Note over AI,MCP: Phase 2: Offline node-type catalog
+    AI->>MCP: n8n_describe_nodes(category=action)
+    MCP-->>AI: Text list of node types and descriptions
 
-    Note over AI,MCP: Phase 3: Safe Promotion & Pre-Mutation Snapshot
-    AI->>MCP: n8n_import_workflow(serverId, workflow, activate)
-    MCP->>Store: Create Safety Snapshot (~/backups/production/42-ts.json, INV-BACK-03)
-    MCP->>Prod: POST /workflows (Create/Promote Workflow)
-    Prod-->>MCP: Created Workflow (id: 108, active: false)
-    MCP->>Audit: Append Forensic Receipt (INV-AUDIT-04)
-    MCP-->>AI: Promotion Success Receipt & Rollback Handle
+    Note over AI,MCP: Phase 3: Import a new inactive copy
+    AI->>MCP: n8n_import_workflow(workflow_json=serialized export, server_name=production, activate=false)
+    MCP->>Prod: POST /workflows
+    Prod-->>MCP: Created workflow JSON with a new ID; inactive
+    opt audit_log enabled (default true)
+        MCP->>Audit: Append import outcome (INV-AUDIT-04)
+    end
+    MCP-->>AI: Text response with the new workflow ID; no rollback handle
 ```
 
 ---
@@ -222,9 +232,9 @@ sequenceDiagram
 
 | Persona | Core Needs | Pain Points Solved | Target Discovery Terms |
 | :--- | :--- | :--- | :--- |
-| **[PERSONA-01] Autonomous AI Agents & Swarms** | Non-destructive workflow manipulation, pre-mutation snapshots, deterministic receipts | LLM hallucination breaking active production workflows; inability to inspect node connections offline | `n8n mcp server`, `ai agent n8n workflow management`, `claude code n8n automation` |
+| **[PERSONA-01] Autonomous AI Agents & Swarms** | Non-destructive workflow manipulation, pre-mutation snapshots, clear operation results | LLM hallucination breaking active production workflows; inability to inspect node connections offline | `n8n mcp server`, `ai agent n8n workflow management`, `claude code n8n automation` |
 | **[PERSONA-02] DevOps & Multi-Environment Engineers** | Safe multi-server routing, export/import synchronization across stages | Manual JSON export friction; staging-to-production drift; unversioned workflow copies | `n8n multi-server mcp`, `sync n8n workflows staging prod`, `n8n workflow export import mcp` |
-| **[PERSONA-03] SecOps, Compliance & Risk Teams** | Monotonic read-only locks, local audit trail, zero external data leakage | Unregulated agent mutations; unvetted API calls; loss of forensic mutation history | `safe n8n mcp server`, `read-only n8n automation`, `audit log n8n ai integration` |
+| **[PERSONA-03] SecOps, Compliance & Risk Teams** | Monotonic read-only locks, optional local audit logging, zero external data leakage | Unregulated agent mutations; unvetted API calls; loss of forensic mutation history | `safe n8n mcp server`, `read-only n8n automation`, `audit log n8n ai integration` |
 | **[PERSONA-04] Ecosystem Builders & Tool Integrators** | Standardized MCP schemas, validated manifests, reliable TypeScript SDK seam | Schema mismatch across MCP directories; missing regression and contract test suites | `modelcontextprotocol n8n`, `glama n8n-manager-mcp`, `smithery n8n workflow` |
 
 ### High-Intent Search Queries
@@ -251,10 +261,10 @@ sequenceDiagram
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **Primary Interface** | Native MCP Stdio (JSON-RPC) | Raw HTTP REST (Curl/Axios) | Ad-hoc CLI / Bash Scripts | Interactive Web Canvas | Proprietary Web Portal |
 | **Safety Guardrails** | Monotonic Read-Only Gate (`N8N_MANAGER_READ_ONLY=1`) | None (Unchecked API execution) | Shell exit code heuristics | Human confirmation modals | Remote vendor RBAC |
-| **Mutation Backups** | Automated Pre-Mutation JSON Snapshots (`INV-BACK-03`) | None (Overwrites live instance) | None (Script dependent) | None (Live canvas modifications) | Vendor-dependent snapshots |
+| **Mutation Backups** | Pre-mutation JSON snapshots for supported operations (enabled by default; `INV-BACK-03`) | None (Overwrites live instance) | None (Script dependent) | None (Live canvas modifications) | Vendor-dependent snapshots |
 | **Rollback Facility** | 1-Click `n8n_restore_workflow` from Local Disk | Manual JSON reconstruction via POST | Manual script rollback logic | Manual node rebuilding on canvas | Vendor rollback UI (Paywalled) |
-| **Forensic Audit Log** | Append-Only Structured `audit.log` (`INV-AUDIT-04`) | Generic webserver access logs | Ephemeral terminal stdout | Canvas execution logs only | Cloud vendor log retention |
-| **Node Introspection** | Built-in Offline Catalog (`n8n_describe_nodes`) | Manual online documentation | Guesswork & parameter trials | Visual palette browsing | Online API documentation |
+| **Forensic Audit Log** | Optional append-only structured `audit.log`, enabled by default (`INV-AUDIT-04`) | Generic webserver access logs | Ephemeral terminal stdout | Canvas execution logs only | Cloud vendor log retention |
+| **Node Catalog** | Category-filtered offline list of common types and descriptions (`n8n_describe_nodes`) | Manual online documentation | Guesswork & parameter trials | Visual palette browsing | Online API documentation |
 | **Multi-Server Isolation** | Isolated Stored Profiles (`servers.json`) | Manual token switching in scripts | Shell history token exposure | Multi-tab credential clutter | Cloud workspace switching |
 | **Privacy & No Telemetry** | Local stdio transport; HTTP only to configured n8n/manager endpoints | Direct HTTP client traffic | Local shell execution | Browser telemetry & analytics | Remote third-party hosting |
 | **Workflow Migration** | Built-in `n8n_export_workflow` & `n8n_import_workflow` | Custom Python/Curl ETL scripts | Complex bash/jq pipelines | Download / Upload JSON dialog | Cloud enterprise paywall |
@@ -273,13 +283,13 @@ sequenceDiagram
 | :--- | :--- | :--- | :--- |
 | `INV-LOCAL-01` | **Local MCP Transport & No Telemetry** | MCP uses local stdio and has no third-party telemetry; configured remote n8n servers receive API requests and the API-key header | Credentials go only to the configured n8n endpoint during API requests |
 | `INV-READ-02` | **Monotonic Read-Only Enforcement** | `N8N_MANAGER_READ_ONLY=1` establishes a process-level ceiling immune to tool override | Provable air-gapping against accidental workflow deletions or alterations |
-| `INV-BACK-03` | **Automated Pre-Mutation Backups** | Full workflow JSON snapshots stored under `~/.n8n-manager-mcp/backups/` before mutate/delete | Instant 1-click rollback via `n8n_restore_workflow` upon unwanted modifications |
-| `INV-AUDIT-04` | **Local Audit Trail** | Append-only structured JSON log in `~/.n8n-manager-mcp/audit.log` | Complete forensic visibility over all agent actions and execution outcomes |
+| `INV-BACK-03` | **Automated Pre-Mutation Backups** | When enabled (default: true), workflow JSON snapshots are stored under `~/.n8n-manager-mcp/backups/` before `n8n_update_workflow`, `n8n_delete_workflow`, `n8n_activate_workflow`, and restore-overwrite operations | Restore a saved snapshot with `n8n_restore_workflow`; imports create new workflows without a pre-import backup |
+| `INV-AUDIT-04` | **Local Audit Trail** | Append-only structured JSON log in `~/.n8n-manager-mcp/audit.log`, enabled by default and configurable | Mutation outcomes are recorded locally while audit logging is enabled |
 | `INV-SRV-05` | **Multi-Server & Isolated Credentials** | Separate plaintext server profiles in local `servers.json`; API key whitespace validation | Seamless cross-instance workflow migration between staging and production |
 | `INV-TRAV-06` | **Strict Input & Path Traversal Guard** | Bounded numeric limits (1..1000), connection indices (0..1000), path escape rejection | Immune to directory traversal, prototype pollution, and malformed payload crashes |
 | `INV-PRIV-07` | **Non-Elevation & User-Space Security** | Operates strictly as unprivileged user process | Zero root/administrator privilege requirements for local or CI execution |
 | `INV-SEAM-08` | **Opt-In Decision History Seam** | Clean adapter to `n8n-workflow-manager` via `N8N_MCP_MANAGER_URL`; explicit fail-fast | Bridges human decision logs and versioning without corrupting standard MCP mode |
-| `INV-NODE-09` | **Built-in Node Catalog & Introspection** | Comprehensive offline catalog for triggers, actions, logic, transform, and AI nodes | LLMs formulate valid node connections without trial-and-error network calls |
+| `INV-NODE-09` | **Built-in Node Catalog** | Category-filtered text descriptions of common trigger, action, logic, transform, and AI node types; it does not return full schemas or required properties | Use the catalog for orientation; validate node parameters and workflow connections separately |
 | `INV-SLA-10` | **Multi-Node CI & 48h Security SLA** | Automated GitHub Actions CI across Node.js 20, 22 with Concurrency cancellation; 48h response / 5d triage SLA | Guaranteed cross-platform stability, verified security responsiveness, and regression-free distribution |
 
 <a id="sec-07"></a>
@@ -291,7 +301,7 @@ sequenceDiagram
 
 - **19 Tools** for complete n8n workflow management
 - List, create, update, delete, and activate/deactivate workflows
-- Safety controls: read-only mode, backup-before-delete/update, local restore, and audit log
+- Safety controls: read-only mode, configurable backups for supported mutations (enabled by default), local restore, and configurable audit logging (enabled by default)
 - Multi-server support (connect to multiple n8n instances)
 - Export/Import workflows between servers
 - View execution history and status
@@ -343,16 +353,16 @@ npm install -g n8n-manager-mcp
 
 ### Natural Language Prompts
 
-After installation, use these prompts directly in your AI assistant:
+After installation, use these prompts in your AI assistant. Before registering a server, securely configure N8N_MANAGER_API_KEY and the matching N8N_MANAGER_SERVER_URL in the MCP host environment. Do not include the API key in a prompt or tool argument:
 
 1. **Add your n8n server:**
-   > "Add my n8n server named production at http://localhost:5678 with my API key"
+   > "Add an n8n server profile named production at http://localhost:5678 using the already configured host credentials"
 
 2. **List workflows:**
    > "Show me all workflows on my n8n server"
 
 3. **Inspect nodes offline:**
-   > "Describe the HTTP Request and Webhook nodes so we can construct a new workflow"
+   > "Show the action node types and descriptions from the bundled offline catalog"
 
 4. **Create a workflow:**
    > "Create an n8n workflow that triggers on a webhook, fetches data from an API, and sends a Slack message"
@@ -360,138 +370,144 @@ After installation, use these prompts directly in your AI assistant:
 5. **Check executions:**
    > "Show me the last 10 workflow executions on production"
 
-6. **Promote across environments:**
-   > "Export workflow 42 from staging and import it to production without activating"
+6. **Import a copy across environments:**
+   > "Export workflow 42 from staging and import a new inactive copy into production"
+   >
+   > Note: n8n_import_workflow creates a new workflow; it does not create a pre-import backup or return a rollback handle. The copy stays inactive unless activation is requested.
 
 ### End-to-End Developer & Agent Execution Showcase
 
-Below is a step-by-step walkthrough of how an AI assistant (e.g. Claude Code or Cursor) interacts with `n8n-manager-mcp` across configuration, inspection, pre-mutation snapshotting, and rollback:
+Below is a step-by-step walkthrough of server configuration, offline catalog lookup, workflow mutation with backup, restore, and read-only behavior. Examples show tool-argument shapes and illustrative MCP text responses.
 
 #### 1. Multi-Server Registration & Health Check
-Configure your n8n endpoints. Passwords and API keys are stored with restricted POSIX file permissions (`0600`) under `~/.n8n-manager-mcp/servers.json`:
+
+Before registering a new server, configure N8N_MANAGER_API_KEY and a matching N8N_MANAGER_SERVER_URL in the MCP host environment using the client's sensitive settings or an OS secret facility. Never pass the API key in a chat prompt or tool argument. The local server profile stores the key as plaintext; new files request mode 0600 on POSIX, while Windows access follows the directory ACL.
+
+Call n8n_add_server:
+
 ```json
-// Tool Call: n8n_add_server
 {
   "name": "staging",
   "url": "http://127.0.0.1:5678",
-  "apiKey": "n8n_api_key_staging",
-  "isDefault": true
-}
-```
-*Response Receipt:*
-```json
-{
-  "success": true,
-  "server": "staging",
-  "url": "http://127.0.0.1:5678",
-  "isDefault": true
+  "is_default": true
 }
 ```
 
-Verify connection reachability without modifying workflows:
-```json
-// Tool Call: n8n_ping_server
-{
-  "name": "staging"
-}
+Illustrative MCP text response (the server name and URL follow the request):
+
+```text
+Server "staging" added (http://127.0.0.1:5678). Set as default.
 ```
-*Response Receipt:*
+
+Call n8n_ping_server:
+
 ```json
 {
-  "server": "staging",
-  "status": "online",
-  "latencyMs": 14
+  "server_name": "staging"
 }
 ```
 
-#### 2. Zero-Latency Offline Node Introspection
-Inspect node schemas and connection ports instantaneously from the bundled catalog without making network requests (`INV-NODE-09`):
-```json
-// Tool Call: n8n_describe_nodes
-{
-  "nodeTypes": ["n8n-nodes-base.webhook", "n8n-nodes-base.httpRequest"]
-}
+Illustrative MCP text response (response time varies):
+
+```text
+Server "staging" (http://127.0.0.1:5678) is reachable. Response time: <N>ms
 ```
-*Response Receipt:*
+
+#### 2. Offline Node Catalog
+
+n8n_describe_nodes filters the bundled catalog by category. It returns text descriptions, not full node schemas or a selected list of node names.
+
+Call n8n_describe_nodes:
+
 ```json
 {
-  "nodes": [
-    {
-      "name": "n8n-nodes-base.webhook",
-      "displayName": "Webhook",
-      "description": "Starts the workflow when a webhook request is received",
-      "inputs": [],
-      "outputs": ["main"]
-    },
-    {
-      "name": "n8n-nodes-base.httpRequest",
-      "displayName": "HTTP Request",
-      "description": "Makes an HTTP request and returns the response",
-      "inputs": ["main"],
-      "outputs": ["main"]
-    }
-  ]
+  "category": "action"
 }
 ```
 
-#### 3. Safe Workflow Mutation with Automated Snapshot
-When updating an existing workflow, `n8n-manager-mcp` automatically saves a timestamped JSON snapshot before sending changes to the n8n API (`INV-BACK-03`):
-```json
-// Tool Call: n8n_update_workflow
-{
-  "id": "42",
-  "workflow": {
-    "name": "Customer Webhook Ingest [v2]",
-    "nodes": [ /* updated node graph */ ],
-    "connections": { /* node wiring */ }
-  }
-}
+Illustrative response text:
+
+```text
+n8n Node Types (action):
+
+  [ACTION] n8n-nodes-base.httpRequest
+    Name: HTTP Request
+    Make HTTP requests. Params: url, method, headers, body
+
+  [ACTION] n8n-nodes-base.emailSend
+    Name: Send Email
+    Send emails via SMTP. Params: fromEmail, toEmail, subject, text
+
+  [ACTION] n8n-nodes-base.slack
+    Name: Slack
+    Send messages to Slack channels
+
+  [ACTION] n8n-nodes-base.telegram
+    Name: Telegram
+    Send messages via Telegram bot
+
+  [ACTION] n8n-nodes-base.googleSheets
+    Name: Google Sheets
+    Read/write Google Sheets data
 ```
-*Response Receipt (Pre-Mutation Backup Verified):*
+
+#### 3. Safe Workflow Update with Automated Snapshot
+
+When backup_before_mutations is enabled (default: true), n8n_update_workflow saves a timestamped snapshot before sending the update to n8n. This example shows the argument shape only: replace the placeholder with the complete, JSON-serialized updated workflow.
+
+Call n8n_update_workflow:
+
 ```json
 {
-  "success": true,
-  "id": "42",
-  "name": "Customer Webhook Ingest [v2]",
-  "active": true,
-  "backupPath": "~/.n8n-manager-mcp/backups/staging/42-2026-10-30T04-45-00-000Z.json",
-  "auditReceipt": "AUDIT-20261030-42-MUTATION-OK"
+  "workflow_id": "42",
+  "server_name": "staging",
+  "workflow_json": "<complete JSON-serialized updated workflow>"
 }
 ```
 
-#### 4. Instant 1-Click Rollback
-If a newly deployed workflow mutation causes unexpected behavior, restore the exact previous state in a single tool call:
+Illustrative MCP text response when the default backup is enabled:
+
+```text
+Workflow 42 updated successfully on staging. Backup saved: <backup path>
+```
+
+#### 4. Restore from a Local Backup
+
+To overwrite workflow 42, pass its backup path and target_workflow_id. With backup_before_mutations enabled, the current target is backed up before it is overwritten. Omitting target_workflow_id creates a new workflow instead.
+
+Call n8n_restore_workflow:
+
 ```json
-// Tool Call: n8n_restore_workflow
 {
-  "id": "42",
-  "backupPath": "~/.n8n-manager-mcp/backups/staging/42-2026-10-30T04-45-00-000Z.json"
+  "backup_path": "<path returned by n8n_list_backups or a mutation response>",
+  "server_name": "staging",
+  "target_workflow_id": "42"
 }
 ```
-*Response Receipt:*
-```json
-{
-  "success": true,
-  "id": "42",
-  "restoredFrom": "~/.n8n-manager-mcp/backups/staging/42-2026-10-30T04-45-00-000Z.json",
-  "status": "rolled_back"
-}
+
+Illustrative MCP text response when the pre-restore backup is enabled:
+
+```text
+Workflow restored (overwritten) on staging: "Customer Webhook Ingest [v2]" (ID: 42). Pre-restore backup saved: <backup path>
 ```
 
 #### 5. Fail-Closed Read-Only Protection
-To lock the environment against any modifications during security audits, set `N8N_MANAGER_READ_ONLY=1`. Any mutation call is blocked at process boundary (`INV-READ-02`):
+
+If audit_log is enabled (default: true), a blocked mutation is recorded in the audit log. If N8N_MANAGER_READ_ONLY=1 is set in the MCP host environment, it is a monotonic ceiling: n8n_set_safety_mode cannot disable it. Remove the environment variable and restart the MCP server to lift that ceiling. The runtime's generic text below still mentions n8n_set_safety_mode; that suggestion does not apply while the environment ceiling is active.
+
+Call n8n_delete_workflow:
+
 ```json
-// Tool Call: n8n_delete_workflow (with N8N_MANAGER_READ_ONLY=1)
 {
-  "id": "42"
+  "workflow_id": "42",
+  "server_name": "staging"
 }
 ```
-*Response Receipt (Fail-Closed Gate):*
-```json
-{
-  "error": "Operation rejected: N8N_MANAGER_READ_ONLY mode is active (INV-READ-02). Mutations are prohibited.",
-  "status": "blocked"
-}
+
+Illustrative runtime text response when read-only mode is active:
+
+```text
+Blocked: n8n Manager is in read-only mode. Disable read_only via n8n_set_safety_mode before delete_workflow.
 ```
 
 ---

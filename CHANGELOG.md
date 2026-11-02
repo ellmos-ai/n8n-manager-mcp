@@ -16,9 +16,16 @@ All notable changes to this project will be documented in this file.
 - Preserve version 0.1.21, workflow configuration and product runtime behavior.
 - Correct the verification index to 208 tests and replace its outdated zero-advisory claim with the two moderate findings returned by the current dependency audit; no dependency remediation is claimed by this documentation change.
 
+### README translations and runtime contract corrections
+- Add the complete Spanish user guide and reciprocal English/German/Spanish navigation. Restore the missing German MCP-server, AI-infrastructure, related-project, and license sections so all three guides expose the same links and sections.
+- Synchronize the test badges and their existing metadata assertions to the verified 208-test suite; preserve product version 0.1.21 and runtime code.
+- Align the English, German, and Spanish README examples with the current tool schemas and text responses. New server registration and key rotation read API keys from the MCP host environment; never pass a key through an MCP tool call or prompt. `n8n_describe_nodes` returns category-filtered descriptions of common node types, not full schemas or required properties.
+- Document that `backup_before_mutations` is enabled by default but configurable, applies to update, delete, activation/deactivation, and restore-overwrite operations, and does not create a pre-import backup or rollback handle for `n8n_import_workflow`, which creates a new workflow.
+- Mark audit logging as configurable and enabled by default; examples no longer imply JSON receipts or unconditional audit records.
+
 ### Repository Hygiene, Product Skill, Code of Conduct & Contract Test Expansion (Pfad A: 2026-11-02)
 - **Mandatory Product Skill (`SKILL.md`):**
-  - Authored official product skill `SKILL.md` adhering to P-022 (`MENSCH-UND-LLM-POLICY.md`) and GITHUB-POLICY standards with valid YAML frontmatter, functional tool categorizations across all 19 MCP tools, environment variable documentation (`N8N_API_URL`, `N8N_API_KEY`, `N8N_MANAGER_READ_ONLY`, `N8N_MCP_MANAGER_URL`), human/agent workflow execution patterns (inspection, safe mutation, rollback restore), and 10 runtime invariants (`INV-LOCAL-01` to `INV-SLA-10`).
+  - Authored official product skill `SKILL.md` adhering to P-022 (`MENSCH-UND-LLM-POLICY.md`) and GITHUB-POLICY standards with valid YAML frontmatter, functional tool categorizations across all 19 MCP tools, environment variable documentation (the initial `N8N_API_URL` / `N8N_API_KEY` references have since been corrected to `N8N_MANAGER_SERVER_URL` / `N8N_MANAGER_API_KEY`, alongside `N8N_MANAGER_READ_ONLY` and `N8N_MCP_MANAGER_URL`), human/agent workflow execution patterns (inspection, safe mutation, rollback restore), and 10 runtime invariants (`INV-LOCAL-01` to `INV-SLA-10`).
 - **LLM Compatibility Pointer (`llm.txt`):**
   - Added standard compatibility pointer `llm.txt` linking LLMs and autonomous agents directly to canonical context in `llms.txt` and operational procedures in `SKILL.md`.
 - **Bilingual Community Code of Conduct (`CODE_OF_CONDUCT.md`):**
@@ -37,9 +44,9 @@ All notable changes to this project will be documented in this file.
 
 ### Discoverability, Step-by-Step Terminal Execution Showcase, Multi-Server Migration Sequence & Level 1 SBOM Re-Audit (Pfad B: 2026-10-30)
 - **Step-by-Step Terminal & Agent Execution Showcase (Section 09 Quick Start):**
-  - Integrated comprehensive interactive walkthroughs in both English (`README.md`) and German (`README_de.md`) covering multi-server registration (`n8n_add_server`), latency-free offline node introspection (`n8n_describe_nodes`), safe workflow mutation with automatic pre-mutation JSON snapshots (`n8n_update_workflow`), 1-click rollback (`n8n_restore_workflow`), and fail-closed read-only protection (`N8N_MANAGER_READ_ONLY=1`).
+  - Integrated interactive walkthroughs in English (`README.md`) and German (`README_de.md`) covering multi-server registration (`n8n_add_server`), a category-filtered offline node catalog (`n8n_describe_nodes`), workflow updates with automatic pre-update snapshots (`n8n_update_workflow`), restore (`n8n_restore_workflow`), and fail-closed read-only protection (`N8N_MANAGER_READ_ONLY=1`).
 - **Multi-Server Migration & Staging Synchronization Sequence Diagram (Section 02):**
-  - Added a third dedicated Mermaid sequence diagram illustrating the export-introspection-import lifecycle across staging and production instances with pre-mutation backup verification and forensic audit logging (`INV-LOCAL-01` .. `INV-SLA-10`).
+  - Added a third dedicated Mermaid sequence diagram illustrating export, offline node-catalog lookup, and import across staging and production instances (`INV-LOCAL-01` .. `INV-SLA-10`).
 - **Shields.io Badges Currency & Verification Dates:**
   - Synchronized test badges to `205 passed` (brightgreen) and verification timestamps to `Verified-2026--10--30` and `Last-Checked-2026--10--30` across both documentation languages.
 - **Machine-Readable Context Index (`llms.txt`):**
