@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### French user guide (2026-11-03)
+- Add the complete French README, reciprocal six-language navigation, npm package inclusion and discovery indexing. Preserve implementation and security-policy limits; runtime and version unchanged.
+
 ### Russian user guide (2026-11-03)
 - Add the complete Russian README, reciprocal five-language navigation, npm package inclusion and discovery indexing. Preserve implementation and security-policy limits; runtime and version unchanged.
 

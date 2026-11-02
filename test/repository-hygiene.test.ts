@@ -191,6 +191,7 @@ describe("repository hygiene", () => {
       "README_es.md",
       "README_ja.md",
       "README_ru.md",
+      "README_fr.md",
       "CHANGELOG.md",
       "CONTRIBUTING.md",
       "CODE_OF_CONDUCT.md",

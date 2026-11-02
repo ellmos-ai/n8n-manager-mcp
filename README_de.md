@@ -2,7 +2,7 @@
 
 # n8n Manager MCP Server
 
-**🇬🇧 [English](README.md) · 🇩🇪 Deutsch · 🇪🇸 [Español](README_es.md) · 🇯🇵 [日本語](README_ja.md) · 🇷🇺 [Русский](README_ru.md)**
+**🇬🇧 [English](README.md) · 🇩🇪 Deutsch · 🇪🇸 [Español](README_es.md) · 🇯🇵 [日本語](README_ja.md) · 🇷🇺 [Русский](README_ru.md) · 🇫🇷 [Français](README_fr.md)**
 
 *Teil der [ellmos-ai](https://github.com/ellmos-ai)-Familie und des [open-bricks](https://github.com/open-bricks)-Dachverbunds.*
 
