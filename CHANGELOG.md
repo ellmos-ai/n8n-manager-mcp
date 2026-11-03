@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Portuguese user guide (2026-11-03)
+- Add the complete Portuguese README, reciprocal ten-language navigation, npm package inclusion and discovery indexing. Preserve implementation and security-policy limits; runtime and version unchanged.
+
 ### Arabic user guide (2026-11-03)
 - Add the complete Arabic README, reciprocal nine-language navigation, npm package inclusion and discovery indexing. Preserve implementation and security-policy limits; runtime and version unchanged.
 
