@@ -1,6 +1,6 @@
 # Contributing to n8n-manager-mcp
 
-Thank you for your interest in contributing to **n8n-manager-mcp**! This repository is maintained under strict open-source governance, security SLAs, and local-first runtime invariants.
+Thank you for your interest in contributing to **n8n-manager-mcp**! This document describes the project workflow and current implementation areas. Security response and remediation commitments are published in `SECURITY.md`.
 
 Please read these guidelines thoroughly before opening issues or submitting pull requests.
 
@@ -8,22 +8,22 @@ Please read these guidelines thoroughly before opening issues or submitting pull
 
 ## English
 
-### 1. Architectural & Governance Invariants
+### 1. Implementation Areas & Policy
 
-All contributions must strictly respect and uphold our 10 core governance and runtime invariants:
+The reference IDs below group current source behavior and published policy for contributor orientation. They are not guarantees that behavior is enforced outside the described scope. Update relevant docs and tests when implementation changes.
 
-| Invariant ID | Name / Mandate | Technical Enforcement Requirement |
+| Reference | Implemented behavior | Scope and policy |
 | :--- | :--- | :--- |
-| `INV-LOCAL-01` | **100% Local-First & Zero-Egress** | MCP Stdio transport over JSON-RPC 2.0; bound strictly to `127.0.0.1` by default; zero telemetry, analytics, or external pings. |
-| `INV-READ-02` | **Monotonic Read-Only Mode** | `N8N_MANAGER_READ_ONLY=1` process ceiling; write/mutation tools must be strictly blocked and return deterministic errors. |
-| `INV-BACK-03` | **Automated Pre-Mutation Backups** | JSON snapshot engine in `src/safety.ts` captures full workflow state under `~/.n8n-manager-mcp/backups/` before any update/delete/activate actions. |
-| `INV-AUDIT-04` | **Local Forensic Audit Trail** | Structured append-only JSON logging under `~/.n8n-manager-mcp/audit.log` records timestamp, server URL, workflow ID, tool, and outcome. |
-| `INV-SRV-05` | **Multi-Server & Credential Isolation** | Isolated server configurations in `~/.n8n-manager-mcp/servers.json`; whitespace-stripped API keys; safe default server selection semantics. |
-| `INV-TRAV-06` | **Input Validation & Path Traversal Guard** | Zod numeric bounds (1..1000 for pagination, 0..1000 for connections); path sanitization prevents directory escapes and symlink bypasses. |
-| `INV-PRIV-07` | **Non-Elevation & User-Space Security** | Executes exclusively as unprivileged user (`RunAsInvoker`); zero administrative elevation or root permissions requested. |
-| `INV-SEAM-08` | **Opt-In Decision History Seam** | Optional adapter to `n8n-workflow-manager` via `N8N_MCP_MANAGER_URL`; explicit fail-fast without silent fallback to n8n directly. |
-| `INV-NODE-09` | **Offline Node Catalog & Introspection** | Bundled static node catalog in `src/nodes.ts` provides complete schema introspection for AI agents without API network roundtrips. |
-| `INV-SLA-10` | **Multi-Node CI & 48h / 30d Security SLA** | GitHub Actions matrix on Node.js 20 and 22 with concurrency cancellation; committed 48h initial response, 5-day triage, and 30-day remediation SLA. |
+| `INV-LOCAL-01` | The MCP server communicates with its client over stdio and opens no MCP listening port. | Requests go to configured n8n endpoints, optionally to the configured manager, and an update check may run on interactive TTY startup. This is not zero-egress. |
+| `INV-READ-02` | Persisted read-only mode blocks workflow mutation tools; `N8N_MANAGER_READ_ONLY=1` is an environment ceiling the tool cannot disable. | Configuration is loaded before the mutation check. A blocked attempt may append a local audit entry, so this is not filesystem read-only mode. |
+| `INV-BACK-03` | With `backup_before_mutations` enabled (default: true), workflow JSON snapshots are attempted before update, delete, activate/deactivate, and overwrite-restore operations. | Create/import are not pre-backed up. If an enabled snapshot fetch or save fails, the subsequent n8n mutation request is not sent. Backups are local plaintext. |
+| `INV-AUDIT-04` | `audit_log` is configurable and enabled by default; supported operation outcomes and blocked mutation attempts are appended to a local JSON log. | The log is not tamper-proof. Append errors propagate and can occur after an upstream mutation has succeeded. |
+| `INV-SRV-05` | Multiple server profiles are stored locally in `~/.n8n-manager-mcp/servers.json`; default-server selection is defined by the tool behavior. | API keys are plaintext. New config files request POSIX mode `0600`; Windows access follows directory ACLs. |
+| `INV-TRAV-06` | Input schemas validate numeric ranges (1..1000 for list limits and 0..1000 for connection indices). Backup path segments are sanitized and checked against the configured root in relevant operations. | Real-path and symlink checks are scoped to backup, listing, and restore file handling; they do not establish general immunity to traversal, prototype pollution, or malformed-payload failures. |
+| `INV-PRIV-07` | The server does not request privilege elevation. | The Node.js process inherits its launcher's privileges; no privilege-dropping mechanism or `RunAsInvoker` enforcement is implemented. |
+| `INV-SEAM-08` | Optional `n8n_manager_history` uses `N8N_MCP_MANAGER_URL` and does not fall back to querying n8n when the manager is unreachable. | When configured, it sends a request to the manager endpoint. |
+| `INV-NODE-09` | `n8n_describe_nodes` returns offline descriptions of common node types. | It does not provide complete node schemas or required properties. |
+| `INV-SLA-10` | GitHub Actions runs build, test, smoke, and package checks on Ubuntu with Node.js 20 and 22. `SECURITY.md` publishes response, triage, and remediation commitments. | CI does not establish cross-platform stability. The policy sets a 48-hour initial response, triage within 5 business days, and remediation within 30 calendar days after confirmation of a reported vulnerability; these are policy commitments, not a report of observed performance. |
 
 ### 2. Development Workflow (Plan D)
 
@@ -43,7 +43,7 @@ All contributions must strictly respect and uphold our 10 core governance and ru
 1. **Focused Scope:** One feature, bug fix, or documentation enhancement per pull request.
 2. **Contract & Unit Tests:** Add or update test coverage in `test/` for any behavioral changes. All existing and new tests must pass (`npm test`).
 3. **Smoke Verification:** Verify MCP tool registration and introspection via `npm run smoke`.
-4. **Documentation Parity:** If user-facing behavior or tools change, update `README.md`, `README_de.md`, and `llms.txt`.
+4. **Documentation Parity:** If user-facing behavior or tools change, update `README.md`, `README_de.md`, `README_es.md`, and `llms.txt`.
 5. **License & Attribution:** All contributions are licensed under the [MIT License](LICENSE) with attribution documented in [NOTICE](NOTICE).
 
 ### 4. Security & Incident Reporting
@@ -57,22 +57,22 @@ For security disclosures, please refer to our [Security Policy](SECURITY.md). Do
 
 ## Deutsch
 
-### 1. Architektur- und Governance-Invarianten
+### 1. Implementierungsbereiche und Richtlinie
 
-Alle Beiträge müssen unsere 10 verbindlichen Sicherheits- und Laufzeitinvarianten einhalten:
+Die folgenden Referenz-IDs ordnen aktuelles Quellverhalten und veröffentlichte Richtlinien ein. Sie sind keine Garantien über den beschriebenen Umfang hinaus. Bei Änderungen am Verhalten müssen die betroffenen Dokumente und Tests mitaktualisiert werden.
 
-| Invarianten-ID | Name / Schutzbereich | Technische Implementierungsanforderung |
+| Referenz | Implementiertes Verhalten | Umfang und Richtlinie |
 | :--- | :--- | :--- |
-| `INV-LOCAL-01` | **100% Local-First & Zero-Egress** | MCP Stdio-Transport über JSON-RPC 2.0; standardmäßig an `127.0.0.1` gebunden; null Telemetrie, Analyse-Pings oder externe Tracker. |
-| `INV-READ-02` | **Monotoner Read-Only-Schutz** | `N8N_MANAGER_READ_ONLY=1` als Prozess-Obergrenze; schreibende/mutierende Werkzeuge werden strikt unterbunden. |
-| `INV-BACK-03` | **Automatisierte Pre-Mutation-Snapshots** | JSON-Snapshot-Engine in `src/safety.ts` sichert vollständigen Workflow-Zustand unter `~/.n8n-manager-mcp/backups/` vor Änderungen. |
-| `INV-AUDIT-04` | **Forensischer Lokaler Audit-Trail** | Strukturiertes Append-Only JSON-Protokoll unter `~/.n8n-manager-mcp/audit.log` mit Zeitstempel, Server-URL, Workflow-ID und Status. |
-| `INV-SRV-05` | **Multi-Server & Credential-Isolation** | Isolierte Server-Konfiguration in `~/.n8n-manager-mcp/servers.json`; bereinigte API-Keys; sichere Standard-Server-Semantik. |
-| `INV-TRAV-06` | **Eingabevalidierung & Pfad-Traversierungsschutz** | Zod-Zahlenbereichsgrenzen (1..1000 Paginierung, 0..1000 Verbindungen); Pfadbereinigung verhindert Verzeichnis-Ausbrüche. |
-| `INV-PRIV-07` | **Rechte-Nicht-Eskalation & User-Space** | Ausführung ausschließlich im unprivilegierten Standard-Benutzerkontext (`RunAsInvoker`); keine Administrator-/Root-Rechte nötig. |
-| `INV-SEAM-08` | **Opt-In Decision History Nahtstelle** | Optionaler Adapter zu `n8n-workflow-manager` via `N8N_MCP_MANAGER_URL`; expliziter Schnellfehler ohne unbemerkten Fallback. |
-| `INV-NODE-09` | **Offline Node-Katalog & Introspektion** | Gebündelter statischer Node-Katalog in `src/nodes.ts` liefert Schemainformationen für KI-Agenten ohne Netzwerk-Roundtrips. |
-| `INV-SLA-10` | **Multi-Node CI & 48h / 30d Sicherheits-SLA** | GitHub Actions Matrix für Node.js 20 und 22 mit Concurrency-Abbruch; verbindliche 48h Reaktions-, 5-Tage-Triage- und 30-Tage-Fix-SLA. |
+| `INV-LOCAL-01` | Der MCP-Server kommuniziert über stdio mit seinem Client und öffnet keinen MCP-Listener. | Anfragen gehen an konfigurierte n8n-Endpunkte, optional an den konfigurierten Manager; beim Start in einem interaktiven TTY kann ein Update-Check laufen. Das bedeutet nicht „Zero-Egress“. |
+| `INV-READ-02` | Der gespeicherte Read-Only-Modus blockiert Workflow-Mutationswerkzeuge; `N8N_MANAGER_READ_ONLY=1` ist eine Umgebungsobergrenze, die das Werkzeug nicht deaktivieren kann. | Die Konfiguration wird vor der Mutationsprüfung geladen. Ein blockierter Versuch kann einen lokalen Audit-Eintrag anhängen; das ist kein Dateisystem-Read-Only-Modus. |
+| `INV-BACK-03` | Bei aktiviertem `backup_before_mutations` (Standard: true) werden vor Update, Löschen, Aktivieren/Deaktivieren und überschreibendem Restore JSON-Snapshots versucht. | Erstellen und Import werden nicht vorher gesichert. Scheitert Abruf oder Speicherung eines aktivierten Snapshots, wird die folgende n8n-Mutationsanfrage nicht gesendet. Backups liegen lokal im Klartext. |
+| `INV-AUDIT-04` | `audit_log` ist konfigurierbar und standardmäßig aktiviert; unterstützte Operationsergebnisse und blockierte Mutationsversuche werden an ein lokales JSON-Log angehängt. | Das Log ist nicht manipulationssicher. Append-Fehler werden weitergereicht und können nach erfolgreicher Remote-Mutation auftreten. |
+| `INV-SRV-05` | Mehrere Serverprofile werden lokal in `~/.n8n-manager-mcp/servers.json` gespeichert; die Standard-Serverauswahl ist durch das Werkzeugverhalten festgelegt. | API-Keys liegen im Klartext. Neue Konfigurationsdateien fordern POSIX-Modus `0600` an; unter Windows gelten Verzeichnis-ACLs. |
+| `INV-TRAV-06` | Eingabeschemas validieren Zahlenbereiche (1..1000 für Listenlimits, 0..1000 für Verbindungsindizes). Backup-Pfadsegmente werden bereinigt und bei den betreffenden Dateioperationen gegen den konfigurierten Root geprüft. | Realpath- und Symlink-Prüfungen sind auf Backup-, Listen- und Restore-Vorgänge begrenzt; sie belegen keine allgemeine Immunität gegen Traversal, Prototype-Pollution oder fehlerhafte Payloads. |
+| `INV-PRIV-07` | Der Server fordert keine Rechteerhöhung an. | Der Node.js-Prozess erbt die Rechte des startenden Prozesses; ein Rechteabbau oder eine `RunAsInvoker`-Erzwingung ist nicht implementiert. |
+| `INV-SEAM-08` | `n8n_manager_history` verwendet optional `N8N_MCP_MANAGER_URL` und fragt bei Nichterreichbarkeit des Managers nicht direkt n8n ab. | Bei Einrichtung wird eine Anfrage an den Manager-Endpunkt gesendet. |
+| `INV-NODE-09` | `n8n_describe_nodes` liefert Offline-Beschreibungen gängiger Node-Typen. | Vollständige Node-Schemas oder Pflichtparameter werden nicht bereitgestellt. |
+| `INV-SLA-10` | GitHub Actions führt Build-, Test-, Smoke- und Paketprüfungen auf Ubuntu mit Node.js 20 und 22 aus. `SECURITY.md` veröffentlicht Reaktions-, Triage- und Behebungszusagen. | Die CI belegt keine plattformübergreifende Stabilität. Die Richtlinie setzt eine erste Reaktion binnen 48 Stunden, Triage binnen 5 Werktagen und Behebung binnen 30 Kalendertagen nach Bestätigung einer gemeldeten Schwachstelle fest; dies sind Richtlinienzusagen, keine Messwerte zur tatsächlichen Leistung. |
 
 ### 2. Entwicklungsworkflow (Plan D)
 
@@ -92,7 +92,7 @@ Alle Beiträge müssen unsere 10 verbindlichen Sicherheits- und Laufzeitinvarian
 1. **Fokussierter Umfang:** Ein Thema, Bugfix oder Feature pro Pull Request.
 2. **Vertragstests & Regression:** Neue oder modifizierte Funktionen durch Unit- und Vertragstests in `test/` absichern (`npm test`).
 3. **Smoke-Prüfung:** Werkzeug-Registrierung und Schema-Funktion via `npm run smoke` verifizieren.
-4. **Dokumentations-Parität:** Bei Schnittstellenänderungen `README.md`, `README_de.md` und `llms.txt` synchron halten.
+4. **Dokumentations-Parität:** Bei Änderungen an Nutzerverhalten oder Werkzeugen `README.md`, `README_de.md`, `README_es.md`, `README_ja.md`, `README_ru.md`, `README_fr.md`, `README_zh.md`, `README_hi.md`, `README_ar.md`, `README_bn.md`, `README_pt.md` und `llms.txt` aktualisieren.
 5. **Lizenz & Urheberschaft:** Alle Beiträge werden unter der [MIT-Lizenz](LICENSE) bereitgestellt; Urheberrecht gem. [NOTICE](NOTICE).
 
 ### 4. Sicherheit & Meldewege

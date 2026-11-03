@@ -2,7 +2,7 @@
 
 > n8n-manager-mcp is an MCP (Model Context Protocol) server that lets AI assistants like Claude, Cursor, and Windsurf manage n8n workflows end-to-end: list, create, update, delete, activate, export, import, and inspect executions. Connects directly to the n8n REST API with no Python dependency, and supports multiple n8n instances at once.
 
-19 tools covering complete n8n workflow management: n8n_list_workflows, n8n_get_workflow (full node graph + connections), n8n_create_workflow (from nodes + connections), n8n_update_workflow, n8n_delete_workflow, n8n_activate_workflow (toggle on/off), n8n_list_executions (recent runs with status), n8n_export_workflow (importable JSON), n8n_import_workflow, n8n_safety_status, n8n_set_safety_mode, n8n_list_backups, n8n_restore_workflow, n8n_describe_nodes (built-in catalog with descriptions), n8n_add_server, n8n_list_servers, n8n_remove_server, n8n_ping_server, n8n_manager_history (opt-in, read-only: version history, recorded decisions, and sync history from a running n8n-workflow-manager module; enabled with N8N_MCP_MANAGER_URL, never falls back to a direct n8n query when the manager is unreachable). Multi-server support allows AI agents to move workflows between n8n instances, while the safety layer supports read-only mode, backup-before-mutation, restore from backup, and local audit logging.
+19 tools cover workflow listing, reading, creation, updating, deletion, activation, execution inspection, export/import, safety settings, backups, node descriptions, server profiles, server reachability, and optional manager history. `n8n_describe_nodes` returns short descriptions of common node types, not complete schemas. Multi-server support routes to configured n8n instances. When `backup_before_mutations` is enabled (default: true), snapshots are attempted before update, delete, activate/deactivate, and overwrite-restore operations; a failed enabled backup stops the following n8n mutation request. Create/import have no pre-mutation backup; import creates a new workflow without a rollback handle. Local audit logging is configurable and enabled by default. `N8N_MANAGER_READ_ONLY=1` adds an environment-level ceiling to the persisted read-only setting. The server loads configuration before checking the mutation gate, and a blocked mutation may append to the local audit log.
 
 Verification (2026-11-02): fresh `npm test`, build, smoke discovery, and
 package dry-run pass with 208 Vitest tests (100% pass).
@@ -16,18 +16,27 @@ Part of the ellmos family. Node.js, MIT. Published as `n8n-manager-mcp` on npm. 
 
 ## Docs
 
-- [README (English)](https://github.com/ellmos-ai/n8n-manager-mcp/blob/main/README.md): 18-point navigation, target personas, 5-way comparative matrix, tools, installation, configuration for Claude Desktop / Claude Code / Cursor / Windsurf
-- [README (Deutsch)](https://github.com/ellmos-ai/n8n-manager-mcp/blob/main/README_de.md): German version with full parity
+- [README (English)](https://github.com/ellmos-ai/n8n-manager-mcp/blob/main/README.md): navigation, target users, project capability/boundary table, tools, installation, and configuration
+- [README (Deutsch)](https://github.com/ellmos-ai/n8n-manager-mcp/blob/main/README_de.md): German-language guide to installation, tools, configuration, and documented implementation limits
+- [README (Français)](https://github.com/ellmos-ai/n8n-manager-mcp/blob/main/README_fr.md): French-language guide to installation, tools, configuration, and documented implementation limits
+- [README (Русский)](https://github.com/ellmos-ai/n8n-manager-mcp/blob/main/README_ru.md): Russian-language guide to installation, tools, configuration, and documented implementation limits
+- [README (日本語)](https://github.com/ellmos-ai/n8n-manager-mcp/blob/main/README_ja.md): Japanese-language guide to installation, tools, configuration, and documented implementation limits
+- [README (Español)](https://github.com/ellmos-ai/n8n-manager-mcp/blob/main/README_es.md): Spanish-language guide to installation, tools, configuration, and documented implementation limits
+- [README (简体中文)](https://github.com/ellmos-ai/n8n-manager-mcp/blob/main/README_zh.md): Simplified Chinese guide to installation, tools, configuration, and documented implementation limits
+- [README (हिन्दी)](https://github.com/ellmos-ai/n8n-manager-mcp/blob/main/README_hi.md): Hindi guide to installation, tools, configuration, and documented implementation limits
+- [README (العربية)](https://github.com/ellmos-ai/n8n-manager-mcp/blob/main/README_ar.md): Arabic guide to installation, tools, configuration, and documented implementation limits
+- [README (Português)](https://github.com/ellmos-ai/n8n-manager-mcp/blob/main/README_pt.md): Portuguese guide to installation, tools, configuration, and documented implementation limits
+- [README (বাংলা)](https://github.com/ellmos-ai/n8n-manager-mcp/blob/main/README_bn.md): Bengali guide to installation, tools, configuration, and documented implementation limits
 - [SKILL.md](https://github.com/ellmos-ai/n8n-manager-mcp/blob/main/SKILL.md): Product skill instructions for autonomous agents and LLMs
 - [llm.txt](https://github.com/ellmos-ai/n8n-manager-mcp/blob/main/llm.txt): Compatibility pointer to canonical llms.txt and SKILL.md
-- [CONTRIBUTING.md](https://github.com/ellmos-ai/n8n-manager-mcp/blob/main/CONTRIBUTING.md): Bilingual contribution guidelines, 10 governance invariants (INV-LOCAL-01 through INV-SLA-10), RunAsInvoker user-mode execution, and Plan D workflow
+- [CONTRIBUTING.md](https://github.com/ellmos-ai/n8n-manager-mcp/blob/main/CONTRIBUTING.md): Bilingual contribution guidelines, implementation scope, Plan D workflow, version-freeze policy, and test/smoke commands
 - [CODE_OF_CONDUCT.md](https://github.com/ellmos-ai/n8n-manager-mcp/blob/main/CODE_OF_CONDUCT.md): Bilingual Community Code of Conduct based on Contributor Covenant v2.1
 - [NOTICE](https://github.com/ellmos-ai/n8n-manager-mcp/blob/main/NOTICE): Formal copyright and attribution notice for ellmos-ai and open-bricks
 - [THIRD_PARTY_LICENSES.md](https://github.com/ellmos-ai/n8n-manager-mcp/blob/main/THIRD_PARTY_LICENSES.md): Inventory of runtime and dev dependencies, permissive licenses (MIT, Apache-2.0, BSD-2-Clause, BSD-3-Clause)
-- [THIRD_PARTY_LICENSES.txt](https://github.com/ellmos-ai/n8n-manager-mcp/blob/main/THIRD_PARTY_LICENSES.txt): Level 1 SBOM plain-text companion file, permissive licenses, 10 formal governance invariants (INV-LOCAL-01 through INV-SLA-10), RunAsInvoker non-elevation certification
-- [MARKETING-LOG.txt](https://github.com/ellmos-ai/n8n-manager-mcp/blob/main/MARKETING-LOG.txt): Marketing positioning, 4 target personas, 10-dimension comparative matrix, 10 invariants (INV-LOCAL-01 to INV-SLA-10), and roadmap
+- [THIRD_PARTY_LICENSES.txt](https://github.com/ellmos-ai/n8n-manager-mcp/blob/main/THIRD_PARTY_LICENSES.txt): Plain-text dependency and license inventory
+- [MARKETING-LOG.txt](https://github.com/ellmos-ai/n8n-manager-mcp/blob/main/MARKETING-LOG.txt): Marketing positioning, target personas, and discoverability roadmap
 - [CHANGELOG.md](https://github.com/ellmos-ai/n8n-manager-mcp/blob/main/CHANGELOG.md): Release history and version notes
-- [SECURITY.md](https://github.com/ellmos-ai/n8n-manager-mcp/blob/main/SECURITY.md): Security policy, supported versions, 48h SLA, and safety invariants
+- [SECURITY.md](https://github.com/ellmos-ai/n8n-manager-mcp/blob/main/SECURITY.md): Security policy, supported versions, reporting contacts, and published response, triage, and remediation commitments
 - [server.json](https://github.com/ellmos-ai/n8n-manager-mcp/blob/main/server.json): MCP Registry metadata for `io.github.ellmos-ai/n8n-manager-mcp`
 - [Glama listing](https://glama.ai/mcp/servers/ellmos-ai/n8n-manager-mcp): Public MCP directory page
 - [Enterprise DNA listing](https://enterprisedna.co/directories/mcp/ellmos-ai-n8n-manager-mcp/): Public MCP directory page for the ellmos-ai namespace
@@ -76,11 +85,8 @@ Part of the ellmos family. Node.js, MIT. Published as `n8n-manager-mcp` on npm. 
 - io.github.ellmos-ai n8n-manager-mcp
 - n8n Manager MCP PulseMCP Glama Enterprise DNA
 
-Current safety contract: backup path segments are sanitized and resolved
-under the configured backup root; reserved names, traversal, and symlink or
-reparse escapes are rejected or mapped safely, and listing returns only
-regular JSON backup files. `n8n_add_server` preserves an existing default when
-`is_default` is omitted on update; `true` promotes and explicit `false`
-removes the flag, with first-server fallback when no default remains.
+Backup path segments are sanitized and resolved under the configured backup root. Real-path and symlink checks apply to backup, listing, and restore operations; listing returns regular JSON backup files. These checks are scoped to those operations and do not establish general immunity to all filesystem escapes or malformed inputs. `servers.json`, backup files, and the audit log are local plaintext; newly written config files request POSIX mode `0600`, while Windows access follows directory ACLs. Audit append errors propagate and may occur after a remote mutation has succeeded. Network requests go to configured n8n endpoints and, when enabled, the manager endpoint; the update notifier may check for updates on interactive TTY startup and skips this check in non-TTY stdio operation. The reviewed application source contains no product-analytics sender.
+
+`n8n_add_server` preserves an existing default when `is_default` is omitted on update; `true` promotes and explicit `false` removes the flag, with first-server fallback when no default remains.
 
 ## Last-checked: 2026-11-02

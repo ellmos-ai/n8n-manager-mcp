@@ -124,7 +124,8 @@ describe("metadata and manifest parity", () => {
     expect(secContent).toContain("security@ellmos.ai");
     expect(secContent).toContain("support@lukasgeiger.com");
     expect(secContent).toContain("lukas@open-bricks.org");
-    expect(secContent).toContain("Local-First");
+    expect(secContent).toContain("Local MCP Transport");
+    expect(secContent).toContain("Lokaler MCP-Transport");
     expect(secContent).toContain("N8N_MANAGER_READ_ONLY=1");
     expect(secContent).toContain("~/.n8n-manager-mcp/backups/");
     expect(secContent).toContain("~/.n8n-manager-mcp/audit.log");
@@ -156,20 +157,20 @@ describe("metadata and manifest parity", () => {
     expect(readmeDe).toContain("#änderungsprotokoll");
   });
 
-  it("verifies core capabilities and safety invariants tables across READMEs", () => {
+  it("verifies capability and implementation boundary tables across READMEs", () => {
     const readme = fs.readFileSync(path.join(repoRoot, "README.md"), "utf-8");
     const readmeDe = fs.readFileSync(path.join(repoRoot, "README_de.md"), "utf-8");
 
-    expect(readme).toContain("## Core Capabilities & Safety Invariants");
-    expect(readmeDe).toContain("## Kernfähigkeiten & Sicherheitsinvarianten");
-    expect(readme).toContain("Local MCP Transport & No Telemetry");
-    expect(readmeDe).toContain("Lokaler MCP-Transport ohne Telemetrie");
-    expect(readme).toContain("Monotonic Read-Only Enforcement");
-    expect(readmeDe).toContain("Monotones Read-Only-Schutzgating");
-    expect(readme).toContain("Automated Pre-Mutation Backups");
-    expect(readmeDe).toContain("Automatische Pre-Mutation-Backups");
-    expect(readme).toContain("Local Audit Trail");
-    expect(readmeDe).toContain("Lokale Audit-Protokollierung");
+    expect(readme).toContain("## Capabilities & Implementation Boundaries");
+    expect(readmeDe).toContain("## Fähigkeiten und Implementierungsgrenzen");
+    expect(readme).toContain("MCP client communication uses local stdio.");
+    expect(readmeDe).toContain("Die MCP-Client-Kommunikation erfolgt über lokales stdio.");
+    expect(readme).toContain("N8N_MANAGER_READ_ONLY=1");
+    expect(readmeDe).toContain("Umgebungsobergrenze");
+    expect(readme).toContain("backup_before_mutations");
+    expect(readmeDe).toContain("backup_before_mutations");
+    expect(readme).toContain("audit_log");
+    expect(readmeDe).toContain("audit_log");
   });
 
   it("verifies sibling tools and ecosystem matrix across READMEs", () => {
@@ -285,15 +286,15 @@ describe("metadata and manifest parity", () => {
     expect(llmsTxt).toContain("THIRD_PARTY_LICENSES.txt");
     expect(llmsTxt).toContain("MARKETING-LOG.txt");
     expect(llmsTxt).toContain("io.github.ellmos-ai/n8n-manager-mcp");
-    expect(llmsTxt).toContain("19 tools covering complete n8n workflow management");
+    expect(llmsTxt).toContain("19 tools cover workflow listing");
   });
 
   it("verifies documentation badge synchronization and links across languages", () => {
     const readme = fs.readFileSync(path.join(repoRoot, "README.md"), "utf-8");
     const readmeDe = fs.readFileSync(path.join(repoRoot, "README_de.md"), "utf-8");
 
-    expect(readme).toContain("205%20passed");
-    expect(readmeDe).toContain("205%20passed");
+    expect(readme).toContain("208%20passed");
+    expect(readmeDe).toContain("208%20passed");
     expect(readme).toContain("README_de.md");
     expect(readmeDe).toContain("README.md");
     expect(readme).toContain("https://github.com/open-bricks");
@@ -360,7 +361,7 @@ describe("metadata and manifest parity", () => {
     expect(marketing).toContain("4. 5-WAY COMPARATIVE MATRIX");
   });
 
-  it("verifies target personas and comparative matrix tables across READMEs", () => {
+  it("verifies target personas and project capability tables across READMEs", () => {
     const readme = fs.readFileSync(path.join(repoRoot, "README.md"), "utf-8");
     const readmeDe = fs.readFileSync(path.join(repoRoot, "README_de.md"), "utf-8");
 
@@ -375,18 +376,18 @@ describe("metadata and manifest parity", () => {
     expect(readme).toContain("Ecosystem Builders & Tool Integrators");
     expect(readmeDe).toContain("Ökosystem-Entwickler & Tool-Integratoren");
 
-    expect(readme).toContain("## Comparative Matrix & Alternatives");
-    expect(readmeDe).toContain("## Vergleichsmatrix & Alternativen");
-    expect(readme).toContain("Direct n8n REST API");
-    expect(readmeDe).toContain("Direkte n8n REST API");
-    expect(readme).toContain("Standard Agent Shell");
-    expect(readmeDe).toContain("Standard Agent Shell");
-    expect(readme).toContain("Manual n8n Web UI");
-    expect(readmeDe).toContain("Manuelle n8n Web-UI");
-    expect(readme).toContain("Generic Cloud SaaS");
-    expect(readmeDe).toContain("Generische Cloud-SaaS");
-    expect(readme).toContain("Local stdio transport; HTTP only to configured n8n/manager endpoints");
-    expect(readmeDe).toContain("Lokales Stdio; HTTP nur zu konfigurierten n8n-/Manager-Endpunkten");
+    expect(readme).toContain("## Project Capabilities & Boundaries");
+    expect(readmeDe).toContain("## Projektfunktionen und Grenzen");
+    expect(readme).toContain("Workflow tools");
+    expect(readmeDe).toContain("Workflow-Werkzeuge");
+    expect(readme).toContain("Server profiles");
+    expect(readmeDe).toContain("Serverprofile");
+    expect(readme).toContain("Pre-mutation backups");
+    expect(readmeDe).toContain("Backups vor Mutationen");
+    expect(readme).toContain("Audit log");
+    expect(readmeDe).toContain("Audit-Log");
+    expect(readme).toContain("interactive TTY start");
+    expect(readmeDe).toContain("interaktiven TTY");
     expect(readme).toContain("## Third-Party Licenses & Transparency");
     expect(readmeDe).toContain("## Drittanbieter-Lizenzen & Transparenz");
   });
@@ -466,7 +467,7 @@ describe("metadata and manifest parity", () => {
     expect(pkg.keywords).toBeDefined();
     expect(pkg.keywords?.length).toBe(20);
     expect(pkg.keywords).toContain("local-first");
-    expect(pkg.keywords).toContain("zero-egress");
+    expect(pkg.keywords).toContain("stdio");
     expect(pkg.keywords).toContain("claude-code");
     expect(pkg.keywords).toContain("mcp-server");
     expect(pkg.keywords).toContain("n8n-workflows");
@@ -544,14 +545,14 @@ describe("metadata and manifest parity", () => {
     const readmeDe = fs.readFileSync(path.join(repoRoot, "README_de.md"), "utf-8");
 
     expect(readmeEn).toContain("[VIEW 1: CALLER RUNTIMES & AGENT ECOSYSTEM]");
-    expect(readmeEn).toContain("[VIEW 2: N8N-MANAGER-MCP CORE ENGINE & SAFETY ARBITRATION]");
-    expect(readmeEn).toContain("[VIEW 3: RUNTIME PERSISTENCE, BACKUP SNAPSHOTS & LOCAL AUDIT WAL]");
-    expect(readmeEn).toContain("[VIEW 4: DEFENSE PERIMETER, LOCAL STDIO & RUNASINVOKER]");
+    expect(readmeEn).toContain("[VIEW 2: N8N-MANAGER-MCP CORE ENGINE & MUTATION CHECKS]");
+    expect(readmeEn).toContain("[VIEW 3: RUNTIME PERSISTENCE, BACKUP SNAPSHOTS & LOCAL AUDIT LOG]");
+    expect(readmeEn).toContain("[VIEW 4: STDIO TRANSPORT, CONFIGURED ENDPOINTS & LAUNCHER PRIVILEGES]");
 
     expect(readmeDe).toContain("[SICHT 1: AUFRUFER-LAUFZEITEN & AGENTEN-ÖKOSYSTEM]");
-    expect(readmeDe).toContain("[SICHT 2: N8N-MANAGER-MCP KERN-ENGINE & SICHERHEITS-ARBITRIERUNG]");
-    expect(readmeDe).toContain("[SICHT 3: LOKALE PERSISTENZ, BACKUP-SNAPSHOTS & AUDIT-WAL]");
-    expect(readmeDe).toContain("[SICHT 4: SICHERHEITSPERIMETER, LOKALES STDIO & RUNASINVOKER]");
+    expect(readmeDe).toContain("[SICHT 2: N8N-MANAGER-MCP KERN-ENGINE & MUTATIONSPRÜFUNGEN]");
+    expect(readmeDe).toContain("[SICHT 3: LOKALE PERSISTENZ, BACKUP-SNAPSHOTS & AUDIT-LOG]");
+    expect(readmeDe).toContain("[SICHT 4: STDIO-TRANSPORT, KONFIGURIERTE ENDPOINTS & STARTRECHTE]");
   });
 
   it("verifies root NOTICE file attribution and copyright integrity", () => {
@@ -600,7 +601,7 @@ describe("metadata and manifest parity", () => {
     expect(contrib).toContain("Plan D");
     expect(contrib).toContain("C:\\_Local_DEV\\repos\\n8n-manager-mcp");
     expect(contrib).toContain("T-20260920-167562623");
-    expect(contrib).toContain("48h");
+    expect(contrib).toContain("48-hour initial response");
     expect(contrib).toContain("security@ellmos.ai");
     expect(contrib).toContain("security@open-bricks.org");
     expect(contrib).toContain("MIT License");
