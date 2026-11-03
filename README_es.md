@@ -2,7 +2,7 @@
 
 # Servidor MCP de n8n Manager
 
-**[🇬🇧 English](README.md) | [🇩🇪 Deutsch](README_de.md) | 🇪🇸 Español | [🇯🇵 日本語](README_ja.md) | [🇷🇺 Русский](README_ru.md) | [🇫🇷 Français](README_fr.md) | [🇨🇳 简体中文](README_zh.md)**
+**[🇬🇧 English](README.md) | [🇩🇪 Deutsch](README_de.md) | 🇪🇸 Español | [🇯🇵 日本語](README_ja.md) | [🇷🇺 Русский](README_ru.md) | [🇫🇷 Français](README_fr.md) | [🇨🇳 简体中文](README_zh.md) | [🇮🇳 हिन्दी](README_hi.md)**
 
 *Parte de la familia [ellmos-ai](https://github.com/ellmos-ai) y del paraguas [open-bricks](https://github.com/open-bricks).*
 

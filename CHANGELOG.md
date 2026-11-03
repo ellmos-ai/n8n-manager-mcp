@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Hindi user guide (2026-11-03)
+- Add the complete Hindi README, reciprocal eight-language navigation, npm package inclusion and discovery indexing. Preserve implementation and security-policy limits; runtime and version unchanged.
+
 ### Simplified Chinese user guide (2026-11-03)
 - Add the complete Simplified Chinese README, reciprocal seven-language navigation, npm package inclusion and discovery indexing. Preserve implementation and security-policy limits; runtime and version unchanged.
 
