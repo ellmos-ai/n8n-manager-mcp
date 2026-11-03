@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Complete World Set user guides (2026-11-03)
+- Add the complete Bengali README after independent prose and terminology review, completing eleven-language documentation with reciprocal navigation, npm package inclusion and discovery indexing. Preserve implementation and security-policy limits; runtime and version unchanged.
+
 ### Portuguese user guide (2026-11-03)
 - Add the complete Portuguese README, reciprocal ten-language navigation, npm package inclusion and discovery indexing. Preserve implementation and security-policy limits; runtime and version unchanged.
 

@@ -26,6 +26,7 @@ Part of the ellmos family. Node.js, MIT. Published as `n8n-manager-mcp` on npm. 
 - [README (हिन्दी)](https://github.com/ellmos-ai/n8n-manager-mcp/blob/main/README_hi.md): Hindi guide to installation, tools, configuration, and documented implementation limits
 - [README (العربية)](https://github.com/ellmos-ai/n8n-manager-mcp/blob/main/README_ar.md): Arabic guide to installation, tools, configuration, and documented implementation limits
 - [README (Português)](https://github.com/ellmos-ai/n8n-manager-mcp/blob/main/README_pt.md): Portuguese guide to installation, tools, configuration, and documented implementation limits
+- [README (বাংলা)](https://github.com/ellmos-ai/n8n-manager-mcp/blob/main/README_bn.md): Bengali guide to installation, tools, configuration, and documented implementation limits
 - [SKILL.md](https://github.com/ellmos-ai/n8n-manager-mcp/blob/main/SKILL.md): Product skill instructions for autonomous agents and LLMs
 - [llm.txt](https://github.com/ellmos-ai/n8n-manager-mcp/blob/main/llm.txt): Compatibility pointer to canonical llms.txt and SKILL.md
 - [CONTRIBUTING.md](https://github.com/ellmos-ai/n8n-manager-mcp/blob/main/CONTRIBUTING.md): Bilingual contribution guidelines, implementation scope, Plan D workflow, version-freeze policy, and test/smoke commands
