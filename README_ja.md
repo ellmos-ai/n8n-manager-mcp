@@ -2,7 +2,7 @@
 
 # n8n Manager MCP Server
 
-**[🇬🇧 English](README.md) | [🇩🇪 Deutsch](README_de.md) | [🇪🇸 Español](README_es.md) | 🇯🇵 日本語 | [🇷🇺 Русский](README_ru.md) | [🇫🇷 Français](README_fr.md) | [🇨🇳 简体中文](README_zh.md) | [🇮🇳 हिन्दी](README_hi.md)**
+**[🇬🇧 English](README.md) | [🇩🇪 Deutsch](README_de.md) | [🇪🇸 Español](README_es.md) | 🇯🇵 日本語 | [🇷🇺 Русский](README_ru.md) | [🇫🇷 Français](README_fr.md) | [🇨🇳 简体中文](README_zh.md) | [🇮🇳 हिन्दी](README_hi.md) | [العربية](README_ar.md)**
 
 *[ellmos-ai](https://github.com/ellmos-ai) ファミリーおよび [open-bricks](https://github.com/open-bricks) の統括プロジェクトの一員です。*
 
