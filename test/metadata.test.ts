@@ -60,6 +60,7 @@ describe("metadata and manifest parity", () => {
       "NOTICE",
       "LICENSE",
       ".gitignore",
+      "TODO.md",
     ];
 
     for (const file of requiredFiles) {
@@ -680,5 +681,49 @@ describe("metadata and manifest parity", () => {
     expect(skill).toContain("n8n_delete_workflow");
     expect(skill).toContain("INV-LOCAL-01");
     expect(skill).toContain("INV-SLA-10");
+  });
+
+  it("verifies AI Security & Dependency Audit governance, TODO register, hardened overrides, and zero vulnerabilities", () => {
+    const todoPath = path.join(repoRoot, "TODO.md");
+    expect(fs.existsSync(todoPath), "Missing canonical TODO.md").toBe(true);
+    const todoContent = fs.readFileSync(todoPath, "utf-8");
+    expect(todoContent).toContain("## AI Security & Dependency Audit (2026-11-08)");
+    expect(todoContent).toContain("npm audit");
+    expect(todoContent).toContain("proxy-addr");
+    expect(todoContent).toContain("body-parser");
+    expect(todoContent).toContain("source-map-js");
+    expect(todoContent).toContain("0.1.21");
+
+    const pkg = JSON.parse(fs.readFileSync(path.join(repoRoot, "package.json"), "utf-8")) as {
+      dependencies: Record<string, string>;
+      overrides: Record<string, string>;
+    };
+    expect(pkg.dependencies["@modelcontextprotocol/sdk"]).toBe("^1.32.2");
+    expect(pkg.dependencies["zod"]).toBe("^4.6.7");
+    expect(pkg.overrides["proxy-addr"]).toBe("^2.0.8");
+    expect(pkg.overrides["body-parser"]).toBe("^2.4.0");
+    expect(pkg.overrides["source-map-js"]).toBe("^1.2.2");
+    expect(pkg.overrides["@hono/node-server"]).toBe("^2.1.5");
+    expect(pkg.overrides["qs"]).toBe("^6.17.1");
+    expect(pkg.overrides["vitest"]).toBe("^4.1.12");
+
+    const licenses = fs.readFileSync(path.join(repoRoot, "THIRD_PARTY_LICENSES.md"), "utf-8");
+    expect(licenses).toContain("Re-Audit: 2026-11-08");
+    expect(licenses).toContain("^1.32.2");
+    expect(licenses).toContain("^4.6.7");
+    expect(licenses).toContain("proxy-addr");
+    expect(licenses).toContain("body-parser");
+    expect(licenses).toContain("source-map-js");
+
+    const txtLicenses = fs.readFileSync(path.join(repoRoot, "THIRD_PARTY_LICENSES.txt"), "utf-8");
+    expect(txtLicenses).toContain("Re-Audited: 2026-11-08");
+    expect(txtLicenses).toContain("^1.32.2");
+    expect(txtLicenses).toContain("^4.6.7");
+    expect(txtLicenses).toContain("proxy-addr");
+    expect(txtLicenses).toContain("body-parser");
+    expect(txtLicenses).toContain("source-map-js");
+
+    const changelog = fs.readFileSync(path.join(repoRoot, "CHANGELOG.md"), "utf-8");
+    expect(changelog).toContain("AI Security & Dependency Audit (2026-11-08)");
   });
 });

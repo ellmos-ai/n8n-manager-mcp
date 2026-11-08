@@ -1,6 +1,6 @@
 # Third-Party Licenses and Open Source Notices
 
-> **Audit Date:** 2026-10-01 (Re-Audited: 2026-10-30) | **Stand: 2026-10-01 / Re-Audit: 2026-10-30** | **Compliance:** 100% Permissive (MIT / BSD / Apache-2.0) | **Zero-Copyleft Guaranteed**
+> **Audit Date:** 2026-10-01 (Re-Audited: 2026-11-08) | **Stand: 2026-10-01 / Re-Audit: 2026-11-08** | **Compliance:** 100% Permissive (MIT / BSD / Apache-2.0) | **Zero-Copyleft Guaranteed**
 
 This project, **n8n-manager-mcp**, is licensed under the [MIT License](LICENSE) with attribution documented in [NOTICE](NOTICE).
 A plain-text Level 1 SBOM companion file is available as [`THIRD_PARTY_LICENSES.txt`](THIRD_PARTY_LICENSES.txt).
@@ -12,8 +12,8 @@ Below is an inventory of third-party open-source software, runtime packages, and
 
 | Package | Version Range | License | Project URL / Source | Purpose |
 | :--- | :--- | :--- | :--- | :--- |
-| [`@modelcontextprotocol/sdk`](https://github.com/modelcontextprotocol/typescript-sdk) | `^1.29.0` | MIT | [GitHub](https://github.com/modelcontextprotocol/typescript-sdk) | Official Model Context Protocol SDK for TypeScript / Node.js (Stdio transport, server abstractions) |
-| [`zod`](https://github.com/colinhacks/zod) | `^3.23.8` | MIT | [GitHub](https://github.com/colinhacks/zod) | TypeScript-first schema declaration and input validation with static type inference |
+| [`@modelcontextprotocol/sdk`](https://github.com/modelcontextprotocol/typescript-sdk) | `^1.32.2` | MIT | [GitHub](https://github.com/modelcontextprotocol/typescript-sdk) | Official Model Context Protocol SDK for TypeScript / Node.js (Stdio transport, server abstractions) |
+| [`zod`](https://github.com/colinhacks/zod) | `^4.6.7` | MIT | [GitHub](https://github.com/colinhacks/zod) | TypeScript-first schema declaration and input validation with static type inference |
 | [`update-notifier`](https://github.com/yeoman/update-notifier) | `^7.3.1` | BSD-2-Clause | [GitHub](https://github.com/yeoman/update-notifier) | CLI update notification for interactive terminal sessions (disabled during stdio MCP operations) |
 
 ---
@@ -29,6 +29,9 @@ Below is an inventory of third-party open-source software, runtime packages, and
 | `express-rate-limit` | Rate limiting middleware for network requests | MIT | [GitHub](https://github.com/express-rate-limit/express-rate-limit) |
 | `ip-address` | IPv4 and IPv6 parsing and validation library | MIT | [GitHub](https://github.com/beaugunderson/ip-address) |
 | `qs` | Query string parser with nesting support | BSD-3-Clause | [GitHub](https://github.com/ljharb/qs) |
+| `proxy-addr` | IP address proxy determination with spoofing mitigations | MIT | [GitHub](https://github.com/jshttp/proxy-addr) |
+| `body-parser` | Node.js body parsing middleware with depth guard | MIT | [GitHub](https://github.com/expressjs/body-parser) |
+| `source-map-js` | Source map parsing and generation utility | BSD-3-Clause | [GitHub](https://github.com/73rhodes/source-map-js) |
 | `postcss` | CSS processing pipeline utility | MIT | [GitHub](https://github.com/postcss/postcss) |
 
 ---
@@ -40,7 +43,7 @@ The following tools are used solely for building, testing, linting, and verifyin
 | Package | Version Range | License | Project URL | Purpose |
 | :--- | :--- | :--- | :--- | :--- |
 | [`typescript`](https://github.com/microsoft/TypeScript) | `^5.3.3` | Apache-2.0 | [GitHub](https://github.com/microsoft/TypeScript) | TypeScript compiler (`tsc`) for type checking and compilation to JavaScript |
-| [`vitest`](https://github.com/vitest-dev/vitest) | `^4.1.11` | MIT | [GitHub](https://github.com/vitest-dev/vitest) | Next-generation testing framework for unit and contract test suites |
+| [`vitest`](https://github.com/vitest-dev/vitest) | `^4.1.12` | MIT | [GitHub](https://github.com/vitest-dev/vitest) | Next-generation testing framework for unit and contract test suites |
 | [`@types/node`](https://github.com/DefinitelyTyped/DefinitelyTyped) | `^20.11.0` | MIT | [GitHub](https://github.com/DefinitelyTyped/DefinitelyTyped) | TypeScript definitions for Node.js runtime APIs |
 
 ---

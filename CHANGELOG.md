@@ -4,6 +4,30 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### AI Security & Dependency Audit (2026-11-08)
+- Comprehensive supply-chain and vulnerability audit (`npm audit` -> 0 vulnerabilities across 195 packages).
+- Upgrade `@modelcontextprotocol/sdk` to `^1.32.2` (resolving upstream advisories GHSA-6qxp-vccf-f47h, GHSA-22jm-h49p-29qw, GHSA-6prh-2h8m-c8cw, GHSA-46jr-4wx8-v453, GHSA-rvq5-wwqv-78pq, GHSA-f897-62hf-6gxq).
+- Harden `zod` to `^4.6.7` (mitigating memory exhaustion vulnerability GHSA-mrhx-c7xc-m3w5).
+- Align and pin supply-chain security overrides in `package.json` with sibling MCP servers:
+  - `proxy-addr` (`^2.0.8`, GHSA-jqcg-44mw-7w3h)
+  - `body-parser` (`^2.4.0`, GHSA-27r3-jxmh-p828)
+  - `source-map-js` (`^1.2.2`, GHSA-68fv-2mgg-jv7q)
+  - `@hono/node-server` (`^2.1.5`)
+  - `qs` (`^6.17.1`)
+  - `vitest` (`^4.1.12`)
+  - `@vitest/mocker` (`^4.1.12`)
+  - `ip-address` (`^10.7.5`)
+  - `postcss` (`^8.5.18`)
+  - `fast-uri` (`^3.1.9`)
+  - `express-rate-limit` (`^8.6.2`)
+  - `nanoid` (`^3.3.17`)
+  - `hono` (`^4.13.13`)
+- Harmonize Level 1 SBOM documents (`THIRD_PARTY_LICENSES.md` & `THIRD_PARTY_LICENSES.txt`) to audit date 2026-11-08.
+- Establish canonical `TODO.md` task and security register with standard 10-Gate STATUS table.
+- AST/Regex secrets and privacy scan: 0 hardcoded personal developer homepaths (`C:\Users\lukas\...`), 0 credentials/tokens, 0 private keys.
+- Extend automated contract test suite (`test/metadata.test.ts`) verifying hardened overrides, SBOM re-audit date, and `TODO.md` integrity.
+
+
 ### Complete World Set user guides (2026-11-03)
 - Add the complete Bengali README after independent prose and terminology review, completing eleven-language documentation with reciprocal navigation, npm package inclusion and discovery indexing. Preserve implementation and security-policy limits; runtime and version unchanged.
 

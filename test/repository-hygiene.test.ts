@@ -170,6 +170,7 @@ describe("repository hygiene", () => {
       "NOTICE",
       ".env.example",
       ".env.sample",
+      "TODO.md",
     ];
 
     for (const candidate of trackable) {

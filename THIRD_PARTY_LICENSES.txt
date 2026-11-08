@@ -4,7 +4,7 @@ THIRD-PARTY SOFTWARE LICENSES & LEVEL 1 SBOM AUDIT TRAIL
 
 Project:               ellmos-ai/n8n-manager-mcp
 Version:               0.1.21 (frozen per T-20260920-167562623)
-Stand:                 2026-10-01 (Re-Audited: 2026-10-30)
+Stand:                 2026-10-01 (Re-Audited: 2026-11-08)
 Repository License:    MIT License (see LICENSE)
 Attribution Notice:    see NOTICE
 Markdown Companion:    see THIRD_PARTY_LICENSES.md
@@ -66,7 +66,7 @@ INV-SLA-10    | Multi-Node CI & 48h Security SLA         | Node 20/22/24 matrix 
 --------------------------------------------------------------------------------
 
 Component:      @modelcontextprotocol/sdk
-Version Range:  ^1.29.0
+Version Range:  ^1.32.2
 Purpose:        Official Model Context Protocol SDK for TypeScript / Node.js
                 (Stdio transport, server abstractions, protocol frames).
 License:        MIT License
@@ -77,7 +77,7 @@ Repository:     https://github.com/modelcontextprotocol/typescript-sdk
 ---
 
 Component:      zod
-Version Range:  ^3.23.8
+Version Range:  ^4.6.7
 Purpose:        TypeScript-first schema declaration and input validation with
                 static type inference and runtime bounds enforcement.
 License:        MIT License
@@ -156,6 +156,30 @@ Repository:     https://github.com/ljharb/qs
 
 ---
 
+Component:      proxy-addr
+License:        MIT License
+SPDX-ID:        MIT
+Purpose:        IP address proxy determination with spoofing mitigations.
+Repository:     https://github.com/jshttp/proxy-addr
+
+---
+
+Component:      body-parser
+License:        MIT License
+SPDX-ID:        MIT
+Purpose:        Node.js body parsing middleware with depth guard.
+Repository:     https://github.com/expressjs/body-parser
+
+---
+
+Component:      source-map-js
+License:        BSD-3-Clause
+SPDX-ID:        BSD-3-Clause
+Purpose:        Source map parsing and generation utility.
+Repository:     https://github.com/73rhodes/source-map-js
+
+---
+
 Component:      postcss
 License:        MIT License
 SPDX-ID:        MIT
@@ -176,7 +200,7 @@ Repository:     https://github.com/microsoft/TypeScript
 ---
 
 Component:      vitest
-Version Range:  ^4.1.11
+Version Range:  ^4.1.12
 Purpose:        Next-generation testing framework for unit and contract test suites.
 License:        MIT License
 SPDX-ID:        MIT
