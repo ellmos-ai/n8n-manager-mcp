@@ -141,6 +141,11 @@ describe("repository hygiene", () => {
       ".turbo/cache",
       ".nyc_output/coverage.json",
       ".hypothesis/examples",
+      ".mypy_cache/index.json",
+      "MARKETING-LOG.txt",
+      "custom-MARKETING-LOG.txt",
+      "LOCK.orchestrator.json",
+      "LOCK.worker.md",
     ];
 
     for (const candidate of ignored) {
@@ -166,7 +171,6 @@ describe("repository hygiene", () => {
       "SECURITY.md",
       "THIRD_PARTY_LICENSES.md",
       "THIRD_PARTY_LICENSES.txt",
-      "MARKETING-LOG.txt",
       "NOTICE",
       ".env.example",
       ".env.sample",
@@ -205,7 +209,6 @@ describe("repository hygiene", () => {
       "llm.txt",
       "THIRD_PARTY_LICENSES.md",
       "THIRD_PARTY_LICENSES.txt",
-      "MARKETING-LOG.txt",
       "server.json",
       "glama.json",
       "smithery.yaml",
@@ -213,7 +216,16 @@ describe("repository hygiene", () => {
       "SECURITY.md",
       "scripts/smoke-mcp.js",
     ]);
+    expect(packageJson.files).not.toContain("MARKETING-LOG.txt");
     expect(packageJson.files).not.toContain("config/");
     expect(packageJson.files).not.toContain("*.json");
+  });
+
+  it("ensures MARKETING-LOG.txt is never tracked in git (T-20260926-455218633)", () => {
+    const tracked = execFileSync("git", ["ls-files", "MARKETING-LOG.txt"], {
+      cwd: repoRoot,
+      encoding: "utf-8",
+    }).trim();
+    expect(tracked).toBe("");
   });
 });

@@ -9,7 +9,7 @@
 | Gate 3 | Testabdeckung & Vitest | PASS | Vitest Testsuite 100% grün (209 Tests PASS) |
 | Gate 4 | MCP-Protokoll & Smoke-Test | PASS | `npm run smoke`: 19 Tools validiert, `n8n_describe_nodes` Handshake erfolgreich |
 | Gate 5 | Lokaler Transport & Zero-Egress | PASS | Stdio JSON-RPC 2.0, isolierte Serverprofile, RunAsInvoker (INV-LOCAL-01 bis INV-PRIV-07) |
-| Gate 6 | Secrets & Pfad-Datenschutz | PASS | 0 echte Credentials, 0 persönliche Windows-Entwicklerpfade (`C:\Users\lukas\...`) |
+| Gate 6 | Secrets & Pfad-Datenschutz | PASS | 0 echte Credentials, 0 persönliche Windows-Entwicklerpfade (`%USERPROFILE%\...`) |
 | Gate 7 | Supply-Chain & Dependency Audit | PASS | `npm audit`: 0 Schwachstellen across 195 Paketen, SDK `^1.32.2`, Zod `^4.6.7`, Pinned Overrides |
 | Gate 8 | Level 1 SBOM & Lizenz-Transparenz | PASS | `THIRD_PARTY_LICENSES.md` & `.txt` Re-Audit Stand 2026-11-08, 100% Permissive Open Source |
 | Gate 9 | Mehrsprachige Dokumentation & Navigation | PASS | 11 Sprachen (EN, DE, ES, JA, RU, FR, ZH, HI, AR, BN, PT) mit reziproker Schnellnavigation |
@@ -37,7 +37,7 @@
   - `nanoid` (`^3.3.17`)
   - `hono` (`^4.13.13`)
 - [x] Level 1 SBOM Dokumente (`THIRD_PARTY_LICENSES.md` und `THIRD_PARTY_LICENSES.txt`) auf Re-Audit Stand 2026-11-08 harmonisiert.
-- [x] AST- und Regex-Scan aller getrackten Quelldateien, Konfigurationen und Manifeste: 0 echte Credentials, 0 API-Keys, 0 Private Keys und 0 persönliche Windows-Entwicklerpfade (`C:\Users\lukas\...`).
+- [x] AST- und Regex-Scan aller getrackten Quelldateien, Konfigurationen und Manifeste: 0 echte Credentials, 0 API-Keys, 0 Private Keys und 0 persönliche Windows-Entwicklerpfade (`%USERPROFILE%\...`).
 - [x] Kanonisches `TODO.md` Aufgaben- und Statusregister im Repository etabliert.
 - [x] Vertragstestsuite (`test/metadata.test.ts`) um automatisierten Sicherheits- und Governance-Vertragstest erweitert (`test_security_and_dependency_audit_contract`).
 - [x] Bitgenaue Plan-D-Synchronisation nach OneDrive (`.MCP/n8n-manager-mcp`) via `repo_mirror.py --apply`.

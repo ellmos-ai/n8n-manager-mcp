@@ -7,7 +7,7 @@
 *Fait partie de la famille [ellmos-ai](https://github.com/ellmos-ai) et du projet fédérateur [open-bricks](https://github.com/open-bricks).*
 
 [![npm](https://img.shields.io/npm/v/n8n-manager-mcp.svg)](https://www.npmjs.com/package/n8n-manager-mcp)
-[![Tests](https://img.shields.io/badge/Tests-208%20passed-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
+[![Tests](https://img.shields.io/badge/Tests-213%20passed-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
 [![Outils MCP](https://img.shields.io/badge/MCP%20Tools-19%20tools-blue.svg)](https://github.com/ellmos-ai/n8n-manager-mcp)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D20-blue.svg)](https://nodejs.org)
 [![Sécurité](https://img.shields.io/badge/Safety-Backups%20%7C%20Audit%20%7C%20Read--Only-success.svg)](SECURITY.md)
@@ -15,8 +15,8 @@
 [![Tiers](https://img.shields.io/badge/Third--Party-License%20inventory-success.svg)](THIRD_PARTY_LICENSES.md)
 [![Inventaire des dépendances : texte brut](https://img.shields.io/badge/Dependency%20Inventory-Plain%20Text-success.svg)](THIRD_PARTY_LICENSES.txt)
 [![Attribution : NOTICE](https://img.shields.io/badge/Attribution-NOTICE-blue.svg)](NOTICE)
-[![Vérifié](https://img.shields.io/badge/Verified-2026--11--02-blue.svg)](llms.txt)
-[![Dernière vérification](https://img.shields.io/badge/Last--Checked-2026--11--02-success.svg)](llms.txt)
+[![Vérifié](https://img.shields.io/badge/Verified-2026--11--15-blue.svg)](llms.txt)
+[![Dernière vérification](https://img.shields.io/badge/Last--Checked-2026--11--15-success.svg)](llms.txt)
 [![Licence : MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Compatible LLM](https://img.shields.io/badge/LLM--Ready-llms.txt-orange.svg)](llms.txt)
 [![Écosystème : ellmos--ai](https://img.shields.io/badge/Ecosystem-ellmos--ai-blue.svg)](https://github.com/ellmos-ai)
@@ -168,7 +168,7 @@ sequenceDiagram
         opt audit_log enabled (default true)
             Safety->>Audit: Append structured outcome to audit log (INV-AUDIT-04)
         end
-        Safety-->>AI: Return text; include backup path when a backup was saved
+        Safety-->>AI: Return text - include backup path when a backup was saved
     end
 ```
 
@@ -198,11 +198,11 @@ sequenceDiagram
     Note over AI,MCP: Phase 3: Import a new inactive copy
     AI->>MCP: n8n_import_workflow(workflow_json=serialized export, server_name=production, activate=false)
     MCP->>Prod: POST /workflows
-    Prod-->>MCP: Created workflow JSON with a new ID; inactive
+    Prod-->>MCP: Created workflow JSON with a new ID - inactive
     opt audit_log enabled (default true)
         MCP->>Audit: Append import outcome (INV-AUDIT-04)
     end
-    MCP-->>AI: Text response with the new workflow ID; no rollback handle
+    MCP-->>AI: Text response with the new workflow ID - no rollback handle
 ```
 
 ---
@@ -732,11 +732,11 @@ Le tableau ci-dessous présente une sélection de dépendances directes et de d�
 
 | Dépendance | Type | Version | Licence | Statut dans l’inventaire |
 | :--- | :--- | :--- | :--- | :--- |
-| [`@modelcontextprotocol/sdk`](https://github.com/modelcontextprotocol/typescript-sdk) | Exécution (directe) | `^1.29.0` | MIT | Licence répertoriée |
+| [`@modelcontextprotocol/sdk`](https://github.com/modelcontextprotocol/typescript-sdk) | Exécution (directe) | `^1.32.2` | MIT | Licence répertoriée |
 | [`zod`](https://github.com/colinhacks/zod) | Exécution (directe) | `^4.6.7` | MIT | Licence répertoriée |
 | [`update-notifier`](https://github.com/yeoman/update-notifier) | Exécution (directe) | `^7.3.1` | BSD-2-Clause | Licence répertoriée |
 | `typescript` | Développement / compilateur | `^5.3.3` | Apache-2.0 | Licence répertoriée |
-| `vitest` | Développement / exécution des tests | `^4.1.11` | MIT | Licence répertoriée |
+| `vitest` | Développement / exécution des tests | `^4.1.12` | MIT | Licence répertoriée |
 | `@types/node` | Développement / définitions de types | `^20.11.0` | MIT | Licence répertoriée |
 
 - **Portée réseau :** le serveur envoie des requêtes aux points de terminaison n8n configurés et, si elle est activée, au point de terminaison du gestionnaire. Le module de notification peut rechercher des mises à jour au démarrage interactif dans un TTY ; le chemin stdio habituel sans TTY ignore cette vérification. Le code source de l’application examiné ne contient aucun mécanisme d’envoi d’analyses produit.
@@ -752,7 +752,7 @@ Le tableau ci-dessous présente une sélection de dépendances directes et de d�
 <a id="marketing--personas-protokoll"></a>
 ## Journal marketing et profils cibles
 
-Le positionnement marketing, les définitions des profils cibles, les correspondances avec les invariants de gouvernance et la feuille de route de découvrabilité en trois phases sont décrits dans [`MARKETING-LOG.txt`](MARKETING-LOG.txt).
+Le positionnement marketing, les définitions des profils cibles, les correspondances avec les invariants de gouvernance et la feuille de route de découvrabilité en trois phases sont décrits dans [`llms.txt`](llms.txt) & [`SKILL.md`](SKILL.md).
 
 ---
 

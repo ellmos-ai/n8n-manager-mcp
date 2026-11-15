@@ -4,9 +4,9 @@
 
 19 tools cover workflow listing, reading, creation, updating, deletion, activation, execution inspection, export/import, safety settings, backups, node descriptions, server profiles, server reachability, and optional manager history. `n8n_describe_nodes` returns short descriptions of common node types, not complete schemas. Multi-server support routes to configured n8n instances. When `backup_before_mutations` is enabled (default: true), snapshots are attempted before update, delete, activate/deactivate, and overwrite-restore operations; a failed enabled backup stops the following n8n mutation request. Create/import have no pre-mutation backup; import creates a new workflow without a rollback handle. Local audit logging is configurable and enabled by default. `N8N_MANAGER_READ_ONLY=1` adds an environment-level ceiling to the persisted read-only setting. The server loads configuration before checking the mutation gate, and a blocked mutation may append to the local audit log.
 
-Verification (2026-11-02): fresh `npm test`, build, smoke discovery, and
-package dry-run pass with 208 Vitest tests (100% pass).
-The 2026-11-02 audit of the unreleased source lockfile reports zero known advisories.
+Verification (2026-11-15): fresh `npm test`, build, smoke discovery, and
+package dry-run pass with 213 Vitest tests (100% pass).
+The 2026-11-15 audit of the unreleased source lockfile reports zero known advisories.
 It locks @hono/node-server 2.1.6 and qs 6.17.1, above the patched floors for
 GHSA-rmxm-3fg6-px4f and GHSA-6pq8-jhm2-2vcw; every other locked package version is preserved.
 The package dry-run contains the built server and smoke discovery reports all
@@ -34,7 +34,6 @@ Part of the ellmos family. Node.js, MIT. Published as `n8n-manager-mcp` on npm. 
 - [NOTICE](https://github.com/ellmos-ai/n8n-manager-mcp/blob/main/NOTICE): Formal copyright and attribution notice for ellmos-ai and open-bricks
 - [THIRD_PARTY_LICENSES.md](https://github.com/ellmos-ai/n8n-manager-mcp/blob/main/THIRD_PARTY_LICENSES.md): Inventory of runtime and dev dependencies, permissive licenses (MIT, Apache-2.0, BSD-2-Clause, BSD-3-Clause)
 - [THIRD_PARTY_LICENSES.txt](https://github.com/ellmos-ai/n8n-manager-mcp/blob/main/THIRD_PARTY_LICENSES.txt): Plain-text dependency and license inventory
-- [MARKETING-LOG.txt](https://github.com/ellmos-ai/n8n-manager-mcp/blob/main/MARKETING-LOG.txt): Marketing positioning, target personas, and discoverability roadmap
 - [CHANGELOG.md](https://github.com/ellmos-ai/n8n-manager-mcp/blob/main/CHANGELOG.md): Release history and version notes
 - [SECURITY.md](https://github.com/ellmos-ai/n8n-manager-mcp/blob/main/SECURITY.md): Security policy, supported versions, reporting contacts, and published response, triage, and remediation commitments
 - [server.json](https://github.com/ellmos-ai/n8n-manager-mcp/blob/main/server.json): MCP Registry metadata for `io.github.ellmos-ai/n8n-manager-mcp`
@@ -89,4 +88,4 @@ Backup path segments are sanitized and resolved under the configured backup root
 
 `n8n_add_server` preserves an existing default when `is_default` is omitted on update; `true` promotes and explicit `false` removes the flag, with first-server fallback when no default remains.
 
-## Last-checked: 2026-11-02
+## Last-checked: 2026-11-15

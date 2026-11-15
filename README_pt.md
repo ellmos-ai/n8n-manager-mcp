@@ -7,7 +7,7 @@
 *Parte da família [ellmos-ai](https://github.com/ellmos-ai) e do ecossistema [open-bricks](https://github.com/open-bricks).*
 
 [![npm](https://img.shields.io/npm/v/n8n-manager-mcp.svg)](https://www.npmjs.com/package/n8n-manager-mcp)
-[![Testes](https://img.shields.io/badge/Tests-208%20passed-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
+[![Testes](https://img.shields.io/badge/Tests-213%20passed-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
 [![Ferramentas MCP](https://img.shields.io/badge/MCP%20Tools-19%20tools-blue.svg)](https://github.com/ellmos-ai/n8n-manager-mcp)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D20-blue.svg)](https://nodejs.org)
 [![Segurança operacional](https://img.shields.io/badge/Safety-Backups%20%7C%20Audit%20%7C%20Read--Only-success.svg)](SECURITY.md)
@@ -15,8 +15,8 @@
 [![Terceiros](https://img.shields.io/badge/Third--Party-License%20inventory-success.svg)](THIRD_PARTY_LICENSES.md)
 [![Inventário de dependências: texto simples](https://img.shields.io/badge/Dependency%20Inventory-Plain%20Text-success.svg)](THIRD_PARTY_LICENSES.txt)
 [![Atribuição: NOTICE](https://img.shields.io/badge/Attribution-NOTICE-blue.svg)](NOTICE)
-[![Verificado](https://img.shields.io/badge/Verified-2026--11--02-blue.svg)](llms.txt)
-[![Última verificação](https://img.shields.io/badge/Last--Checked-2026--11--02-success.svg)](llms.txt)
+[![Verificado](https://img.shields.io/badge/Verified-2026--11--15-blue.svg)](llms.txt)
+[![Última verificação](https://img.shields.io/badge/Last--Checked-2026--11--15-success.svg)](llms.txt)
 [![Licença: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Pronto para LLM](https://img.shields.io/badge/LLM--Ready-llms.txt-orange.svg)](llms.txt)
 [![Ecossistema: ellmos--ai](https://img.shields.io/badge/Ecosystem-ellmos--ai-blue.svg)](https://github.com/ellmos-ai)
@@ -168,7 +168,7 @@ sequenceDiagram
         opt audit_log enabled (default true)
             Safety->>Audit: Append structured outcome to audit log (INV-AUDIT-04)
         end
-        Safety-->>AI: Return text; include backup path when a backup was saved
+        Safety-->>AI: Return text - include backup path when a backup was saved
     end
 ```
 
@@ -198,11 +198,11 @@ sequenceDiagram
     Note over AI,MCP: Phase 3: Import a new inactive copy
     AI->>MCP: n8n_import_workflow(workflow_json=serialized export, server_name=production, activate=false)
     MCP->>Prod: POST /workflows
-    Prod-->>MCP: Created workflow JSON with a new ID; inactive
+    Prod-->>MCP: Created workflow JSON with a new ID - inactive
     opt audit_log enabled (default true)
         MCP->>Audit: Append import outcome (INV-AUDIT-04)
     end
-    MCP-->>AI: Text response with the new workflow ID; no rollback handle
+    MCP-->>AI: Text response with the new workflow ID - no rollback handle
 ```
 
 ---
@@ -736,11 +736,11 @@ A tabela abaixo lista dependências diretas e de desenvolvimento selecionadas qu
 
 | Dependência | Tipo | Versão | Licença | Situação no inventário |
 | :--- | :--- | :--- | :--- | :--- |
-| [`@modelcontextprotocol/sdk`](https://github.com/modelcontextprotocol/typescript-sdk) | Runtime (direta) | `^1.29.0` | MIT | Licença listada |
+| [`@modelcontextprotocol/sdk`](https://github.com/modelcontextprotocol/typescript-sdk) | Runtime (direta) | `^1.32.2` | MIT | Licença listada |
 | [`zod`](https://github.com/colinhacks/zod) | Runtime (direta) | `^4.6.7` | MIT | Licença listada |
 | [`update-notifier`](https://github.com/yeoman/update-notifier) | Runtime (direta) | `^7.3.1` | BSD-2-Clause | Licença listada |
 | `typescript` | Dev / compilador | `^5.3.3` | Apache-2.0 | Licença listada |
-| `vitest` | Dev / executor de testes | `^4.1.11` | MIT | Licença listada |
+| `vitest` | Dev / executor de testes | `^4.1.12` | MIT | Licença listada |
 | `@types/node` | Dev / definições de tipos | `^20.11.0` | MIT | Licença listada |
 
 - **Escopo de rede:** o servidor envia solicitações aos endpoints n8n configurados e, quando ativado, ao endpoint configurado do manager. O update notifier pode verificar atualizações na inicialização em um TTY interativo; o fluxo stdio normal sem TTY ignora essa verificação. O código-fonte da aplicação analisado não contém um emissor de analytics de produto.
@@ -756,7 +756,7 @@ A tabela abaixo lista dependências diretas e de desenvolvimento selecionadas qu
 <a id="marketing--personas-protokoll"></a>
 ## Registro de marketing e personas
 
-Para conhecer o posicionamento de marketing, as definições de personas-alvo, os mapeamentos de invariantes de governança e o roteiro de descoberta em 3 fases, consulte [`MARKETING-LOG.txt`](MARKETING-LOG.txt).
+Para conhecer o posicionamento de marketing, as definições de personas-alvo, os mapeamentos de invariantes de governança e o roteiro de descoberta em 3 fases, consulte [`llms.txt`](llms.txt) & [`SKILL.md`](SKILL.md).
 
 ---
 
