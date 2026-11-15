@@ -7,7 +7,7 @@
 *Teil der [ellmos-ai](https://github.com/ellmos-ai)-Familie und des [open-bricks](https://github.com/open-bricks)-Dachverbunds.*
 
 [![npm](https://img.shields.io/npm/v/n8n-manager-mcp.svg)](https://www.npmjs.com/package/n8n-manager-mcp)
-[![Tests](https://img.shields.io/badge/Tests-208%20passed-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
+[![Tests](https://img.shields.io/badge/Tests-213%20passed-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
 [![MCP Tools](https://img.shields.io/badge/MCP%20Tools-19%20tools-blue.svg)](https://github.com/ellmos-ai/n8n-manager-mcp)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D20-blue.svg)](https://nodejs.org)
 [![Sicherheit](https://img.shields.io/badge/Sicherheit-Backups%20%7C%20Audit%20%7C%20Read--Only-success.svg)](SECURITY.md)
@@ -15,8 +15,8 @@
 [![Drittanbieter](https://img.shields.io/badge/Drittanbieter-Lizenzinventar-success.svg)](THIRD_PARTY_LICENSES.md)
 [![Dependency Inventory: Plain Text](https://img.shields.io/badge/Dependency%20Inventory-Plain%20Text-success.svg)](THIRD_PARTY_LICENSES.txt)
 [![Attribution: NOTICE](https://img.shields.io/badge/Attribution-NOTICE-blue.svg)](NOTICE)
-[![Verified](https://img.shields.io/badge/Verified-2026--11--02-blue.svg)](llms.txt)
-[![Last-Checked](https://img.shields.io/badge/Last--Checked-2026--11--02-success.svg)](llms.txt)
+[![Verified](https://img.shields.io/badge/Verified-2026--11--15-blue.svg)](llms.txt)
+[![Last-Checked](https://img.shields.io/badge/Last--Checked-2026--11--15-success.svg)](llms.txt)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![LLM Ready](https://img.shields.io/badge/LLM--Ready-llms.txt-orange.svg)](llms.txt)
 [![Ecosystem: ellmos--ai](https://img.shields.io/badge/Ecosystem-ellmos--ai-blue.svg)](https://github.com/ellmos-ai)
@@ -168,7 +168,7 @@ sequenceDiagram
         opt audit_log enabled (default true)
             Safety->>Audit: Append structured outcome to audit log (INV-AUDIT-04)
         end
-        Safety-->>AI: Return text; include backup path when a backup was saved
+        Safety-->>AI: Return text - include backup path when a backup was saved
     end
 ```
 
@@ -198,11 +198,11 @@ sequenceDiagram
     Note over AI,MCP: Phase 3: Neue inaktive Kopie importieren
     AI->>MCP: n8n_import_workflow(workflow_json=serialized export, server_name=production, activate=false)
     MCP->>Prod: POST /workflows
-    Prod-->>MCP: Erstelltes Workflow-JSON mit neuer ID; inaktiv
+    Prod-->>MCP: Erstelltes Workflow-JSON mit neuer ID - inaktiv
     opt audit_log enabled (default true)
         MCP->>Audit: Append import outcome (INV-AUDIT-04)
     end
-    MCP-->>AI: Textantwort mit neuer Workflow-ID; kein Rollback-Handle
+    MCP-->>AI: Textantwort mit neuer Workflow-ID - kein Rollback-Handle
 ```
 
 ---
@@ -342,6 +342,14 @@ claude mcp add --scope user n8n-manager npx -y n8n-manager-mcp
 
 ```bash
 npm install -g n8n-manager-mcp
+```
+
+### Mit deinem LLM installieren
+
+Kopiere diesen Prompt in Claude Code, Cursor, Codex oder Antigravity:
+
+```text
+Installiere und konfiguriere den n8n-manager-mcp Server aus https://github.com/ellmos-ai/n8n-manager-mcp (npm-Paket n8n-manager-mcp) in meiner MCP-Client-Konfiguration, hinterlege N8N_MANAGER_API_KEY und N8N_MANAGER_SERVER_URL in der Host-Umgebung statt in Prompts und führe bei einem lokalen Klon npm test && npm run smoke aus.
 ```
 
 ---
@@ -740,11 +748,11 @@ Die folgende Tabelle enthält ausgewählte direkte Laufzeit- und Entwicklungsabh
 
 | Abhängigkeit | Typ | Version | Lizenz | Inventarstatus |
 | :--- | :--- | :--- | :--- | :--- |
-| [`@modelcontextprotocol/sdk`](https://github.com/modelcontextprotocol/typescript-sdk) | Laufzeit (Direkt) | `^1.29.0` | MIT | Lizenz im Inventar aufgeführt |
+| [`@modelcontextprotocol/sdk`](https://github.com/modelcontextprotocol/typescript-sdk) | Laufzeit (Direkt) | `^1.32.2` | MIT | Lizenz im Inventar aufgeführt |
 | [`zod`](https://github.com/colinhacks/zod) | Laufzeit (Direkt) | `^4.6.7` | MIT | Lizenz im Inventar aufgeführt |
 | [`update-notifier`](https://github.com/yeoman/update-notifier) | Laufzeit (Direkt) | `^7.3.1` | BSD-2-Clause | Lizenz im Inventar aufgeführt |
 | `typescript` | Entwicklung / Compiler | `^5.3.3` | Apache-2.0 | Lizenz im Inventar aufgeführt |
-| `vitest` | Entwicklung / Test-Runner | `^4.1.11` | MIT | Lizenz im Inventar aufgeführt |
+| `vitest` | Entwicklung / Test-Runner | `^4.1.12` | MIT | Lizenz im Inventar aufgeführt |
 | `@types/node` | Entwicklung / Typdefinitionen | `^20.11.0` | MIT | Lizenz im Inventar aufgeführt |
 
 - **Netzwerkumfang:** Der Server sendet Anfragen an konfigurierte n8n-Endpunkte und bei Aktivierung an den konfigurierten Manager-Endpunkt. Der Update-Notifier kann beim Start in einem interaktiven TTY nach Updates suchen; im regulären Nicht-TTY-stdio-Betrieb wird dieser Check übersprungen. Im geprüften Anwendungscode gibt es keinen Sender für Produktanalysen.
@@ -760,7 +768,7 @@ Die folgende Tabelle enthält ausgewählte direkte Laufzeit- und Entwicklungsabh
 <a id="marketing--personas-log"></a>
 ## Marketing- & Zielgruppen-Log
 
-Produktpositionierung, Zielgruppen-Personas, Governance-Invarianten-Zuordnung sowie die 3-Phasen-Discoverability-Roadmap sind im [`MARKETING-LOG.txt`](MARKETING-LOG.txt) hinterlegt.
+Produktpositionierung, Zielgruppen-Personas, Governance-Invarianten-Zuordnung sowie die 3-Phasen-Discoverability-Roadmap sind im [`llms.txt`](llms.txt) & [`SKILL.md`](SKILL.md) hinterlegt.
 
 ---
 

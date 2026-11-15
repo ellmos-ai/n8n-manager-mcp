@@ -7,7 +7,7 @@
 *[ellmos-ai](https://github.com/ellmos-ai) ファミリーおよび [open-bricks](https://github.com/open-bricks) の統括プロジェクトの一員です。*
 
 [![npm](https://img.shields.io/npm/v/n8n-manager-mcp.svg)](https://www.npmjs.com/package/n8n-manager-mcp)
-[![テスト](https://img.shields.io/badge/Tests-208%20passed-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
+[![テスト](https://img.shields.io/badge/Tests-213%20passed-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
 [![MCP ツール](https://img.shields.io/badge/MCP%20Tools-19%20tools-blue.svg)](https://github.com/ellmos-ai/n8n-manager-mcp)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D20-blue.svg)](https://nodejs.org)
 [![安全性](https://img.shields.io/badge/Safety-Backups%20%7C%20Audit%20%7C%20Read--Only-success.svg)](SECURITY.md)
@@ -15,8 +15,8 @@
 [![サードパーティ](https://img.shields.io/badge/Third--Party-License%20inventory-success.svg)](THIRD_PARTY_LICENSES.md)
 [![依存関係一覧: テキスト形式](https://img.shields.io/badge/Dependency%20Inventory-Plain%20Text-success.svg)](THIRD_PARTY_LICENSES.txt)
 [![帰属表示: NOTICE](https://img.shields.io/badge/Attribution-NOTICE-blue.svg)](NOTICE)
-[![確認済み](https://img.shields.io/badge/Verified-2026--11--02-blue.svg)](llms.txt)
-[![最終確認](https://img.shields.io/badge/Last--Checked-2026--11--02-success.svg)](llms.txt)
+[![確認済み](https://img.shields.io/badge/Verified-2026--11--15-blue.svg)](llms.txt)
+[![最終確認](https://img.shields.io/badge/Last--Checked-2026--11--15-success.svg)](llms.txt)
 [![ライセンス: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![LLM 対応](https://img.shields.io/badge/LLM--Ready-llms.txt-orange.svg)](llms.txt)
 [![エコシステム: ellmos--ai](https://img.shields.io/badge/Ecosystem-ellmos--ai-blue.svg)](https://github.com/ellmos-ai)
@@ -168,7 +168,7 @@ sequenceDiagram
         opt audit_log enabled (default true)
             Safety->>Audit: Append structured outcome to audit log (INV-AUDIT-04)
         end
-        Safety-->>AI: Return text; include backup path when a backup was saved
+        Safety-->>AI: Return text - include backup path when a backup was saved
     end
 ```
 
@@ -198,11 +198,11 @@ sequenceDiagram
     Note over AI,MCP: Phase 3: Import a new inactive copy
     AI->>MCP: n8n_import_workflow(workflow_json=serialized export, server_name=production, activate=false)
     MCP->>Prod: POST /workflows
-    Prod-->>MCP: Created workflow JSON with a new ID; inactive
+    Prod-->>MCP: Created workflow JSON with a new ID - inactive
     opt audit_log enabled (default true)
         MCP->>Audit: Append import outcome (INV-AUDIT-04)
     end
-    MCP-->>AI: Text response with the new workflow ID; no rollback handle
+    MCP-->>AI: Text response with the new workflow ID - no rollback handle
 ```
 
 ---
@@ -725,11 +725,11 @@ MIT
 
 | 依存関係 | 種別 | バージョン | ライセンス | 一覧の状態 |
 | :--- | :--- | :--- | :--- | :--- |
-| [`@modelcontextprotocol/sdk`](https://github.com/modelcontextprotocol/typescript-sdk) | 実行時（直接） | `^1.29.0` | MIT | ライセンス記載済み |
+| [`@modelcontextprotocol/sdk`](https://github.com/modelcontextprotocol/typescript-sdk) | 実行時（直接） | `^1.32.2` | MIT | ライセンス記載済み |
 | [`zod`](https://github.com/colinhacks/zod) | 実行時（直接） | `^4.6.7` | MIT | ライセンス記載済み |
 | [`update-notifier`](https://github.com/yeoman/update-notifier) | 実行時（直接） | `^7.3.1` | BSD-2-Clause | ライセンス記載済み |
 | `typescript` | 開発／コンパイラー | `^5.3.3` | Apache-2.0 | ライセンス記載済み |
-| `vitest` | 開発／テストランナー | `^4.1.11` | MIT | ライセンス記載済み |
+| `vitest` | 開発／テストランナー | `^4.1.12` | MIT | ライセンス記載済み |
 | `@types/node` | 開発／型定義 | `^20.11.0` | MIT | ライセンス記載済み |
 
 - **ネットワークの範囲:** サーバーは設定済み n8n エンドポイントにリクエストを送り、有効な場合は設定済みマネージャーのエンドポイントにも送信します。更新通知機能は対話型 TTY での起動時に更新を確認する場合があります。通常の非 TTY stdio 経路では確認を行いません。確認したアプリケーションソースには、製品分析データを送信する処理はありません。
@@ -745,7 +745,7 @@ MIT
 <a id="marketing--personas-protokoll"></a>
 ## マーケティングとユーザー像の記録
 
-マーケティング上のポジショニング、想定ユーザーの定義、ガバナンス不変条件との対応、3 段階の見つけやすさ向上ロードマップについては [`MARKETING-LOG.txt`](MARKETING-LOG.txt) を参照してください。
+マーケティング上のポジショニング、想定ユーザーの定義、ガバナンス不変条件との対応、3 段階の見つけやすさ向上ロードマップについては [`llms.txt`](llms.txt) & [`SKILL.md`](SKILL.md) を参照してください。
 
 ---
 

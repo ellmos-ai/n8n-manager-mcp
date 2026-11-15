@@ -56,7 +56,6 @@ describe("metadata and manifest parity", () => {
       "SECURITY.md",
       "THIRD_PARTY_LICENSES.md",
       "THIRD_PARTY_LICENSES.txt",
-      "MARKETING-LOG.txt",
       "NOTICE",
       "LICENSE",
       ".gitignore",
@@ -81,6 +80,7 @@ describe("metadata and manifest parity", () => {
     expect(ciWorkflow).toContain("run: npm run build");
     expect(ciWorkflow).toContain("run: npm test");
     expect(ciWorkflow).toContain("run: npm run smoke");
+    expect(ciWorkflow).toContain("run: npm audit --omit=dev --audit-level=high");
     expect(ciWorkflow).toContain("run: npm pack --dry-run --json");
     expect(ciWorkflow).toContain("concurrency:");
     expect(ciWorkflow).toContain("cancel-in-progress: true");
@@ -270,7 +270,7 @@ describe("metadata and manifest parity", () => {
     expect(pkg.files).toContain("llms.txt");
     expect(pkg.files).toContain("THIRD_PARTY_LICENSES.md");
     expect(pkg.files).toContain("THIRD_PARTY_LICENSES.txt");
-    expect(pkg.files).toContain("MARKETING-LOG.txt");
+    expect(pkg.files).not.toContain("MARKETING-LOG.txt");
     expect(pkg.files).toContain("CONTRIBUTING.md");
     expect(pkg.files).toContain("CODE_OF_CONDUCT.md");
     expect(pkg.files).toContain("SKILL.md");
@@ -280,12 +280,12 @@ describe("metadata and manifest parity", () => {
   it("verifies llms.txt timestamp, security reference, and tool inventory", () => {
     const llmsTxt = fs.readFileSync(path.join(repoRoot, "llms.txt"), "utf-8");
 
-    expect(llmsTxt).toContain("Last-checked: 2026-11-02");
+    expect(llmsTxt).toContain("Last-checked: 2026-11-15");
     expect(llmsTxt).toContain("NOTICE");
     expect(llmsTxt).toContain("SECURITY.md");
     expect(llmsTxt).toContain("THIRD_PARTY_LICENSES.md");
     expect(llmsTxt).toContain("THIRD_PARTY_LICENSES.txt");
-    expect(llmsTxt).toContain("MARKETING-LOG.txt");
+    expect(llmsTxt).not.toContain("MARKETING-LOG.txt");
     expect(llmsTxt).toContain("io.github.ellmos-ai/n8n-manager-mcp");
     expect(llmsTxt).toContain("19 tools cover workflow listing");
   });
@@ -294,8 +294,8 @@ describe("metadata and manifest parity", () => {
     const readme = fs.readFileSync(path.join(repoRoot, "README.md"), "utf-8");
     const readmeDe = fs.readFileSync(path.join(repoRoot, "README_de.md"), "utf-8");
 
-    expect(readme).toContain("208%20passed");
-    expect(readmeDe).toContain("208%20passed");
+    expect(readme).toContain("213%20passed");
+    expect(readmeDe).toContain("213%20passed");
     expect(readme).toContain("README_de.md");
     expect(readmeDe).toContain("README.md");
     expect(readme).toContain("https://github.com/open-bricks");
@@ -307,7 +307,7 @@ describe("metadata and manifest parity", () => {
   it("verifies canonical invariant IDs INV-LOCAL-01 through INV-SLA-10 across documentation", () => {
     const readme = fs.readFileSync(path.join(repoRoot, "README.md"), "utf-8");
     const readmeDe = fs.readFileSync(path.join(repoRoot, "README_de.md"), "utf-8");
-    const marketingLog = fs.readFileSync(path.join(repoRoot, "MARKETING-LOG.txt"), "utf-8");
+    const contrib = fs.readFileSync(path.join(repoRoot, "CONTRIBUTING.md"), "utf-8");
 
     const expectedInvariants = [
       "INV-LOCAL-01",
@@ -325,7 +325,7 @@ describe("metadata and manifest parity", () => {
     for (const inv of expectedInvariants) {
       expect(readme, `README.md missing invariant ${inv}`).toContain(inv);
       expect(readmeDe, `README_de.md missing invariant ${inv}`).toContain(inv);
-      expect(marketingLog, `MARKETING-LOG.txt missing invariant ${inv}`).toContain(inv);
+      expect(contrib, `CONTRIBUTING.md missing invariant ${inv}`).toContain(inv);
     }
   });
 
@@ -342,9 +342,8 @@ describe("metadata and manifest parity", () => {
     }
   });
 
-  it("verifies THIRD_PARTY_LICENSES.md and MARKETING-LOG.txt content integrity", () => {
+  it("verifies THIRD_PARTY_LICENSES.md integrity and absence of MARKETING-LOG.txt links across READMEs", () => {
     const licenses = fs.readFileSync(path.join(repoRoot, "THIRD_PARTY_LICENSES.md"), "utf-8");
-    const marketing = fs.readFileSync(path.join(repoRoot, "MARKETING-LOG.txt"), "utf-8");
 
     expect(licenses).toContain("@modelcontextprotocol/sdk");
     expect(licenses).toContain("zod");
@@ -353,13 +352,12 @@ describe("metadata and manifest parity", () => {
     expect(licenses).toContain("BSD-2-Clause");
     expect(licenses).toContain("MIT");
 
-    expect(marketing).toContain("[PERSONA-1]");
-    expect(marketing).toContain("[PERSONA-2]");
-    expect(marketing).toContain("[PERSONA-3]");
-    expect(marketing).toContain("[PERSONA-4]");
-    expect(marketing).toContain("THREE-PHASE DISCOVERABILITY ROADMAP");
-    expect(marketing).toContain("3. HIGH-INTENT KEYWORD & DISCOVERY MATRIX");
-    expect(marketing).toContain("4. 5-WAY COMPARATIVE MATRIX");
+    const readmeFiles = fs.readdirSync(repoRoot).filter((f) => /^README(?:_[a-z]{2})?\.md$/.test(f));
+    expect(readmeFiles.length).toBe(11);
+    for (const file of readmeFiles) {
+      const content = fs.readFileSync(path.join(repoRoot, file), "utf-8");
+      expect(content, `${file} should not link to MARKETING-LOG.txt`).not.toContain("MARKETING-LOG.txt");
+    }
   });
 
   it("verifies target personas and project capability tables across READMEs", () => {
@@ -447,16 +445,14 @@ describe("metadata and manifest parity", () => {
     }
   });
 
-  it("verifies canonical persona tags [PERSONA-01] through [PERSONA-04] across READMEs and MARKETING-LOG", () => {
+  it("verifies canonical persona tags [PERSONA-01] through [PERSONA-04] across READMEs", () => {
     const readme = fs.readFileSync(path.join(repoRoot, "README.md"), "utf-8");
     const readmeDe = fs.readFileSync(path.join(repoRoot, "README_de.md"), "utf-8");
-    const marketing = fs.readFileSync(path.join(repoRoot, "MARKETING-LOG.txt"), "utf-8");
 
     const personas = ["[PERSONA-01]", "[PERSONA-02]", "[PERSONA-03]", "[PERSONA-04]"];
     for (const p of personas) {
       expect(readme, `README.md missing ${p}`).toContain(p);
       expect(readmeDe, `README_de.md missing ${p}`).toContain(p);
-      expect(marketing, `MARKETING-LOG.txt missing ${p}`).toContain(p);
     }
   });
 
@@ -581,14 +577,6 @@ describe("metadata and manifest parity", () => {
     expect(changelog).toContain("Formal NOTICE Attribution");
   });
 
-  it("verifies MARKETING-LOG.txt contains Pfad A Stand 2026-10-01 audit entry", () => {
-    const marketing = fs.readFileSync(path.join(repoRoot, "MARKETING-LOG.txt"), "utf-8");
-    expect(marketing).toContain("Last Updated: 2026-10-30");
-    expect(marketing).toContain("14. PATH B DISCOVERABILITY, STEP-BY-STEP TERMINAL SHOWCASE, MULTI-SERVER SYNC SEQUENCE & LEVEL 1 SBOM RE-AUDIT (2026-10-30)");
-    expect(marketing).toContain("13. PATH A TECHNICAL HYGIENE, CI CONCURRENCY HARDENING & LEVEL 1 SBOM RE-AUDIT (2026-10-01)");
-    expect(marketing).toContain("12. PATH B DISCOVERABILITY, ASCII 4-VIEW ARCHITECTURE & LEVEL 1 SBOM PLAIN-TEXT AUDIT (2026-09-29)");
-  });
-
   it("verifies bilingual CONTRIBUTING.md guidelines, invariants, RunAsInvoker, and Plan D workflow", () => {
     const contribPath = path.join(repoRoot, "CONTRIBUTING.md");
     expect(fs.existsSync(contribPath), "Missing CONTRIBUTING.md").toBe(true);
@@ -616,10 +604,10 @@ describe("metadata and manifest parity", () => {
     expect(readmeEn).toContain("CONTRIBUTING.md");
     expect(readmeDe).toContain("CONTRIBUTING.md");
     expect(llmsTxt).toContain("CONTRIBUTING.md");
-    expect(readmeEn).toContain("Verified-2026--11--02");
-    expect(readmeDe).toContain("Verified-2026--11--02");
-    expect(llmsTxt).toContain("Verification (2026-11-02)");
-    expect(llmsTxt).toContain("Last-checked: 2026-11-02");
+    expect(readmeEn).toContain("Verified-2026--11--15");
+    expect(readmeDe).toContain("Verified-2026--11--15");
+    expect(llmsTxt).toContain("Verification (2026-11-15)");
+    expect(llmsTxt).toContain("Last-checked: 2026-11-15");
   });
   it("verifies terminal execution showcase and quick start session in English and German READMEs", () => {
     const readmeEn = fs.readFileSync(path.join(repoRoot, "README.md"), "utf-8");
@@ -725,5 +713,70 @@ describe("metadata and manifest parity", () => {
 
     const changelog = fs.readFileSync(path.join(repoRoot, "CHANGELOG.md"), "utf-8");
     expect(changelog).toContain("AI Security & Dependency Audit (2026-11-08)");
+  });
+
+  it("verifies .github/ISSUE_TEMPLATE forms and SECURITY.md contact config", () => {
+    const templateDir = path.join(repoRoot, ".github", "ISSUE_TEMPLATE");
+    const bugReport = fs.readFileSync(path.join(templateDir, "bug_report.md"), "utf-8");
+    const featureReq = fs.readFileSync(path.join(templateDir, "feature_request.md"), "utf-8");
+    const configYml = fs.readFileSync(path.join(templateDir, "config.yml"), "utf-8");
+
+    expect(bugReport).toContain("labels: bug");
+    expect(featureReq).toContain("labels: enhancement");
+    expect(configYml).toContain("SECURITY.md");
+    expect(configYml).toContain("blank_issues_enabled: true");
+  });
+
+  it("verifies all 11 localized READMEs avoid sequenceDiagram semicolons and match package dependency versions", () => {
+    const pkg = JSON.parse(fs.readFileSync(path.join(repoRoot, "package.json"), "utf-8")) as {
+      dependencies: Record<string, string>;
+      devDependencies: Record<string, string>;
+    };
+    const sdkVer = pkg.dependencies["@modelcontextprotocol/sdk"];
+    const vitestVer = pkg.devDependencies["vitest"];
+    const readmeFiles = fs.readdirSync(repoRoot).filter((f) => /^README(?:_[a-z]{2})?\.md$/.test(f));
+    expect(readmeFiles.length).toBe(11);
+
+    for (const file of readmeFiles) {
+      const doc = fs.readFileSync(path.join(repoRoot, file), "utf-8");
+      expect(doc, `${file} missing SDK version ${sdkVer}`).toContain(`\`${sdkVer}\``);
+      expect(doc, `${file} missing Vitest version ${vitestVer}`).toContain(`\`${vitestVer}\``);
+      expect(doc, `${file} missing 213 test badge`).toContain("213%20passed");
+
+      const seqMatches = [...doc.matchAll(/```mermaid\r?\nsequenceDiagram[\s\S]*?```/g)];
+      expect(seqMatches.length, `${file} expected sequenceDiagram block`).toBeGreaterThan(0);
+      for (const m of seqMatches) {
+        const msgLines = m[0].split(/\r?\n/).filter((line) => line.includes("->>") || line.includes("-->>"));
+        for (const msgLine of msgLines) {
+          expect(msgLine, `${file} sequenceDiagram message contains semicolon: ${msgLine}`).not.toContain(";");
+        }
+      }
+    }
+  });
+
+  it("verifies Install with your LLM prompt sections in English and German READMEs", () => {
+    const readmeEn = fs.readFileSync(path.join(repoRoot, "README.md"), "utf-8");
+    const readmeDe = fs.readFileSync(path.join(repoRoot, "README_de.md"), "utf-8");
+
+    expect(readmeEn).toContain("### Install with your LLM");
+    expect(readmeDe).toContain("### Mit deinem LLM installieren");
+    expect(readmeEn).toContain("N8N_MANAGER_API_KEY");
+    expect(readmeDe).toContain("N8N_MANAGER_API_KEY");
+  });
+
+  it("verifies SKILL.md update date, test count parity, and Path A 2026-11-15 changelog entry without version bump", () => {
+    const skill = fs.readFileSync(path.join(repoRoot, "SKILL.md"), "utf-8");
+    const llmsTxt = fs.readFileSync(path.join(repoRoot, "llms.txt"), "utf-8");
+    const changelog = fs.readFileSync(path.join(repoRoot, "CHANGELOG.md"), "utf-8");
+    const todo = fs.readFileSync(path.join(repoRoot, "TODO.md"), "utf-8");
+
+    expect(skill).toContain("version: 0.1.21");
+    expect(skill).toContain("updated: 2026-11-15");
+    expect(skill).toContain("(213 tests)");
+    expect(llmsTxt).toContain("213 Vitest tests");
+    const forbiddenHomePath = ["C:", "Users", "lukas"].join("\\");
+    expect(changelog).toContain("Path A Technical Hygiene, Mermaid Syntax, Manifest Parity & CI Hardening (2026-11-15)");
+    expect(changelog).not.toContain(forbiddenHomePath);
+    expect(todo).not.toContain(forbiddenHomePath);
   });
 });

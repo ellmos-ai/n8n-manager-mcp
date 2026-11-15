@@ -7,7 +7,7 @@
 *جزء من عائلة [ellmos-ai](https://github.com/ellmos-ai) والمظلّة [open-bricks](https://github.com/open-bricks).*
 
 [![npm](https://img.shields.io/npm/v/n8n-manager-mcp.svg)](https://www.npmjs.com/package/n8n-manager-mcp)
-[![الاختبارات](https://img.shields.io/badge/Tests-208%20passed-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
+[![الاختبارات](https://img.shields.io/badge/Tests-213%20passed-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
 [![أدوات MCP](https://img.shields.io/badge/MCP%20Tools-19%20tools-blue.svg)](https://github.com/ellmos-ai/n8n-manager-mcp)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D20-blue.svg)](https://nodejs.org)
 [![السلامة](https://img.shields.io/badge/Safety-Backups%20%7C%20Audit%20%7C%20Read--Only-success.svg)](SECURITY.md)
@@ -15,8 +15,8 @@
 [![الجهات الخارجية](https://img.shields.io/badge/Third--Party-License%20inventory-success.svg)](THIRD_PARTY_LICENSES.md)
 [![قائمة التبعيات: نص عادي](https://img.shields.io/badge/Dependency%20Inventory-Plain%20Text-success.svg)](THIRD_PARTY_LICENSES.txt)
 [![الإسناد: NOTICE](https://img.shields.io/badge/Attribution-NOTICE-blue.svg)](NOTICE)
-[![تم التحقق](https://img.shields.io/badge/Verified-2026--11--02-blue.svg)](llms.txt)
-[![آخر تحقق](https://img.shields.io/badge/Last--Checked-2026--11--02-success.svg)](llms.txt)
+[![تم التحقق](https://img.shields.io/badge/Verified-2026--11--15-blue.svg)](llms.txt)
+[![آخر تحقق](https://img.shields.io/badge/Last--Checked-2026--11--15-success.svg)](llms.txt)
 [![الترخيص: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![جاهز لنماذج LLM](https://img.shields.io/badge/LLM--Ready-llms.txt-orange.svg)](llms.txt)
 [![منظومة ellmos--ai](https://img.shields.io/badge/Ecosystem-ellmos--ai-blue.svg)](https://github.com/ellmos-ai)
@@ -168,7 +168,7 @@ sequenceDiagram
         opt audit_log enabled (default true)
             Safety->>Audit: Append structured outcome to audit log (INV-AUDIT-04)
         end
-        Safety-->>AI: Return text; include backup path when a backup was saved
+        Safety-->>AI: Return text - include backup path when a backup was saved
     end
 ```
 
@@ -198,11 +198,11 @@ sequenceDiagram
     Note over AI,MCP: Phase 3: Import a new inactive copy
     AI->>MCP: n8n_import_workflow(workflow_json=serialized export, server_name=production, activate=false)
     MCP->>Prod: POST /workflows
-    Prod-->>MCP: Created workflow JSON with a new ID; inactive
+    Prod-->>MCP: Created workflow JSON with a new ID - inactive
     opt audit_log enabled (default true)
         MCP->>Audit: Append import outcome (INV-AUDIT-04)
     end
-    MCP-->>AI: Text response with the new workflow ID; no rollback handle
+    MCP-->>AI: Text response with the new workflow ID - no rollback handle
 ```
 
 ---
@@ -729,11 +729,11 @@ MIT
 
 | التبعية | النوع | الإصدار | الترخيص | حالة الجرد |
 | :--- | :--- | :--- | :--- | :--- |
-| [`@modelcontextprotocol/sdk`](https://github.com/modelcontextprotocol/typescript-sdk) | وقت التشغيل (مباشر) | `^1.29.0` | MIT | الترخيص مدرج |
+| [`@modelcontextprotocol/sdk`](https://github.com/modelcontextprotocol/typescript-sdk) | وقت التشغيل (مباشر) | `^1.32.2` | MIT | الترخيص مدرج |
 | [`zod`](https://github.com/colinhacks/zod) | وقت التشغيل (مباشر) | `^4.6.7` | MIT | الترخيص مدرج |
 | [`update-notifier`](https://github.com/yeoman/update-notifier) | وقت التشغيل (مباشر) | `^7.3.1` | BSD-2-Clause | الترخيص مدرج |
 | `typescript` | تطوير / مترجم | `^5.3.3` | Apache-2.0 | الترخيص مدرج |
-| `vitest` | تطوير / مشغّل اختبار | `^4.1.11` | MIT | الترخيص مدرج |
+| `vitest` | تطوير / مشغّل اختبار | `^4.1.12` | MIT | الترخيص مدرج |
 | `@types/node` | تطوير / تعريفات الأنواع | `^20.11.0` | MIT | الترخيص مدرج |
 
 - **نطاق الشبكة:** يرسل الخادم طلبات إلى نقاط n8n المُعدّة، وإلى نقطة manager عند تفعيلها. وقد يفحص update notifier التحديثات عند بدء TTY تفاعلي؛ ويتجاوز مسار stdio المعتاد غير التفاعلي هذا الفحص. لا يتضمن مصدر التطبيق الذي جرت مراجعته مرسلًا لتحليلات المنتج.
@@ -749,7 +749,7 @@ MIT
 <a id="marketing--personas-protokoll"></a>
 ## سجل التسويق والفئات المستهدفة
 
-للاطلاع على التموضع التسويقي وتعريف الفئات المستهدفة ومواءمة ثوابت الحوكمة وخارطة طريق سهولة الاكتشاف من 3 مراحل، راجع [`MARKETING-LOG.txt`](MARKETING-LOG.txt).
+للاطلاع على التموضع التسويقي وتعريف الفئات المستهدفة ومواءمة ثوابت الحوكمة وخارطة طريق سهولة الاكتشاف من 3 مراحل، راجع [`llms.txt`](llms.txt) & [`SKILL.md`](SKILL.md).
 
 ---
 

@@ -7,7 +7,7 @@
 *属于 [ellmos-ai](https://github.com/ellmos-ai) 项目系列和 [open-bricks](https://github.com/open-bricks) 统合项目。*
 
 [![npm](https://img.shields.io/npm/v/n8n-manager-mcp.svg)](https://www.npmjs.com/package/n8n-manager-mcp)
-[![测试](https://img.shields.io/badge/Tests-208%20passed-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
+[![测试](https://img.shields.io/badge/Tests-213%20passed-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
 [![MCP 工具](https://img.shields.io/badge/MCP%20Tools-19%20tools-blue.svg)](https://github.com/ellmos-ai/n8n-manager-mcp)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D20-blue.svg)](https://nodejs.org)
 [![安全性](https://img.shields.io/badge/Safety-Backups%20%7C%20Audit%20%7C%20Read--Only-success.svg)](SECURITY.md)
@@ -15,8 +15,8 @@
 [![第三方](https://img.shields.io/badge/Third--Party-License%20inventory-success.svg)](THIRD_PARTY_LICENSES.md)
 [![依赖清单：纯文本](https://img.shields.io/badge/Dependency%20Inventory-Plain%20Text-success.svg)](THIRD_PARTY_LICENSES.txt)
 [![署名：NOTICE](https://img.shields.io/badge/Attribution-NOTICE-blue.svg)](NOTICE)
-[![已验证](https://img.shields.io/badge/Verified-2026--11--02-blue.svg)](llms.txt)
-[![最近检查](https://img.shields.io/badge/Last--Checked-2026--11--02-success.svg)](llms.txt)
+[![已验证](https://img.shields.io/badge/Verified-2026--11--15-blue.svg)](llms.txt)
+[![最近检查](https://img.shields.io/badge/Last--Checked-2026--11--15-success.svg)](llms.txt)
 [![许可证：MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![适用于 LLM](https://img.shields.io/badge/LLM--Ready-llms.txt-orange.svg)](llms.txt)
 [![生态：ellmos--ai](https://img.shields.io/badge/Ecosystem-ellmos--ai-blue.svg)](https://github.com/ellmos-ai)
@@ -168,7 +168,7 @@ sequenceDiagram
         opt audit_log enabled (default true)
             Safety->>Audit: Append structured outcome to audit log (INV-AUDIT-04)
         end
-        Safety-->>AI: Return text; include backup path when a backup was saved
+        Safety-->>AI: Return text - include backup path when a backup was saved
     end
 ```
 
@@ -198,11 +198,11 @@ sequenceDiagram
     Note over AI,MCP: Phase 3: Import a new inactive copy
     AI->>MCP: n8n_import_workflow(workflow_json=serialized export, server_name=production, activate=false)
     MCP->>Prod: POST /workflows
-    Prod-->>MCP: Created workflow JSON with a new ID; inactive
+    Prod-->>MCP: Created workflow JSON with a new ID - inactive
     opt audit_log enabled (default true)
         MCP->>Audit: Append import outcome (INV-AUDIT-04)
     end
-    MCP-->>AI: Text response with the new workflow ID; no rollback handle
+    MCP-->>AI: Text response with the new workflow ID - no rollback handle
 ```
 
 ---
@@ -731,11 +731,11 @@ MIT
 
 | 依赖项 | 类型 | 版本 | 许可证 | 清单状态 |
 | :--- | :--- | :--- | :--- | :--- |
-| [`@modelcontextprotocol/sdk`](https://github.com/modelcontextprotocol/typescript-sdk) | 运行时（直接依赖） | `^1.29.0` | MIT | 许可证已列明 |
+| [`@modelcontextprotocol/sdk`](https://github.com/modelcontextprotocol/typescript-sdk) | 运行时（直接依赖） | `^1.32.2` | MIT | 许可证已列明 |
 | [`zod`](https://github.com/colinhacks/zod) | 运行时（直接依赖） | `^4.6.7` | MIT | 许可证已列明 |
 | [`update-notifier`](https://github.com/yeoman/update-notifier) | 运行时（直接依赖） | `^7.3.1` | BSD-2-Clause | 许可证已列明 |
 | `typescript` | 开发 / 编译器 | `^5.3.3` | Apache-2.0 | 许可证已列明 |
-| `vitest` | 开发 / 测试运行器 | `^4.1.11` | MIT | 许可证已列明 |
+| `vitest` | 开发 / 测试运行器 | `^4.1.12` | MIT | 许可证已列明 |
 | `@types/node` | 开发 / 类型定义 | `^20.11.0` | MIT | 许可证已列明 |
 
 - **网络范围：**服务器会向已配置的 n8n 端点以及（启用时）已配置的管理器端点发送请求。更新通知器可能在交互式 TTY 启动时检查更新；常规非 TTY stdio 路径会跳过该检查。已审阅的应用源代码中未发现产品分析数据发送逻辑。
@@ -751,7 +751,7 @@ MIT
 <a id="marketing--personas-protokoll"></a>
 ## 市场定位与用户角色记录
 
-关于市场定位、目标用户角色定义、治理不变量映射及三阶段可发现性路线图，请参阅 [`MARKETING-LOG.txt`](MARKETING-LOG.txt)。
+关于市场定位、目标用户角色定义、治理不变量映射及三阶段可发现性路线图，请参阅 [`llms.txt`](llms.txt) & [`SKILL.md`](SKILL.md)。
 
 ---
 
