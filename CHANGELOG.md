@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Path A Technical Hygiene, Mermaid Syntax, Manifest Parity & CI Hardening (2026-11-15)
+- **Untrack private marketing log (`T-20260926-455218633`):** Remove `MARKETING-LOG.txt` from Git tracking, npm package `files`, `llms.txt`, and public README links; ignore `*MARKETING-LOG.txt` and role-lock patterns (`LOCK.orchestrator.*`, `LOCK.operator.*`, `LOCK.worker.*`, `LOCK.thinker.*`, `LOCK.reviewer.*`) plus `.mypy_cache/` in `.gitignore`.
+- **Mermaid `sequenceDiagram` repair:** Replace semicolons inside `sequenceDiagram` message texts across all 11 localized `README*.md` files so GitHub Mermaid rendering passes with 0 syntax errors.
+- **CI & Issue Template hardening:** Add `npm audit --omit=dev --audit-level=high` to `.github/workflows/tests.yml` and add bilingual `.github/ISSUE_TEMPLATE/` (`bug_report.md`, `feature_request.md`, `config.yml`).
+- **Documentation & Manifest parity:** Sync `@modelcontextprotocol/sdk` (`^1.32.2`) and `vitest` (`^4.1.12`) dependency tables, verification dates (`2026-11-15`), `### Install with your LLM` / `### Mit deinem LLM installieren` installation sections, and measured test badge counts across docs; preserve `0.1.21` version freeze (`T-20260920-167562623`).
+- **Contract test expansion:** Update and expand `test/repository-hygiene.test.ts` and `test/metadata.test.ts` for untracked/ignored `MARKETING-LOG.txt`, `.github/ISSUE_TEMPLATE/` presence, zero `sequenceDiagram` semicolons across all 11 READMEs, CI workflow audit gate, and dependency/doc parity.
+
 ### AI Security & Dependency Audit (2026-11-08)
 - Comprehensive supply-chain and vulnerability audit (`npm audit` -> 0 vulnerabilities across 195 packages).
 - Upgrade `@modelcontextprotocol/sdk` to `^1.32.2` (resolving upstream advisories GHSA-6qxp-vccf-f47h, GHSA-22jm-h49p-29qw, GHSA-6prh-2h8m-c8cw, GHSA-46jr-4wx8-v453, GHSA-rvq5-wwqv-78pq, GHSA-f897-62hf-6gxq).
@@ -24,7 +31,7 @@ All notable changes to this project will be documented in this file.
   - `hono` (`^4.13.13`)
 - Harmonize Level 1 SBOM documents (`THIRD_PARTY_LICENSES.md` & `THIRD_PARTY_LICENSES.txt`) to audit date 2026-11-08.
 - Establish canonical `TODO.md` task and security register with standard 10-Gate STATUS table.
-- AST/Regex secrets and privacy scan: 0 hardcoded personal developer homepaths (`C:\Users\lukas\...`), 0 credentials/tokens, 0 private keys.
+- AST/Regex secrets and privacy scan: 0 hardcoded personal developer homepaths (`%USERPROFILE%\...`), 0 credentials/tokens, 0 private keys.
 - Extend automated contract test suite (`test/metadata.test.ts`) verifying hardened overrides, SBOM re-audit date, and `TODO.md` integrity.
 
 

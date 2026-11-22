@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Security Vulnerability Disclosure / Sicherheitslücken vertraulich melden
+    url: https://github.com/ellmos-ai/n8n-manager-mcp/blob/main/SECURITY.md
+    about: Do NOT open public issues for security vulnerabilities — follow SECURITY.md.

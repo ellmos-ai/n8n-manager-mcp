@@ -7,7 +7,7 @@
 *Parte de la familia [ellmos-ai](https://github.com/ellmos-ai) y del paraguas [open-bricks](https://github.com/open-bricks).*
 
 [![npm](https://img.shields.io/npm/v/n8n-manager-mcp.svg)](https://www.npmjs.com/package/n8n-manager-mcp)
-[![Tests](https://img.shields.io/badge/Tests-208%20passed-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
+[![Tests](https://img.shields.io/badge/Tests-213%20passed-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
 [![MCP Tools](https://img.shields.io/badge/MCP%20Tools-19%20tools-blue.svg)](https://github.com/ellmos-ai/n8n-manager-mcp)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D20-blue.svg)](https://nodejs.org)
 [![Safety](https://img.shields.io/badge/Safety-Backups%20%7C%20Audit%20%7C%20Read--Only-success.svg)](SECURITY.md)
@@ -15,8 +15,8 @@
 [![Third-Party](https://img.shields.io/badge/Third--Party-License%20inventory-success.svg)](THIRD_PARTY_LICENSES.md)
 [![Dependency Inventory: Plain Text](https://img.shields.io/badge/Dependency%20Inventory-Plain%20Text-success.svg)](THIRD_PARTY_LICENSES.txt)
 [![Attribution: NOTICE](https://img.shields.io/badge/Attribution-NOTICE-blue.svg)](NOTICE)
-[![Verified](https://img.shields.io/badge/Verified-2026--11--02-blue.svg)](llms.txt)
-[![Last-Checked](https://img.shields.io/badge/Last--Checked-2026--11--02-success.svg)](llms.txt)
+[![Verified](https://img.shields.io/badge/Verified-2026--11--15-blue.svg)](llms.txt)
+[![Last-Checked](https://img.shields.io/badge/Last--Checked-2026--11--15-success.svg)](llms.txt)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![LLM Ready](https://img.shields.io/badge/LLM--Ready-llms.txt-orange.svg)](llms.txt)
 [![Ecosystem: ellmos--ai](https://img.shields.io/badge/Ecosystem-ellmos--ai-blue.svg)](https://github.com/ellmos-ai)
@@ -168,7 +168,7 @@ sequenceDiagram
         opt audit_log enabled (default true)
             Safety->>Audit: Append structured outcome to audit log (INV-AUDIT-04)
         end
-        Safety-->>AI: Return text; include backup path when a backup was saved
+        Safety-->>AI: Return text - include backup path when a backup was saved
     end
 ```
 
@@ -198,11 +198,11 @@ sequenceDiagram
     Note over AI,MCP: Phase 3: Import a new inactive copy
     AI->>MCP: n8n_import_workflow(workflow_json=serialized export, server_name=production, activate=false)
     MCP->>Prod: POST /workflows
-    Prod-->>MCP: Created workflow JSON with a new ID; inactive
+    Prod-->>MCP: Created workflow JSON with a new ID - inactive
     opt audit_log enabled (default true)
         MCP->>Audit: Append import outcome (INV-AUDIT-04)
     end
-    MCP-->>AI: Text response with the new workflow ID; no rollback handle
+    MCP-->>AI: Text response with the new workflow ID - no rollback handle
 ```
 
 ---
@@ -720,11 +720,11 @@ Este proyecto se distribuye bajo la [Licencia MIT](LICENSE) y sus atribuciones s
 
 | Dependencia | Tipo | Versión | Licencia | Estado del inventario |
 | :--- | :--- | :--- | :--- | :--- |
-| [`@modelcontextprotocol/sdk`](https://github.com/modelcontextprotocol/typescript-sdk) | Ejecución (directa) | `^1.29.0` | MIT | Licencia incluida en el inventario |
+| [`@modelcontextprotocol/sdk`](https://github.com/modelcontextprotocol/typescript-sdk) | Ejecución (directa) | `^1.32.2` | MIT | Licencia incluida en el inventario |
 | [`zod`](https://github.com/colinhacks/zod) | Ejecución (directa) | `^4.6.7` | MIT | Licencia incluida en el inventario |
 | [`update-notifier`](https://github.com/yeoman/update-notifier) | Ejecución (directa) | `^7.3.1` | BSD-2-Clause | Licencia incluida en el inventario |
 | `typescript` | Desarrollo / compilador | `^5.3.3` | Apache-2.0 | Licencia incluida en el inventario |
-| `vitest` | Desarrollo / ejecutor de pruebas | `^4.1.11` | MIT | Licencia incluida en el inventario |
+| `vitest` | Desarrollo / ejecutor de pruebas | `^4.1.12` | MIT | Licencia incluida en el inventario |
 | `@types/node` | Desarrollo / tipos | `^20.11.0` | MIT | Licencia incluida en el inventario |
 
 - **Alcance de red:** el servidor envía solicitudes a los extremos n8n configurados y, si está habilitado, al extremo del gestor configurado. El notificador puede comprobar actualizaciones al iniciar en un TTY interactivo; omite esa comprobación en el funcionamiento stdio habitual sin TTY. El código de aplicación revisado no contiene un emisor de analítica de producto.
@@ -740,7 +740,7 @@ Este proyecto se distribuye bajo la [Licencia MIT](LICENSE) y sus atribuciones s
 <a id="marketing--personas-protokoll"></a>
 ## Registro de marketing y perfiles
 
-Para consultar el posicionamiento de marketing, las definiciones de los perfiles objetivo, las correspondencias de invariantes de gobernanza y la hoja de ruta de visibilidad en tres fases, consulta [`MARKETING-LOG.txt`](MARKETING-LOG.txt).
+Para consultar el posicionamiento de marketing, las definiciones de los perfiles objetivo, las correspondencias de invariantes de gobernanza y la hoja de ruta de visibilidad en tres fases, consulta [`llms.txt`](llms.txt) & [`SKILL.md`](SKILL.md).
 
 ---
 

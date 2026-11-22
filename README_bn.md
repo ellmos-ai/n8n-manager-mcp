@@ -7,7 +7,7 @@
 *[ellmos-ai](https://github.com/ellmos-ai) পরিবার এবং [open-bricks](https://github.com/open-bricks) ছাতার অংশ।*
 
 [![npm](https://img.shields.io/npm/v/n8n-manager-mcp.svg)](https://www.npmjs.com/package/n8n-manager-mcp)
-[![পরীক্ষা](https://img.shields.io/badge/Tests-208%20passed-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
+[![পরীক্ষা](https://img.shields.io/badge/Tests-213%20passed-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
 [![MCP টুল](https://img.shields.io/badge/MCP%20Tools-19%20tools-blue.svg)](https://github.com/ellmos-ai/n8n-manager-mcp)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D20-blue.svg)](https://nodejs.org)
 [![নিরাপত্তা](https://img.shields.io/badge/Safety-Backups%20%7C%20Audit%20%7C%20Read--Only-success.svg)](SECURITY.md)
@@ -15,8 +15,8 @@
 [![তৃতীয় পক্ষ](https://img.shields.io/badge/Third--Party-License%20inventory-success.svg)](THIRD_PARTY_LICENSES.md)
 [![নির্ভরতার তালিকা: সাধারণ পাঠ্য](https://img.shields.io/badge/Dependency%20Inventory-Plain%20Text-success.svg)](THIRD_PARTY_LICENSES.txt)
 [![স্বীকৃতি: NOTICE](https://img.shields.io/badge/Attribution-NOTICE-blue.svg)](NOTICE)
-[![যাচাইকৃত](https://img.shields.io/badge/Verified-2026--11--02-blue.svg)](llms.txt)
-[![সর্বশেষ পরীক্ষা](https://img.shields.io/badge/Last--Checked-2026--11--02-success.svg)](llms.txt)
+[![যাচাইকৃত](https://img.shields.io/badge/Verified-2026--11--15-blue.svg)](llms.txt)
+[![সর্বশেষ পরীক্ষা](https://img.shields.io/badge/Last--Checked-2026--11--15-success.svg)](llms.txt)
 [![লাইসেন্স: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![LLM-এর জন্য প্রস্তুত](https://img.shields.io/badge/LLM--Ready-llms.txt-orange.svg)](llms.txt)
 [![ইকোসিস্টেম: ellmos--ai](https://img.shields.io/badge/Ecosystem-ellmos--ai-blue.svg)](https://github.com/ellmos-ai)
@@ -168,7 +168,7 @@ sequenceDiagram
         opt audit_log enabled (default true)
             Safety->>Audit: Append structured outcome to audit log (INV-AUDIT-04)
         end
-        Safety-->>AI: Return text; include backup path when a backup was saved
+        Safety-->>AI: Return text - include backup path when a backup was saved
     end
 ```
 
@@ -198,11 +198,11 @@ sequenceDiagram
     Note over AI,MCP: Phase 3: Import a new inactive copy
     AI->>MCP: n8n_import_workflow(workflow_json=serialized export, server_name=production, activate=false)
     MCP->>Prod: POST /workflows
-    Prod-->>MCP: Created workflow JSON with a new ID; inactive
+    Prod-->>MCP: Created workflow JSON with a new ID - inactive
     opt audit_log enabled (default true)
         MCP->>Audit: Append import outcome (INV-AUDIT-04)
     end
-    MCP-->>AI: Text response with the new workflow ID; no rollback handle
+    MCP-->>AI: Text response with the new workflow ID - no rollback handle
 ```
 
 ---
@@ -729,11 +729,11 @@ MIT
 
 | নির্ভরতা | ধরন | সংস্করণ | লাইসেন্স | তালিকার অবস্থা |
 | :--- | :--- | :--- | :--- | :--- |
-| [`@modelcontextprotocol/sdk`](https://github.com/modelcontextprotocol/typescript-sdk) | রানটাইম (সরাসরি) | `^1.29.0` | MIT | লাইসেন্স তালিকাভুক্ত |
+| [`@modelcontextprotocol/sdk`](https://github.com/modelcontextprotocol/typescript-sdk) | রানটাইম (সরাসরি) | `^1.32.2` | MIT | লাইসেন্স তালিকাভুক্ত |
 | [`zod`](https://github.com/colinhacks/zod) | রানটাইম (সরাসরি) | `^4.6.7` | MIT | লাইসেন্স তালিকাভুক্ত |
 | [`update-notifier`](https://github.com/yeoman/update-notifier) | রানটাইম (সরাসরি) | `^7.3.1` | BSD-2-Clause | লাইসেন্স তালিকাভুক্ত |
 | `typescript` | ডেভেলপমেন্ট / কম্পাইলার | `^5.3.3` | Apache-2.0 | লাইসেন্স তালিকাভুক্ত |
-| `vitest` | ডেভেলপমেন্ট / টেস্ট রানার | `^4.1.11` | MIT | লাইসেন্স তালিকাভুক্ত |
+| `vitest` | ডেভেলপমেন্ট / টেস্ট রানার | `^4.1.12` | MIT | লাইসেন্স তালিকাভুক্ত |
 | `@types/node` | ডেভেলপমেন্ট / টাইপ সংজ্ঞা | `^20.11.0` | MIT | লাইসেন্স তালিকাভুক্ত |
 
 - **নেটওয়ার্কের পরিধি:** সার্ভার কনফিগার করা n8n এন্ডপয়েন্ট এবং (চালু থাকলে) ম্যানেজার এন্ডপয়েন্টে অনুরোধ পাঠায়। হালনাগাদ পরীক্ষক ইন্টার‌্যাক্টিভ TTY শুরুতে হালনাগাদ পরীক্ষা করতে পারে; নিয়মিত non-TTY stdio পাথ তা এড়িয়ে যায়। পর্যালোচিত অ্যাপ্লিকেশন উৎসে পণ্য-ব্যবহার বিশ্লেষণ প্রেরক নেই।
@@ -749,7 +749,7 @@ MIT
 <a id="marketing--personas-protokoll"></a>
 ## বিপণন ও পারসোনা লগ
 
-বিপণন অবস্থান নির্ধারণ, লক্ষ্য পারসোনার সংজ্ঞা, শাসন অপরিবর্তনীয় নিয়ম মানচিত্র এবং 3-পর্যায়ের খুঁজে পাওয়ার রোডম্যাপের জন্য [`MARKETING-LOG.txt`](MARKETING-LOG.txt) দেখুন।
+বিপণন অবস্থান নির্ধারণ, লক্ষ্য পারসোনার সংজ্ঞা, শাসন অপরিবর্তনীয় নিয়ম মানচিত্র এবং 3-পর্যায়ের খুঁজে পাওয়ার রোডম্যাপের জন্য [`llms.txt`](llms.txt) & [`SKILL.md`](SKILL.md) দেখুন।
 
 ---
 

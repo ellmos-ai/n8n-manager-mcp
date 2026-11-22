@@ -4,7 +4,7 @@ version: 0.1.21
 type: product-skill
 author: ellmos-ai
 created: 2026-11-02
-updated: 2026-11-02
+updated: 2026-11-15
 status: production
 description: >
   Comprehensive Model Context Protocol (MCP) server for end-to-end n8n workflow management:
@@ -174,7 +174,7 @@ If a workflow modification introduces errors:
 To verify server health and tool registration locally:
 
 ```bash
-# Run complete Vitest suite (208 tests)
+# Run complete Vitest suite (213 tests)
 npm test
 
 # Build TypeScript to dist/

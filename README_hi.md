@@ -7,7 +7,7 @@
 *[ellmos-ai](https://github.com/ellmos-ai) परिवार और [open-bricks](https://github.com/open-bricks) समेकित परियोजना का हिस्सा।*
 
 [![npm](https://img.shields.io/npm/v/n8n-manager-mcp.svg)](https://www.npmjs.com/package/n8n-manager-mcp)
-[![परीक्षण](https://img.shields.io/badge/Tests-208%20passed-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
+[![परीक्षण](https://img.shields.io/badge/Tests-213%20passed-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
 [![MCP उपकरण](https://img.shields.io/badge/MCP%20Tools-19%20tools-blue.svg)](https://github.com/ellmos-ai/n8n-manager-mcp)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D20-blue.svg)](https://nodejs.org)
 [![सुरक्षा](https://img.shields.io/badge/Safety-Backups%20%7C%20Audit%20%7C%20Read--Only-success.svg)](SECURITY.md)
@@ -15,8 +15,8 @@
 [![तृतीय-पक्ष](https://img.shields.io/badge/Third--Party-License%20inventory-success.svg)](THIRD_PARTY_LICENSES.md)
 [![निर्भरता सूची: सादा पाठ](https://img.shields.io/badge/Dependency%20Inventory-Plain%20Text-success.svg)](THIRD_PARTY_LICENSES.txt)
 [![श्रेय: NOTICE](https://img.shields.io/badge/Attribution-NOTICE-blue.svg)](NOTICE)
-[![सत्यापित](https://img.shields.io/badge/Verified-2026--11--02-blue.svg)](llms.txt)
-[![अंतिम जाँच](https://img.shields.io/badge/Last--Checked-2026--11--02-success.svg)](llms.txt)
+[![सत्यापित](https://img.shields.io/badge/Verified-2026--11--15-blue.svg)](llms.txt)
+[![अंतिम जाँच](https://img.shields.io/badge/Last--Checked-2026--11--15-success.svg)](llms.txt)
 [![लाइसेंस: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![LLM के लिए तैयार](https://img.shields.io/badge/LLM--Ready-llms.txt-orange.svg)](llms.txt)
 [![इकोसिस्टम: ellmos--ai](https://img.shields.io/badge/Ecosystem-ellmos--ai-blue.svg)](https://github.com/ellmos-ai)
@@ -168,7 +168,7 @@ sequenceDiagram
         opt audit_log enabled (default true)
             Safety->>Audit: Append structured outcome to audit log (INV-AUDIT-04)
         end
-        Safety-->>AI: Return text; include backup path when a backup was saved
+        Safety-->>AI: Return text - include backup path when a backup was saved
     end
 ```
 
@@ -198,11 +198,11 @@ sequenceDiagram
     Note over AI,MCP: Phase 3: Import a new inactive copy
     AI->>MCP: n8n_import_workflow(workflow_json=serialized export, server_name=production, activate=false)
     MCP->>Prod: POST /workflows
-    Prod-->>MCP: Created workflow JSON with a new ID; inactive
+    Prod-->>MCP: Created workflow JSON with a new ID - inactive
     opt audit_log enabled (default true)
         MCP->>Audit: Append import outcome (INV-AUDIT-04)
     end
-    MCP-->>AI: Text response with the new workflow ID; no rollback handle
+    MCP-->>AI: Text response with the new workflow ID - no rollback handle
 ```
 
 ---
@@ -729,11 +729,11 @@ MIT
 
 | निर्भरता | प्रकार | संस्करण | लाइसेंस | सूची की स्थिति |
 | :--- | :--- | :--- | :--- | :--- |
-| [`@modelcontextprotocol/sdk`](https://github.com/modelcontextprotocol/typescript-sdk) | रनटाइम (direct) | `^1.29.0` | MIT | लाइसेंस सूचीबद्ध |
+| [`@modelcontextprotocol/sdk`](https://github.com/modelcontextprotocol/typescript-sdk) | रनटाइम (direct) | `^1.32.2` | MIT | लाइसेंस सूचीबद्ध |
 | [`zod`](https://github.com/colinhacks/zod) | रनटाइम (direct) | `^4.6.7` | MIT | लाइसेंस सूचीबद्ध |
 | [`update-notifier`](https://github.com/yeoman/update-notifier) | रनटाइम (direct) | `^7.3.1` | BSD-2-Clause | लाइसेंस सूचीबद्ध |
 | `typescript` | विकास / compiler | `^5.3.3` | Apache-2.0 | लाइसेंस सूचीबद्ध |
-| `vitest` | विकास / test runner | `^4.1.11` | MIT | लाइसेंस सूचीबद्ध |
+| `vitest` | विकास / test runner | `^4.1.12` | MIT | लाइसेंस सूचीबद्ध |
 | `@types/node` | विकास / type definitions | `^20.11.0` | MIT | लाइसेंस सूचीबद्ध |
 
 - **नेटवर्क का दायरा:** सर्वर कॉन्फ़िगर n8n endpoints और (सक्षम होने पर) कॉन्फ़िगर मैनेजर endpoint को अनुरोध भेजता है। Update notifier इंटरैक्टिव TTY स्टार्ट पर अपडेट जांच सकता है; सामान्य non-TTY stdio पथ यह जांच छोड़ देता है। समीक्षा किए गए application source में product-analytics sender नहीं है।
@@ -749,7 +749,7 @@ MIT
 <a id="marketing--personas-protokoll"></a>
 ## मार्केटिंग और उपयोगकर्ता समूह लॉग
 
-मार्केटिंग पोज़िशनिंग, लक्षित उपयोगकर्ता समूह परिभाषाएं, governance invariant मैपिंग और 3-चरणीय खोज-योग्यता रोडमैप के लिए [`MARKETING-LOG.txt`](MARKETING-LOG.txt) देखें।
+मार्केटिंग पोज़िशनिंग, लक्षित उपयोगकर्ता समूह परिभाषाएं, governance invariant मैपिंग और 3-चरणीय खोज-योग्यता रोडमैप के लिए [`llms.txt`](llms.txt) & [`SKILL.md`](SKILL.md) देखें।
 
 ---
 
