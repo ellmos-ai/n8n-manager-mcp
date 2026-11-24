@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Path B Discoverability, Terminal SVG, State Diagram & Attribution (2026-11-24)
+- **Visual Terminal Preview (`assets/terminal-workflow.svg`):** Add dark-mode SVG workflow preview (`880x540`) illustrating `npm run smoke` (19 tools), `n8n_add_server`, `n8n_ping_server`, `n8n_describe_nodes` (`INV-NODE-09`), pre-mutation snapshot backup (`INV-BACK-03`), and monotonic read-only enforcement (`INV-READ-02`); embedded in Quick Start / Schnellstart of `README.md` and `README_de.md` while preserving `assets/n8n_logo.jpg`.
+- **Mermaid State Machine (`stateDiagram-v2`):** Add Safety Gate & Read-Only Ceiling Lifecycle state diagram in Section 02 of `README.md` and `README_de.md`.
+- **Badges, P-022 & AI Attribution:** Add `Product Skill`, `Code of Conduct`, and `Discussions` badges; synchronize `Verified-2026--11--24`, `Last--Checked-2026--11--24`, and `216 passed` test badges across all 11 localized READMEs; enrich `llms.txt` with `## Quick Install & Verification` (`Prerequisites`, `Installation`, `Verification`, `Minimal Example`) and `### Install with your LLM` with `llms.txt`/`SKILL.md` references; add `Geiger` attribution note in Section 18; preserve `0.1.21` version freeze (`T-20260920-167562623`).
+- **Contract Test Expansion:** Update verification dates/test counts and add 3 contract tests in `test/metadata.test.ts` for `assets/terminal-workflow.svg`, `stateDiagram-v2`, `llms.txt` install sections, and `Geiger` attribution.
+
 ### Path A Technical Hygiene, Mermaid Syntax, Manifest Parity & CI Hardening (2026-11-15)
 - **Untrack private marketing log (`T-20260926-455218633`):** Remove `MARKETING-LOG.txt` from Git tracking, npm package `files`, `llms.txt`, and public README links; ignore `*MARKETING-LOG.txt` and role-lock patterns (`LOCK.orchestrator.*`, `LOCK.operator.*`, `LOCK.worker.*`, `LOCK.thinker.*`, `LOCK.reviewer.*`) plus `.mypy_cache/` in `.gitignore`.
 - **Mermaid `sequenceDiagram` repair:** Replace semicolons inside `sequenceDiagram` message texts across all 11 localized `README*.md` files so GitHub Mermaid rendering passes with 0 syntax errors.
