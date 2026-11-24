@@ -7,7 +7,7 @@
 *Teil der [ellmos-ai](https://github.com/ellmos-ai)-Familie und des [open-bricks](https://github.com/open-bricks)-Dachverbunds.*
 
 [![npm](https://img.shields.io/npm/v/n8n-manager-mcp.svg)](https://www.npmjs.com/package/n8n-manager-mcp)
-[![Tests](https://img.shields.io/badge/Tests-213%20passed-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
+[![Tests](https://img.shields.io/badge/Tests-216%20passed-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
 [![MCP Tools](https://img.shields.io/badge/MCP%20Tools-19%20tools-blue.svg)](https://github.com/ellmos-ai/n8n-manager-mcp)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D20-blue.svg)](https://nodejs.org)
 [![Sicherheit](https://img.shields.io/badge/Sicherheit-Backups%20%7C%20Audit%20%7C%20Read--Only-success.svg)](SECURITY.md)
@@ -15,10 +15,13 @@
 [![Drittanbieter](https://img.shields.io/badge/Drittanbieter-Lizenzinventar-success.svg)](THIRD_PARTY_LICENSES.md)
 [![Dependency Inventory: Plain Text](https://img.shields.io/badge/Dependency%20Inventory-Plain%20Text-success.svg)](THIRD_PARTY_LICENSES.txt)
 [![Attribution: NOTICE](https://img.shields.io/badge/Attribution-NOTICE-blue.svg)](NOTICE)
-[![Verified](https://img.shields.io/badge/Verified-2026--11--15-blue.svg)](llms.txt)
-[![Last-Checked](https://img.shields.io/badge/Last--Checked-2026--11--15-success.svg)](llms.txt)
+[![Verified](https://img.shields.io/badge/Verified-2026--11--24-blue.svg)](llms.txt)
+[![Last-Checked](https://img.shields.io/badge/Last--Checked-2026--11--24-success.svg)](llms.txt)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![LLM Ready](https://img.shields.io/badge/LLM--Ready-llms.txt-orange.svg)](llms.txt)
+[![Product Skill](https://img.shields.io/badge/Product%20Skill-SKILL.md-teal.svg)](SKILL.md)
+[![Code of Conduct](https://img.shields.io/badge/Code%20of%20Conduct-Contributor%20Covenant%202.1-blueviolet.svg)](CODE_OF_CONDUCT.md)
+[![Discussions](https://img.shields.io/badge/GitHub-Discussions-blue.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/discussions)
 [![Ecosystem: ellmos--ai](https://img.shields.io/badge/Ecosystem-ellmos--ai-blue.svg)](https://github.com/ellmos-ai)
 [![Umbrella: open--bricks](https://img.shields.io/badge/Umbrella-open--bricks-purple.svg)](https://github.com/open-bricks)
 
@@ -205,6 +208,23 @@ sequenceDiagram
     MCP-->>AI: Textantwort mit neuer Workflow-ID - kein Rollback-Handle
 ```
 
+### Sicherheits-Gate & Read-Only-Obergrenzen-Lebenszyklus
+
+```mermaid
+stateDiagram-v2
+    [*] --> ReadWriteReady: Standardmodus (backup_before_mutations=true)
+    ReadWriteReady --> ReadOnlyPersisted: n8n_set_safety_mode(read_only=true)
+    ReadOnlyPersisted --> ReadWriteReady: n8n_set_safety_mode(read_only=false)
+    ReadWriteReady --> ReadOnlyCeiling: N8N_MANAGER_READ_ONLY=1 (INV-READ-02)
+    ReadOnlyPersisted --> ReadOnlyCeiling: N8N_MANAGER_READ_ONLY=1 (INV-READ-02)
+    ReadOnlyCeiling --> ReadOnlyCeiling: n8n_set_safety_mode abgewiesen
+    ReadWriteReady --> SnapshotBeforeMutate: Update / Delete / Activate / Overwrite
+    SnapshotBeforeMutate --> MutationApplied: Backup gesichert (INV-BACK-03)
+    SnapshotBeforeMutate --> MutationAborted: Backup fehlgeschlagen (kein API-Aufruf)
+    MutationApplied --> ReadWriteReady: Audit-Eintrag angehängt (INV-AUDIT-04)
+    MutationAborted --> ReadWriteReady: Fehler an MCP-Client gemeldet
+```
+
 ---
 
 <a id="sec-03"></a>
@@ -349,7 +369,10 @@ npm install -g n8n-manager-mcp
 Kopiere diesen Prompt in Claude Code, Cursor, Codex oder Antigravity:
 
 ```text
-Installiere und konfiguriere den n8n-manager-mcp Server aus https://github.com/ellmos-ai/n8n-manager-mcp (npm-Paket n8n-manager-mcp) in meiner MCP-Client-Konfiguration, hinterlege N8N_MANAGER_API_KEY und N8N_MANAGER_SERVER_URL in der Host-Umgebung statt in Prompts und führe bei einem lokalen Klon npm test && npm run smoke aus.
+Installiere und konfiguriere den n8n-manager-mcp Server aus https://github.com/ellmos-ai/n8n-manager-mcp (npm-Paket n8n-manager-mcp):
+1. Lies zuerst llms.txt und SKILL.md im Repository-Root.
+2. Hinterlege N8N_MANAGER_API_KEY und N8N_MANAGER_SERVER_URL in der MCP-Host-Umgebung statt in Prompts.
+3. Führe bei einem lokalen Klon npm test && npm run smoke aus und berichte das Verifikationsergebnis.
 ```
 
 ---
@@ -386,6 +409,10 @@ Nach der Installation können Sie diese Prompts in Ihrem KI-Assistenten verwende
    > Hinweis: n8n_import_workflow legt einen neuen Workflow an, erstellt kein Vorab-Backup und liefert keinen Rollback-Handle. Ohne Aktivierung bleibt die Kopie inaktiv.
 
 ### Schrittweiser Entwickler- & Agenten-Showcase
+
+<p align="center">
+  <img src="assets/terminal-workflow.svg" alt="n8n-manager-mcp Terminal-Workflow-Vorschau" width="880">
+</p>
 
 Die Beispiele zeigen die Argumentformen der Werkzeuge sowie erläuternde MCP-Textantworten für Registrierung, Offline-Node-Katalog, Workflow-Änderung mit Backup, Wiederherstellung und Read-Only-Verhalten.
 
@@ -813,3 +840,7 @@ Gemäß der veröffentlichten Sicherheitsrichtlinie in [SECURITY.md](SECURITY.md
   - `lukas@open-bricks.org`
 
 Dies sind Richtlinienzusagen; dieses Dokument enthält keine Messwerte zur tatsächlich erreichten Reaktionsleistung.
+
+---
+
+*Idee & Abnahme: Geiger · Textassistenz: LLM-gestützt · Grafik: SVG-generiert*

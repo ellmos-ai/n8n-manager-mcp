@@ -280,7 +280,7 @@ describe("metadata and manifest parity", () => {
   it("verifies llms.txt timestamp, security reference, and tool inventory", () => {
     const llmsTxt = fs.readFileSync(path.join(repoRoot, "llms.txt"), "utf-8");
 
-    expect(llmsTxt).toContain("Last-checked: 2026-11-15");
+    expect(llmsTxt).toContain("Last-checked: 2026-11-24");
     expect(llmsTxt).toContain("NOTICE");
     expect(llmsTxt).toContain("SECURITY.md");
     expect(llmsTxt).toContain("THIRD_PARTY_LICENSES.md");
@@ -294,8 +294,8 @@ describe("metadata and manifest parity", () => {
     const readme = fs.readFileSync(path.join(repoRoot, "README.md"), "utf-8");
     const readmeDe = fs.readFileSync(path.join(repoRoot, "README_de.md"), "utf-8");
 
-    expect(readme).toContain("213%20passed");
-    expect(readmeDe).toContain("213%20passed");
+    expect(readme).toContain("216%20passed");
+    expect(readmeDe).toContain("216%20passed");
     expect(readme).toContain("README_de.md");
     expect(readmeDe).toContain("README.md");
     expect(readme).toContain("https://github.com/open-bricks");
@@ -604,10 +604,10 @@ describe("metadata and manifest parity", () => {
     expect(readmeEn).toContain("CONTRIBUTING.md");
     expect(readmeDe).toContain("CONTRIBUTING.md");
     expect(llmsTxt).toContain("CONTRIBUTING.md");
-    expect(readmeEn).toContain("Verified-2026--11--15");
-    expect(readmeDe).toContain("Verified-2026--11--15");
-    expect(llmsTxt).toContain("Verification (2026-11-15)");
-    expect(llmsTxt).toContain("Last-checked: 2026-11-15");
+    expect(readmeEn).toContain("Verified-2026--11--24");
+    expect(readmeDe).toContain("Verified-2026--11--24");
+    expect(llmsTxt).toContain("Verification (2026-11-24)");
+    expect(llmsTxt).toContain("Last-checked: 2026-11-24");
   });
   it("verifies terminal execution showcase and quick start session in English and German READMEs", () => {
     const readmeEn = fs.readFileSync(path.join(repoRoot, "README.md"), "utf-8");
@@ -741,7 +741,7 @@ describe("metadata and manifest parity", () => {
       const doc = fs.readFileSync(path.join(repoRoot, file), "utf-8");
       expect(doc, `${file} missing SDK version ${sdkVer}`).toContain(`\`${sdkVer}\``);
       expect(doc, `${file} missing Vitest version ${vitestVer}`).toContain(`\`${vitestVer}\``);
-      expect(doc, `${file} missing 213 test badge`).toContain("213%20passed");
+      expect(doc, `${file} missing 216 test badge`).toContain("216%20passed");
 
       const seqMatches = [...doc.matchAll(/```mermaid\r?\nsequenceDiagram[\s\S]*?```/g)];
       expect(seqMatches.length, `${file} expected sequenceDiagram block`).toBeGreaterThan(0);
@@ -764,19 +764,63 @@ describe("metadata and manifest parity", () => {
     expect(readmeDe).toContain("N8N_MANAGER_API_KEY");
   });
 
-  it("verifies SKILL.md update date, test count parity, and Path A 2026-11-15 changelog entry without version bump", () => {
+  it("verifies SKILL.md update date, test count parity, and Path A/B changelog entries without version bump", () => {
     const skill = fs.readFileSync(path.join(repoRoot, "SKILL.md"), "utf-8");
     const llmsTxt = fs.readFileSync(path.join(repoRoot, "llms.txt"), "utf-8");
     const changelog = fs.readFileSync(path.join(repoRoot, "CHANGELOG.md"), "utf-8");
     const todo = fs.readFileSync(path.join(repoRoot, "TODO.md"), "utf-8");
 
     expect(skill).toContain("version: 0.1.21");
-    expect(skill).toContain("updated: 2026-11-15");
-    expect(skill).toContain("(213 tests)");
-    expect(llmsTxt).toContain("213 Vitest tests");
+    expect(skill).toContain("updated: 2026-11-24");
+    expect(skill).toContain("(216 tests)");
+    expect(llmsTxt).toContain("216 Vitest tests");
     const forbiddenHomePath = ["C:", "Users", "lukas"].join("\\");
     expect(changelog).toContain("Path A Technical Hygiene, Mermaid Syntax, Manifest Parity & CI Hardening (2026-11-15)");
+    expect(changelog).toContain("Path B Discoverability, Terminal SVG, State Diagram & Attribution (2026-11-24)");
     expect(changelog).not.toContain(forbiddenHomePath);
     expect(todo).not.toContain(forbiddenHomePath);
+  });
+
+  it("verifies terminal workflow SVG asset integrity and embedding in English and German READMEs", () => {
+    const svgPath = path.join(repoRoot, "assets", "terminal-workflow.svg");
+    expect(fs.existsSync(svgPath), "Missing assets/terminal-workflow.svg").toBe(true);
+    const svg = fs.readFileSync(svgPath, "utf-8");
+    expect(svg).toContain("<svg");
+    expect(svg).toContain("</svg>");
+    expect(svg).toContain("INV-BACK-03");
+    expect(svg).toContain("INV-READ-02");
+
+    const readmeEn = fs.readFileSync(path.join(repoRoot, "README.md"), "utf-8");
+    const readmeDe = fs.readFileSync(path.join(repoRoot, "README_de.md"), "utf-8");
+    expect(readmeEn).toContain("assets/terminal-workflow.svg");
+    expect(readmeDe).toContain("assets/terminal-workflow.svg");
+  });
+
+  it("verifies safety state machine Mermaid diagram (stateDiagram-v2) and P-022 quick install sections", () => {
+    const readmeEn = fs.readFileSync(path.join(repoRoot, "README.md"), "utf-8");
+    const readmeDe = fs.readFileSync(path.join(repoRoot, "README_de.md"), "utf-8");
+    for (const doc of [readmeEn, readmeDe]) {
+      expect(doc).toContain("stateDiagram-v2");
+      expect(doc).toContain("ReadOnlyCeiling");
+      expect(doc).toContain("SnapshotBeforeMutate");
+    }
+
+    const llmsTxt = fs.readFileSync(path.join(repoRoot, "llms.txt"), "utf-8");
+    expect(llmsTxt).toContain("## Quick Install & Verification");
+    expect(llmsTxt).toContain("Prerequisites:");
+    expect(llmsTxt).toContain("Installation:");
+    expect(llmsTxt).toContain("Verification:");
+    expect(llmsTxt).toContain("Minimal Example:");
+  });
+
+  it("verifies public AI attribution (Geiger) and governance badges in English and German READMEs", () => {
+    const readmeEn = fs.readFileSync(path.join(repoRoot, "README.md"), "utf-8");
+    const readmeDe = fs.readFileSync(path.join(repoRoot, "README_de.md"), "utf-8");
+    for (const doc of [readmeEn, readmeDe]) {
+      expect(doc).toContain("Geiger");
+      expect(doc).toContain("Product%20Skill-SKILL.md");
+      expect(doc).toContain("Code%20of%20Conduct");
+      expect(doc).toContain("GitHub-Discussions");
+    }
   });
 });

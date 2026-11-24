@@ -7,7 +7,7 @@
 *属于 [ellmos-ai](https://github.com/ellmos-ai) 项目系列和 [open-bricks](https://github.com/open-bricks) 统合项目。*
 
 [![npm](https://img.shields.io/npm/v/n8n-manager-mcp.svg)](https://www.npmjs.com/package/n8n-manager-mcp)
-[![测试](https://img.shields.io/badge/Tests-213%20passed-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
+[![测试](https://img.shields.io/badge/Tests-216%20passed-brightgreen.svg)](https://github.com/ellmos-ai/n8n-manager-mcp/actions/workflows/tests.yml)
 [![MCP 工具](https://img.shields.io/badge/MCP%20Tools-19%20tools-blue.svg)](https://github.com/ellmos-ai/n8n-manager-mcp)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D20-blue.svg)](https://nodejs.org)
 [![安全性](https://img.shields.io/badge/Safety-Backups%20%7C%20Audit%20%7C%20Read--Only-success.svg)](SECURITY.md)
@@ -15,8 +15,8 @@
 [![第三方](https://img.shields.io/badge/Third--Party-License%20inventory-success.svg)](THIRD_PARTY_LICENSES.md)
 [![依赖清单：纯文本](https://img.shields.io/badge/Dependency%20Inventory-Plain%20Text-success.svg)](THIRD_PARTY_LICENSES.txt)
 [![署名：NOTICE](https://img.shields.io/badge/Attribution-NOTICE-blue.svg)](NOTICE)
-[![已验证](https://img.shields.io/badge/Verified-2026--11--15-blue.svg)](llms.txt)
-[![最近检查](https://img.shields.io/badge/Last--Checked-2026--11--15-success.svg)](llms.txt)
+[![已验证](https://img.shields.io/badge/Verified-2026--11--24-blue.svg)](llms.txt)
+[![最近检查](https://img.shields.io/badge/Last--Checked-2026--11--24-success.svg)](llms.txt)
 [![许可证：MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![适用于 LLM](https://img.shields.io/badge/LLM--Ready-llms.txt-orange.svg)](llms.txt)
 [![生态：ellmos--ai](https://img.shields.io/badge/Ecosystem-ellmos--ai-blue.svg)](https://github.com/ellmos-ai)
